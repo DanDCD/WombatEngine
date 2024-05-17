@@ -36,6 +36,33 @@ void setUpTriangle()
     glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_verts), triangle_verts, GL_STATIC_DRAW);
 }
 
+float rectangle_verts[] = {
+    0.5f, 0.5f, 0.0f,   // top right
+    0.5f, -0.5f, 0.0f,  // bottom right
+    -0.5f, -0.5f, 0.0f, // bottom left
+    -0.5f, 0.5f, 0.0f   // top left
+};
+
+unsigned int rectangle_indices[] = {
+    // clockwise
+    0, 1, 3, // first triangle
+    1, 2, 3  // second triangle
+};
+
+// set up our rectangle - conversely, we use EBO and index drawing to save memory!
+void setUpRectangle()
+{
+    unsigned int vbo_id;
+    glGenBuffers(1, &vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(rectangle_verts), rectangle_verts, GL_STATIC_DRAW);
+
+    unsigned int ebo_id;
+    glGenBuffers(1, &ebo_id);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_id);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectangle_indices), rectangle_indices, GL_STATIC_DRAW);
+}
+
 // vertex shader
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
@@ -157,7 +184,8 @@ int main()
 
     // set up vao
     unsigned int vao_id = setUpVAO();
-    setUpTriangle();
+    // setUpTriangle();
+    setUpRectangle();
 
     // set up our shader program
     unsigned int shaderProgram_id = setUpShaderProgram(setUpVertexShader(), setUpFragmentShader());
@@ -175,8 +203,11 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT); // we clear the color buffer
 
         glUseProgram(shaderProgram_id); // use the shader program we set up
+
+        // glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
         glBindVertexArray(vao_id);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         processInput(window); // process input events
 
