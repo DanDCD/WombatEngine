@@ -36,6 +36,21 @@ void setUpTriangle()
     glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_verts), triangle_verts, GL_STATIC_DRAW);
 }
 
+float triangles_verts[] = {
+    -0.5f, 0.5f, 0.0f, //0
+    0.0f, 0.5f, 0.0f, //1
+    -0.25f, -0.5f, 0.0f, //2
+    0.5f, 0.5f, 0.0f, //3
+    0.25f, -0.5f, 0.0f //4
+};
+
+unsigned int triangles_indices[] = {
+    // clockwise
+    2, 0, 1, // first triangle
+    1, 3, 4 // second triangle
+};
+
+
 float rectangle_verts[] = {
     0.5f, 0.5f, 0.0f,   // top right
     0.5f, -0.5f, 0.0f,  // bottom right
@@ -204,10 +219,12 @@ int main()
 
         glUseProgram(shaderProgram_id); // use the shader program we set up
 
+        glBindVertexArray(vao_id);
         // glDrawArrays(GL_TRIANGLES, 0, 3);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        
 
-        glBindVertexArray(vao_id);
+        
 
         processInput(window); // process input events
 
