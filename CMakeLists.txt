@@ -8,9 +8,21 @@ include(CTest)
 enable_testing()
 
 # Set directories for dependencies
-set(GLFW_DIR "C:/dev/cppsources/glfw-3.4")
-set(GLAD_DIR "C:/dev/cppsources/glad")
-set(GLM_DIR "C:/dev/cppsources/glm/glm")
+#pc
+# set(GLFW_DIR "C:/dev/cppsources/glfw-3.4")
+# set(GLAD_DIR "C:/dev/cppsources/glad")
+# set(GLM_DIR "C:/dev/cppsources/glm/glm")
+#laptop
+# set (GLFW_DIR "C:/Dev/Cpp/sources/glfw-3.4")
+# set (GLAD_DIR "C:/Dev/Cpp/sources/glad")
+
+
+# we can set these with ctrl+p cmake cache editor in vscode
+# Set directories for dependencies using cache variables
+set(GLFW_DIR "" CACHE PATH "Path to the GLFW library")
+set(GLAD_DIR "" CACHE PATH "Path to the GLAD library")
+set(GLM_DIR "" CACHE PATH "Path to the GLM library")
+
 
 # Add GLFW
 add_subdirectory(${GLFW_DIR} "binary_directory")
