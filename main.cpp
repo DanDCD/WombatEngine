@@ -206,6 +206,7 @@ int main()
     unsigned int shaderProgram_id = setUpShaderProgram(setUpVertexShader(), setUpFragmentShader());
 
     // tell open gl how to interpret vertex buffer data
+    // for vertext attribute 0, we have 3 float values for each attrib, we do not start with an offset
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0); // enable vertex attribute 0
 
