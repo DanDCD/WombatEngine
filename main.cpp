@@ -22,7 +22,16 @@ void processInput(GLFWwindow *window)
 float triangle_verts[] = {
     -0.5f, -0.5f, 0.0f,
     0.5f, -0.5f, 0.0f,
-    0.0f, 0.5f, 0.0f};
+    0.0f, 0.5f, 0.0f
+};
+
+float colored_triangle_verts[] = {
+    // positions         colors
+    -0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,
+    0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,
+    0.0f, 0.5f, 0.0f,    0.0f, 0.0f, 1.0f
+};
+
 
 // set up our triangle
 void setUpTriangle()
@@ -34,7 +43,7 @@ void setUpTriangle()
     // we bind the buffer objeect to the array buffer - meaning when we use the array buffer we will be using the object
     glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
     // we now store the triangle verts in the vbo bound to the array buffer
-    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_verts), triangle_verts, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colored_triangle_verts), colored_triangle_verts, GL_STATIC_DRAW);
 }
 
 float triangles_verts[] = {
@@ -82,8 +91,11 @@ void setUpRectangle()
 // vertex shader
 const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
+                                 "layout (location = 1) in vec3 aColor;\n"
+                                 "out vec3 ourColor;\n"
                                  "void main()\n"
                                  "{\n"
+                                 "   ourColor = aColor;\n"
                                  "   gl_Position = vec4(aPos, 1.0);\n"
                                  "}\0";
 
@@ -111,10 +123,10 @@ unsigned int setUpVertexShader()
 // fragment shader
 const char *fragmentShaderSource = "#version 330 core\n"
                                    "out vec4 FragColor;\n"
-                                   "uniform vec4 ourColor;\n" 
+                                   "in vec3 ourColor;\n" 
                                    "void main()\n"
                                    "{\n"
-                                   "   FragColor = ourColor;\n"
+                                   "   FragColor = vec4(ourColor, 1.0);\n"
                                    "}\0";
 
 // set up the fragment shader
@@ -201,16 +213,18 @@ int main()
 
     // set up vao
     unsigned int vao_id = setUpVAO();
-    // setUpTriangle();
-    setUpRectangle();
+    setUpTriangle();
+    // setUpRectangle();
 
     // set up our shader program
     unsigned int shaderProgram_id = setUpShaderProgram(setUpVertexShader(), setUpFragmentShader());
 
     // tell open gl how to interpret vertex buffer data
-    // for vertext attribute 0, we have 3 float values for each attrib, we do not start with an offset
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    // for vertext attribute 0, we have 3 float values for each attrib, stride of six, we do not start with an offset
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(0); // enable vertex attribute 0
+    glEnableVertexAttribArray(1);
 
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window))
@@ -220,20 +234,11 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT); // we clear the color buffer
 
-
-
-        float timeValue = glfwGetTime();
-        float greenValue = (std::sin(timeValue) / 2.0f) + 0.5f;
-
-        int ourColorLoc = glGetUniformLocation(shaderProgram_id, "ourColor");
         glUseProgram(shaderProgram_id); // use the shader program we set up
-        glUniform4f(ourColorLoc, 0.0f, greenValue, 0.0f, 1.0f); // update the uniform value
-
-
 
         glBindVertexArray(vao_id);
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         
 
         
