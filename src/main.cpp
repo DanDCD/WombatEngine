@@ -3,6 +3,8 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <math.h>
+#include <shader/shader.h>
+
 
 // A callback function to be called whenever the window is resized
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
@@ -180,6 +182,9 @@ unsigned int setUpVAO()
 
 int main()
 {
+    Shader myShader;
+    myShader.helloWorld();
+
     glfwInit(); // Initialize the GLFW library
     // Set the major and minor version of OpenGL to use
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

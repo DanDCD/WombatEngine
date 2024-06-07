@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.5.0)
 # Set project name and version
 project(threedimsim VERSION 0.1.0 LANGUAGES C CXX)
 
+# Make sure to export compile commands for Vscode C++ extension linter
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Include CTest module and enable testing
 include(CTest)
 enable_testing()
@@ -32,13 +35,14 @@ add_library(glad "${GLAD_DIR}/src/glad.c")
 target_include_directories(glad PUBLIC "${GLAD_DIR}/include")
 
 # Add executable
-add_executable(threedimsim main.cpp)
+file(GLOB_RECURSE ALL_CPP_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
+add_executable(threedimsim ${ALL_CPP_FILES})
 
 # Link libraries to the executable
 target_link_libraries(threedimsim glfw glad)
 
 # Set include directories for GLM
-target_include_directories(threedimsim PUBLIC "${GLM_DIR}")
+target_include_directories(threedimsim PUBLIC "${GLM_DIR}" "${CMAKE_SOURCE_DIR}/includes")
 
 # Find and link OpenGL
 find_package(OpenGL REQUIRED)
@@ -55,3 +59,5 @@ message(STATUS "GLAD directory: ${GLAD_DIR}")
 message(STATUS "GLM directory: ${GLM_DIR}")
 message(STATUS "Project name: ${PROJECT_NAME}")
 message(STATUS "Project version: ${PROJECT_VERSION}")
+
+
