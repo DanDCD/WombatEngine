@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <math.h>
 
 // A callback function to be called whenever the window is resized
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
@@ -83,7 +84,7 @@ const char *vertexShaderSource = "#version 330 core\n"
                                  "layout (location = 0) in vec3 aPos;\n"
                                  "void main()\n"
                                  "{\n"
-                                 "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+                                 "   gl_Position = vec4(aPos, 1.0);\n"
                                  "}\0";
 
 // set up the vertex shader
@@ -110,9 +111,10 @@ unsigned int setUpVertexShader()
 // fragment shader
 const char *fragmentShaderSource = "#version 330 core\n"
                                    "out vec4 FragColor;\n"
+                                   "uniform vec4 ourColor;\n" 
                                    "void main()\n"
                                    "{\n"
-                                   "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+                                   "   FragColor = ourColor;\n"
                                    "}\0";
 
 // set up the fragment shader
@@ -218,7 +220,16 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT); // we clear the color buffer
 
+
+
+        float timeValue = glfwGetTime();
+        float greenValue = (std::sin(timeValue) / 2.0f) + 0.5f;
+
+        int ourColorLoc = glGetUniformLocation(shaderProgram_id, "ourColor");
         glUseProgram(shaderProgram_id); // use the shader program we set up
+        glUniform4f(ourColorLoc, 0.0f, greenValue, 0.0f, 1.0f); // update the uniform value
+
+
 
         glBindVertexArray(vao_id);
         // glDrawArrays(GL_TRIANGLES, 0, 3);
