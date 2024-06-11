@@ -1,9 +1,18 @@
 #include "shader/shader.h"
 
+
 Shader::Shader(const char *vertex_shader_path, const char *fragment_shader_path)
 {
+    // load shader code
     const char *vertexShaderCode_cstr = loadShaderFile(vertex_shader_path).c_str();
     const char *fragmentShaderCode_cstr = loadShaderFile(fragment_shader_path).c_str();
+
+    // compile shaders
+    unsigned int vertexShader_id = Shader::compileShader(vertexShaderCode_cstr, GL_VERTEX_SHADER);
+    unsigned int fragmentShader_id = Shader::compileShader(fragmentShaderCode_cstr, GL_FRAGMENT_SHADER);
+
+
+
 }
 
 void Shader::use()
@@ -47,4 +56,22 @@ std::string Shader::loadShaderFile(const char *shader_path)
         std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY READ: " << shader_path << std::endl;
     }
     return shaderCode;
+}
+
+unsigned int Shader::compileShader(const char *shader_code, GLenum shader_type)
+{
+    // create and compile shader
+    unsigned int shader_id;
+    shader_id = glCreateShader(shader_type); // init shader object in OpenGL
+    glShaderSource(shader_id, 1, &shader_code, NULL); // provide object with source code
+    glCompileShader(shader_id);
+    // check success
+    int success;
+    char infoLog[512];
+    glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
+    if(!success){
+        glGetProgramInfoLog(shader_id, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+    return shader_id;
 }
