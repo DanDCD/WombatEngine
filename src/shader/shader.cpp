@@ -3,8 +3,11 @@
 Shader::Shader(const char *vertex_shader_path, const char *fragment_shader_path)
 {
     // load shader code
-    const char *vertexShaderCode_cstr = loadShaderFile(vertex_shader_path).c_str();
-    const char *fragmentShaderCode_cstr = loadShaderFile(fragment_shader_path).c_str();
+    std::string vertexShaderCode = loadShaderFile(vertex_shader_path);
+    const char *vertexShaderCode_cstr = vertexShaderCode.c_str();
+
+    std::string fragmentShaderCode = loadShaderFile(fragment_shader_path);
+    const char *fragmentShaderCode_cstr = fragmentShaderCode.c_str();
 
     // compile shaders
     unsigned int vertexShader_id = Shader::compileShader(vertexShaderCode_cstr, GL_VERTEX_SHADER);
@@ -40,7 +43,6 @@ void Shader::setUniform(const std::string &uniform_name, float value) const
 
 std::string Shader::loadShaderFile(const char *shader_path)
 {
-
     std::string shaderCode;
     std::ifstream shaderFile;
     // ensure that if the fail/bad bits are set, we throw an exception of type ifstream::failure

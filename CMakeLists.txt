@@ -48,6 +48,13 @@ target_include_directories(threedimsim PUBLIC "${GLM_DIR}" "${CMAKE_SOURCE_DIR}/
 find_package(OpenGL REQUIRED)
 target_link_libraries(threedimsim OpenGL::GL)
 
+
+# Custom command to copy shaders directory
+add_custom_command(TARGET threedimsim POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_SOURCE_DIR}/shaders" $<TARGET_FILE_DIR:threedimsim>/shaders)
+
+
 # CPack settings for packaging the project
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
