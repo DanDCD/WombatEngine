@@ -10,6 +10,15 @@ namespace VERT_DATA{
         0.0f, 0.5f, 0.0f,    0.0f, 0.0f, 1.0f
     };
 
+    float triangle_verts[] = {
+        // positions
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f,
+    };
+
+    
+
     float rectangle_verts[] = {
         0.5f, 0.5f, 0.0f,   // top right
         0.5f, -0.5f, 0.0f,  // bottom right

@@ -54,6 +54,11 @@ add_custom_command(TARGET threedimsim POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_SOURCE_DIR}/shaders" $<TARGET_FILE_DIR:threedimsim>/shaders)
 
+# Custom command to copy textures directory
+add_custom_command(TARGET threedimsim POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_SOURCE_DIR}/textures" $<TARGET_FILE_DIR:threedimsim>/textures)
+
 
 # CPack settings for packaging the project
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
