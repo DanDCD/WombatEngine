@@ -182,8 +182,7 @@ unsigned int setUpVAO()
 
 int main()
 {
-    Shader myShader;
-    myShader.helloWorld();
+
 
     glfwInit(); // Initialize the GLFW library
     // Set the major and minor version of OpenGL to use
