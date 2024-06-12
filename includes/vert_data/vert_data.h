@@ -17,6 +17,11 @@ namespace VERT_DATA{
         0.0f, 0.5f, 0.0f,
     };
 
+    float triangle_texture_coords[] = {
+        0.0f, 0.0f,  // lower-left corner  
+        1.0f, 0.0f,  // lower-right corner
+        0.5f, 1.0f   // top-center corner
+    };
     
 
     float rectangle_verts[] = {
