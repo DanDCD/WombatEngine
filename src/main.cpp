@@ -6,7 +6,6 @@
 #include <shader/shader.h>
 #include <vert_data/vert_data.h>
 
-
 // A callback function to be called whenever the window is resized
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
@@ -16,7 +15,6 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 // function to process input events from user
 void processInput(GLFWwindow *window)
 {
-
     // if user presses escpape, we tell GLFW we want to close the given window
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -35,7 +33,6 @@ void setUpTriangle()
     glBufferData(GL_ARRAY_BUFFER, sizeof(VERT_DATA::colored_triangle_verts), VERT_DATA::colored_triangle_verts, GL_STATIC_DRAW);
 }
 
-
 // set up our rectangle - conversely, we use EBO and index drawing to save memory!
 void setUpRectangle()
 {
@@ -49,8 +46,6 @@ void setUpRectangle()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_id);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(VERT_DATA::rectangle_indices), VERT_DATA::rectangle_indices, GL_STATIC_DRAW);
 }
-
-
 
 unsigned int setUpVAO()
 {
@@ -120,7 +115,7 @@ int main()
         glBindVertexArray(vao_id);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        
+
         processInput(window); // process input events
 
         glfwSwapBuffers(window); // swap the buffer we have been drawing to into the front
