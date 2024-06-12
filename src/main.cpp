@@ -40,7 +40,7 @@ void setUpRectangle()
     unsigned int vbo_id;
     glGenBuffers(1, &vbo_id);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(VERT_DATA::rectangle_verts), VERT_DATA::rectangle_verts, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(VERT_DATA::rectangle_textured_verts), VERT_DATA::rectangle_textured_verts, GL_STATIC_DRAW);
 
     unsigned int ebo_id;
     glGenBuffers(1, &ebo_id);
@@ -94,15 +94,15 @@ int main()
 
     // set up vao
     unsigned int vao_id = setUpVAO();
-    setUpTriangle();
-    // setUpRectangle();
+    setUpRectangle();
 
     // set up vertex attributes
-    // for vertext attribute 0, we have 3 float values for each attrib, stride of six, we do not start with an offset
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);                   // position
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float))); // color
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float))); // texture
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
 
     // LOAD TEXTURE
     // TODO: make a Texture class
@@ -119,7 +119,7 @@ int main()
 
     // load data
     int width, height, nrChannels;
-    unsigned char *texture_data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+    unsigned char *texture_data = stbi_load("textures/container.jpg", &width, &height, &nrChannels, 0);
 
     if (texture_data)
     {
@@ -137,8 +137,6 @@ int main()
     // free texture data from memory
     stbi_image_free(texture_data);
 
-
-
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window))
     {
@@ -148,9 +146,11 @@ int main()
 
         shader.use(); // use shader
 
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        
         glBindVertexArray(vao_id);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         processInput(window); // process input events
 
