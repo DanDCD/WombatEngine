@@ -5,6 +5,7 @@
 #include <math.h>
 #include <shader/shader.h>
 #include <vert_data/vert_data.h>
+#include <stb/stb_image.h>
 
 // A callback function to be called whenever the window is resized
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
@@ -102,6 +103,41 @@ int main()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+
+    // LOAD TEXTURE
+    // TODO: make a Texture class
+    // generate a texture object in OpenGL
+    unsigned int texture_id;
+    glGenTextures(1, &texture_id);
+    // bind the texture
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+    // set the texture wrapping/filtering options (on the currently bound texture object)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // load data
+    int width, height, nrChannels;
+    unsigned char *texture_data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+
+    if (texture_data)
+    {
+        // generate texture with data
+        // bind texture data to the currently bound texture object
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_data);
+        // generate mip maps for the texture (smaller textures for distant renders)
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "ERROR::TEXTURE::FAILED_TO_LOAD_TEXTURE_DATA" << std::endl;
+    }
+
+    // free texture data from memory
+    stbi_image_free(texture_data);
+
+
 
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window))
