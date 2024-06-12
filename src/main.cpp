@@ -6,6 +6,7 @@
 #include <shader/shader.h>
 #include <vert_data/vert_data.h>
 #include <stb/stb_image.h>
+#include <texture/texture.h>
 
 // A callback function to be called whenever the window is resized
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
@@ -104,13 +105,20 @@ int main()
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
 
+    Texture testTexture(GL_TEXTURE_2D,
+                        {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
+                         TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
+                         TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
+                         TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
+                        "textures/container.jpg");
+
     // LOAD TEXTURE
     // TODO: make a Texture class
     // generate a texture object in OpenGL
     unsigned int texture1_id;
     glGenTextures(1, &texture1_id);
     // bind the texture
-    glBindTexture(GL_TEXTURE_2D, texture1_id); // now our 2d texture is associated with unit 0
+    glBindTexture(GL_TEXTURE_2D, texture1_id);
     // set the texture wrapping/filtering options (on the currently bound texture object)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -138,7 +146,7 @@ int main()
     unsigned int texture2_id;
     glGenTextures(1, &texture2_id);
     // bind the texture
-    glBindTexture(GL_TEXTURE_2D, texture2_id); 
+    glBindTexture(GL_TEXTURE_2D, texture2_id);
     // set the texture wrapping/filtering options (on the currently bound texture object)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -162,17 +170,13 @@ int main()
         std::cout << "ERROR::TEXTURE::FAILED_TO_LOAD_TEXTURE_DATA" << std::endl;
     }
 
-
-
     // free texture data from memory
     stbi_image_free(texture_data);
 
-
     // we only have to set uniforms once!
-    shader.use(); // use shader
+    shader.use();                      // use shader
     shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
     shader.setUniform("texture_2", 1); // texture2 is in GL_TEXTURE1
-
 
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window))
@@ -185,7 +189,7 @@ int main()
 
         glActiveTexture(GL_TEXTURE0); // activate the 0th texture unit
         glBindTexture(GL_TEXTURE_2D, texture1_id);
-        
+
         glActiveTexture(GL_TEXTURE1); // activate the 1st texture unit
         glBindTexture(GL_TEXTURE_2D, texture2_id);
 
