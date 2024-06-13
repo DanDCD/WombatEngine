@@ -4,7 +4,7 @@
 
 ## Introduction
 
-This is a project for me to learn OpenGL. I would be hesitant to say this would be anywhere close to an engine, but I aim to improve both my C++ and graphics programming abilities.
+This is a project for me to learn OpenGL. I would be hesitant to say this will be anywhere close to an engine, but I aim to use this to improve both my C++ and graphics programming abilities.
 
 ## Table of Contents
 
