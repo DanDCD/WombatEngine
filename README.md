@@ -35,6 +35,7 @@ To be completed.
 
 These are some websites I refer to during development
 
+- [OpenGL Wiki](https://www.khronos.org/opengl/wiki/Main_Page)
 - [Learn OpenGL](https://learnopengl.com/)
 - [OpenGL Documentation](https://docs.gl/)
 - [Book of Shaders](https://thebookofshaders.com/)
