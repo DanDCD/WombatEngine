@@ -121,6 +121,8 @@ int main()
                       "textures/awesomeface.png",
                       GL_TEXTURE1);
 
+    
+
     // we only have to set uniforms once!
     shader.use();                      // use shader
     shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0

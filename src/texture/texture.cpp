@@ -33,11 +33,19 @@ Texture::Texture(GLenum texture_target_type, const std::vector<TextureParam> &pa
 
     // load and apply the texture
     assignTexture(texture_path);
+
+    // unbind the texture after set up to maintain a clean state
+    unbind();
 }
 
 Texture::Texture(GLenum texture_target_type, const std::vector<TextureParam> &params, const std::string &texture_path)
-    : Texture::Texture(textureTargetType, params, texture_path, GL_TEXTURE0)
+    : Texture::Texture(texture_target_type, params, texture_path, GL_TEXTURE0)
 {
+}
+
+Texture::~Texture()
+{
+    glDeleteTextures(1, &texture_ID); // delete the associated texture object from OpenGL
 }
 
 void Texture::bind()
@@ -65,7 +73,10 @@ void Texture::assignTexture(const std::string &texture_path)
         format = GL_RGBA;
 
     else
+    {
         std::cout << "ERROR::TEXTURE::INVALID_FILE_FORMAT_FOR_TEXTURE" << std::endl;
+        return;
+    }
 
     // load texture
     int width, height, nrChannels;
@@ -89,4 +100,9 @@ void Texture::assignTexture(const std::string &texture_path)
     }
 
     stbi_image_free(texture_data);
+}
+
+void Texture::unbind()
+{
+    glBindTexture(this->textureTargetType, 0);
 }
