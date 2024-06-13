@@ -23,6 +23,8 @@ Texture::Texture(GLenum texture_target_type, const std::vector<TextureParam> &pa
     this->textureTargetType = texture_target_type;
     glBindTexture(this->textureTargetType, this->texture_ID);
 
+    this->textureUnit = texture_unit;
+
     // set the parameters (if any)
     for (const auto &param : params)
     {
@@ -30,7 +32,7 @@ Texture::Texture(GLenum texture_target_type, const std::vector<TextureParam> &pa
     }
 
     // load and apply the texture
-    glm::vec2 dimensions = assignTexture(texture_path);
+    assignTexture(texture_path);
 }
 
 Texture::Texture(GLenum texture_target_type, const std::vector<TextureParam> &params, const std::string &texture_path)
@@ -38,7 +40,13 @@ Texture::Texture(GLenum texture_target_type, const std::vector<TextureParam> &pa
 {
 }
 
-glm::vec2 Texture::assignTexture(const std::string &texture_path)
+void Texture::bind()
+{
+    glActiveTexture(this->textureUnit);                       // activate the associated texture unit
+    glBindTexture(this->textureTargetType, this->texture_ID); // bind this texture to the unit
+}
+
+void Texture::assignTexture(const std::string &texture_path)
 {
     auto has_extension = [](const std::string &file_path, const std::string &extension) -> bool
     {
@@ -72,6 +80,8 @@ glm::vec2 Texture::assignTexture(const std::string &texture_path)
         glTexImage2D(this->textureTargetType, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, texture_data);
         // generate mip maps for the texture (smaller textures for distant renders)
         glGenerateMipmap(this->textureTargetType);
+        // set dimensions
+        this->dimensions = glm::vec2(width, height);
     }
     else
     {
@@ -79,6 +89,4 @@ glm::vec2 Texture::assignTexture(const std::string &texture_path)
     }
 
     stbi_image_free(texture_data);
-
-    return glm::vec2(width, height);
 }

@@ -43,14 +43,23 @@ public:
     /// @param texture_path
     Texture(GLenum texture_target_type, const std::vector<TextureParam> &params, const std::string &texture_path);
 
+    /// @brief 
+    void bind();
+
 private:
     /// @brief
     unsigned int texture_ID;
 
+    /// @brief 
     GLenum textureTargetType;
 
+    /// @brief 
     GLenum textureUnit;
 
+    /// @brief 
+    glm::vec2 dimensions;
 
-    glm::vec2 assignTexture(const std::string& texture_path);
+    /// @brief 
+    /// @param texture_path 
+    void assignTexture(const std::string &texture_path);
 };
