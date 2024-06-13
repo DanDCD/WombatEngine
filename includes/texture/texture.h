@@ -68,7 +68,4 @@ private:
     /// @brief load and apply an image file as the texture data for this texture (only accepts png and jpg)
     /// @param texture_path the path to the file containing texture data
     void assignTexture(const std::string &texture_path);
-
-
-
 };

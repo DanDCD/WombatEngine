@@ -121,9 +121,7 @@ int main()
                       "textures/awesomeface.png",
                       GL_TEXTURE1);
 
-    
-
-    // we only have to set uniforms once!
+        // we only have to set uniforms once!
     shader.use();                      // use shader
     shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
     shader.setUniform("texture_2", 1); // texture2 is in GL_TEXTURE1
@@ -153,64 +151,3 @@ int main()
     glfwTerminate();
     return 0;
 }
-
-// // LOAD TEXTURE
-// // TODO: make a Texture class
-// // generate a texture object in OpenGL
-// unsigned int texture1_id;
-// glGenTextures(1, &texture1_id);
-// // bind the texture
-// glBindTexture(GL_TEXTURE_2D, texture1_id);
-// // set the texture wrapping/filtering options (on the currently bound texture object)
-// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-// // load data
-// int width, height, nrChannels;
-// unsigned char *texture_data = stbi_load("textures/container.jpg", &width, &height, &nrChannels, 0);
-
-// if (texture_data)
-// {
-//     // generate texture with data
-//     // bind texture data to the currently bound texture object
-//     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_data);
-//     // generate mip maps for the texture (smaller textures for distant renders)
-//     glGenerateMipmap(GL_TEXTURE_2D);
-// }
-// else
-// {
-//     std::cout << "ERROR::TEXTURE::FAILED_TO_LOAD_TEXTURE_DATA" << std::endl;
-// }
-
-// // generate a texture object in OpenGL
-// unsigned int texture2_id;
-// glGenTextures(1, &texture2_id);
-// // bind the texture
-// glBindTexture(GL_TEXTURE_2D, texture2_id);
-// // set the texture wrapping/filtering options (on the currently bound texture object)
-// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-// // load data
-// int width2, height2, nrChannels2;
-// unsigned char *texture_data2 = stbi_load("textures/awesomeface.png", &width2, &height2, &nrChannels2, 0);
-
-// if (texture_data2)
-// {
-//     // generate texture with data
-//     // bind texture data to the currently bound texture object
-//     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture_data2);
-//     // generate mip maps for the texture (smaller textures for distant renders)
-//     glGenerateMipmap(GL_TEXTURE_2D);
-// }
-// else
-// {
-//     std::cout << "ERROR::TEXTURE::FAILED_TO_LOAD_TEXTURE_DATA" << std::endl;
-// }
-
-// // free texture data from memory
-// stbi_image_free(texture_data);
