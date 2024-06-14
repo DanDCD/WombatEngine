@@ -17,6 +17,10 @@ public:
     // constructer that reads shader code and builds the shader program
     Shader(const char *vertex_shader_path, const char *fragment_shader_path);
 
+    // destructor that destroys shader program in OpenGL
+    
+
+
     /// @brief tell OpenGL to use this shader
     void use();
 

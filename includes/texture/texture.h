@@ -43,6 +43,20 @@ public:
     /// @param texture_path the path to the image file from which the texture data will be loaded
     Texture(GLenum texture_target_type, const std::vector<TextureParam> &params, const std::string &texture_path);
 
+    /// @brief the move constructor for texture - used when we want to transfer ownership of the texture data between variables (copy constructor for rvalues) (e.g. Texture(std::move(oldTex)))
+    /// @param other the old texture to be moved into this one
+    Texture(Texture &&other);
+
+    /// @brief the move assignment for texture - used when we want to transfer ownership of the texture data between variables (copy assignment for rvalues) (e.g. tex1 = std::move(tex2))
+    /// @param other
+    Texture &operator=(Texture &&other) noexcept;
+
+    /// @brief prevents copy constructor from lvalues (e.g. tex = Texture(oldTex); or return tex;)
+    Texture(const Texture &) = delete;
+
+    /// @brief prevents copy assignment from lvalues (e.g. tex1 = tex2;)
+    Texture &operator=(const Texture &) = delete;
+
     /// @brief destructor - deletes texture from OpenGL
     ~Texture();
 

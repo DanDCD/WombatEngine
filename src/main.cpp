@@ -98,6 +98,7 @@ int main()
     setUpRectangle();
 
     // set up vertex attributes
+    // this is the stage where we tell open gl we get the attribute data for attribs 0, 1, 2 from the currently bound VBO (see setUpRectangle)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);                   // position
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float))); // color
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float))); // texture
@@ -121,7 +122,7 @@ int main()
                       "textures/awesomeface.png",
                       GL_TEXTURE1);
 
-        // we only have to set uniforms once!
+    // we only have to set uniforms once!
     shader.use();                      // use shader
     shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
     shader.setUniform("texture_2", 1); // texture2 is in GL_TEXTURE1

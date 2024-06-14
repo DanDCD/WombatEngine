@@ -43,6 +43,34 @@ Texture::Texture(GLenum texture_target_type, const std::vector<TextureParam> &pa
 {
 }
 
+Texture::Texture(Texture &&other)
+{
+    // copy over important params
+    this->texture_ID = other.texture_ID; // obtain ownership of texture object
+    this->textureTargetType = other.textureTargetType;
+    this->textureUnit = other.textureUnit;
+    this->dimensions = other.dimensions;
+    // remove ownership of the texture object from other
+    other.texture_ID = 0;
+}
+
+Texture &Texture::operator=(Texture &&other) noexcept
+{
+    if (this != &other)
+    {
+        // delete current texture
+        glDeleteTextures(1, &texture_ID);
+        // copy over important params
+        this->texture_ID = other.texture_ID; // obtain ownership of texture object
+        this->textureTargetType = other.textureTargetType;
+        this->textureUnit = other.textureUnit;
+        this->dimensions = other.dimensions;
+        // remove ownership of the texture object from other
+        other.texture_ID = 0;
+    }
+    return *this;
+}
+
 Texture::~Texture()
 {
     glDeleteTextures(1, &texture_ID); // delete the associated texture object from OpenGL
