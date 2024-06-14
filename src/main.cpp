@@ -57,17 +57,6 @@ unsigned int setUpVAO()
     return vao_id;
 }
 
-Texture getTexture2()
-{
-    Texture texture_2old(GL_TEXTURE_2D,
-                         {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
-                          TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
-                          TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
-                          TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
-                         "textures/awesomeface.png",
-                         GL_TEXTURE1);
-    return std::move(texture_2old);
-}
 
 int main()
 {
