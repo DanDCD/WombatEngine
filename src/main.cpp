@@ -57,7 +57,6 @@ unsigned int setUpVAO()
     return vao_id;
 }
 
-
 int main()
 {
     // set up GLFW
