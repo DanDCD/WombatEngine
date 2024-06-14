@@ -17,9 +17,22 @@ public:
     // constructer that reads shader code and builds the shader program
     Shader(const char *vertex_shader_path, const char *fragment_shader_path);
 
-    // destructor that destroys shader program in OpenGL
-    
+    /// @brief the move constructor for shader - used when we want to transfer ownership of the shader data between variables (copy constructor for rvalues) (e.g. shader(std::move(oldShader)))
+    /// @param other the old shader to be moved into this one
+    Shader(Shader &&other);
 
+    /// @brief the move assignment for shader - used when we want to transfer ownership of the shader data between variables (copy assignment for rvalues) (e.g. shader1 = std::move(shader2))
+    /// @param other
+    Shader &operator=(Shader &&other) noexcept;
+
+    /// @brief prevents copy constructor from lvalues (e.g. shader = shader(oldShader); or return shader;)
+    Shader(const Shader &) = delete;
+
+    /// @brief prevents copy assignment from lvalues (e.g. shader1 = shader2;)
+    Shader &operator=(const Shader &) = delete;
+
+    // destructor that destroys shader program in OpenGL
+    ~Shader();
 
     /// @brief tell OpenGL to use this shader
     void use();

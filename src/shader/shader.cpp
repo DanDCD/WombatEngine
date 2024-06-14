@@ -21,6 +21,33 @@ Shader::Shader(const char *vertex_shader_path, const char *fragment_shader_path)
     glDeleteShader(fragmentShader_id);
 }
 
+Shader::Shader(Shader &&other)
+{
+    // obtain ownership of shader program
+    this->program_ID = other.program_ID;
+    // remove ownership of shader program from other
+    other.program_ID = 0;
+}
+
+Shader &Shader::operator=(Shader &&other) noexcept
+{
+    if (this != &other)
+    {
+        // delete the current shader program (as we are being assigned to a new one and therefore the current must be binned)
+        glDeleteProgram(program_ID);
+        // obtain ownership of shader program
+        this->program_ID = other.program_ID;
+        // remove ownership of shader program from other
+        other.program_ID = 0;
+    }
+    return *this;
+}
+
+Shader::~Shader()
+{
+    glDeleteProgram(program_ID);
+}
+
 void Shader::use()
 {
     glUseProgram(program_ID);
