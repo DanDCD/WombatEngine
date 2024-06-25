@@ -7,6 +7,8 @@
 #include <vert_data/vert_data.h>
 #include <stb/stb_image.h>
 #include <texture/texture.h>
+#include "buffer/vao/vao.h"
+#include "buffer/vbo/vbo.h"
 
 // A callback function to be called whenever the window is resized
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
@@ -20,33 +22,6 @@ void processInput(GLFWwindow *window)
     // if user presses escpape, we tell GLFW we want to close the given window
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-}
-
-// set up our triangle
-void setUpTriangle()
-{
-    // this will be assigned the id of the vertex buffer object
-    unsigned int vbo_id;
-    // create one vertex buffer object and store its id in vbo_id for future reference
-    glGenBuffers(1, &vbo_id);
-    // we bind the buffer objeect to the array buffer - meaning when we use the array buffer we will be using the object
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-    // we now store the triangle verts in the vbo bound to the array buffer
-    glBufferData(GL_ARRAY_BUFFER, sizeof(VERT_DATA::colored_triangle_verts), VERT_DATA::colored_triangle_verts, GL_STATIC_DRAW);
-}
-
-// set up our rectangle - conversely, we use EBO and index drawing to save memory!
-void setUpRectangle()
-{
-    unsigned int vbo_id;
-    glGenBuffers(1, &vbo_id);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(VERT_DATA::rectangle_textured_verts), VERT_DATA::rectangle_textured_verts, GL_STATIC_DRAW);
-
-    unsigned int ebo_id;
-    glGenBuffers(1, &ebo_id);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_id);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(VERT_DATA::rectangle_indices), VERT_DATA::rectangle_indices, GL_STATIC_DRAW);
 }
 
 unsigned int setUpVAO()
@@ -95,7 +70,14 @@ int main()
 
     // set up vao
     unsigned int vao_id = setUpVAO();
-    setUpRectangle();
+    VBO rectVBO = VBO();
+    rectVBO.assignVertData(GL_ARRAY_BUFFER,
+                           VERT_DATA::rectangle_textured_verts,
+                           sizeof(VERT_DATA::rectangle_textured_verts),
+                           VERT_DATA::rectangle_indices,
+                           sizeof(VERT_DATA::rectangle_indices),
+                           GL_STATIC_DRAW);
+    
 
     // set up vertex attributes
     // this is the stage where we tell open gl we get the attribute data for attribs 0, 1, 2 from the currently bound VBO (see setUpRectangle)
