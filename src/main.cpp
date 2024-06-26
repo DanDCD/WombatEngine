@@ -9,6 +9,16 @@
 #include <texture/texture.h>
 #include "buffer/vao/vao.h"
 #include "buffer/vbo/vbo.h"
+#include "buffer/ebo/ebo.h"
+
+void checkGLError(const std::string &label)
+{
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR)
+    {
+        std::cerr << "OpenGL error [" << label << "]: " << err << std::endl;
+    }
+}
 
 // A callback function to be called whenever the window is resized
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
@@ -22,14 +32,6 @@ void processInput(GLFWwindow *window)
     // if user presses escpape, we tell GLFW we want to close the given window
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-}
-
-unsigned int setUpVAO()
-{
-    unsigned int vao_id;
-    glGenVertexArrays(1, &vao_id);
-    glBindVertexArray(vao_id);
-    return vao_id;
 }
 
 int main()
@@ -76,31 +78,20 @@ int main()
     rectVBO.assignVertData(GL_ARRAY_BUFFER,
                            VERT_DATA::rectangle_textured_verts,
                            sizeof(VERT_DATA::rectangle_textured_verts),
-                           VERT_DATA::rectangle_indices,
-                           sizeof(VERT_DATA::rectangle_indices),
                            GL_STATIC_DRAW);
 
-    vao.bind();
-    rectVBO.bind();
-    vao.addVertexAttrribSpec(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
-    vao.addVertexAttrribSpec(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 3 * sizeof(float));
-    vao.addVertexAttrribSpec(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 6 * sizeof(float));
+    EBO rectEBO = EBO();
+    rectEBO.assignIndiceData(VERT_DATA::rectangle_indices,
+                             sizeof(VERT_DATA::rectangle_indices),
+                             GL_STATIC_DRAW);
 
-    // set up vertex attributes
-    // this is the stage where we tell open gl we get the attribute data for attribs 0, 1, 2 from the currently bound VBO (see setUpRectangle)
-    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);                   // position
-    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float))); // color
-    // glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float))); // texture
-    // glEnableVertexAttribArray(0);
-    // glEnableVertexAttribArray(1);
-    // glEnableVertexAttribArray(2);
+    VertexBufferLayout layout = VertexBufferLayout();
+    layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE);
+    layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE);
+    layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE);
 
-    // VertexBufferLayout layout = VertexBufferLayout();
-    // layout.addAttribute<float>(3, GL_FALSE);
-    // layout.addAttribute<float>(3, GL_FALSE);
-    // layout.addAttribute<float>(2, GL_FALSE);
-
-    // vao.addVBO(std::move(rectVBO), layout);
+    vao.addVBO(std::move(rectVBO), layout);
+    vao.addEBO(std::move(rectEBO));
 
     Texture texture_1(GL_TEXTURE_2D,
                       {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
@@ -136,8 +127,9 @@ int main()
         texture_2.bind();
 
         vao.bind();
+        checkGLError("VAO bound in main loop");
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // PROBLEM: NEEDS A BOUND EBO!
 
         processInput(window); // process input events
 

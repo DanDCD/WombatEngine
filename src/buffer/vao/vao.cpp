@@ -1,8 +1,9 @@
 #include "buffer/vao/vao.h"
 #include "glad/glad.h"
 #include <iostream>
+#include "buffer/ebo/ebo.h"
 
-VertexBufferElement::VertexBufferElement(unsigned int type, unsigned int count, unsigned int totalSize, GLboolean normalised)
+VertexBufferElement::VertexBufferElement(GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised)
     : type(type), count(count), totalSize(totalSize), normalised(normalised)
 {
 }
@@ -14,6 +15,17 @@ VertexBufferElement::VertexBufferElement()
 VertexBufferLayout::VertexBufferLayout()
     : attributeToElements(), stride()
 {
+}
+
+void VertexBufferLayout::addAttribute(unsigned int index, GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised)
+{
+    VertexBufferElement vertexBufferElement = VertexBufferElement(type, count, totalSize, normalised);
+    attributeToElements[index] = vertexBufferElement;
+}
+
+void VertexBufferLayout::addAttribute(GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised)
+{
+    addAttribute(attributeToElements.size(), type, count, totalSize, normalised);
 }
 
 const std::vector<VertexBufferElement> VertexBufferLayout::getElements() const
@@ -89,12 +101,7 @@ void VAO::addVBO(VBO &&vbo, const VertexBufferLayout &layout)
         unsigned int attribute_id = pair.first;
         const VertexBufferElement &bufferElement = pair.second;
 
-        glEnableVertexAttribArray(attribute_id); // Enable the vertex attribute
-
-        // Set the vertex attribute pointer
-        glVertexAttribPointer(attribute_id, bufferElement.count, bufferElement.type,
-                              bufferElement.normalised, stride,
-                              reinterpret_cast<void *>(currentOffset));
+        addVertexAttrribSpec(attribute_id, bufferElement.count, bufferElement.type, bufferElement.normalised, stride, currentOffset);
 
         // Increment the offset
         currentOffset += bufferElement.totalSize;
@@ -105,15 +112,23 @@ void VAO::addVBO(VBO &&vbo, const VertexBufferLayout &layout)
     unbind();                       // Unbind the VAO
 }
 
+void VAO::addEBO(EBO &&ebo)
+{
+    this->ebo = std::move(ebo);
+}
+
 void VAO::addVertexAttrribSpec(unsigned int attrib_ID, unsigned int count, GLenum type, GLboolean normalised, unsigned int stride, unsigned int offset)
 {
-    glVertexAttribPointer(attrib_ID, count, type, normalised, stride, reinterpret_cast<void *>(offset));
     glEnableVertexAttribArray(attrib_ID);
+    glVertexAttribPointer(attrib_ID, count, type, normalised, stride, reinterpret_cast<void *>(offset));
 }
 
 void VAO::bind() const
 {
     glBindVertexArray(vao_ID);
+    if(ebo.has_value()){
+        ebo->bind();
+    }
 }
 
 void VAO::unbind() const

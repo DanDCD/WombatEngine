@@ -4,6 +4,8 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <optional>
+#include "buffer/ebo/ebo.h"
 
 class VertexBufferElement
 {
@@ -13,13 +15,13 @@ public:
     /// @param count the number of these types
     /// @param totalSize size in bytes of this element
     /// @param normalised if these are normalised
-    VertexBufferElement(unsigned int type, unsigned int count, unsigned int totalSize, GLboolean normalised);
+    VertexBufferElement(GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised);
 
     /// @brief default constructor
     VertexBufferElement();
 
     /// @brief the OpenGL type of this element
-    unsigned int type;
+    GLenum type;
 
     /// @brief the number of times this type appears contiguously
     unsigned int count;
@@ -37,20 +39,11 @@ class VertexBufferLayout
 public:
     VertexBufferLayout();
 
-    /// @brief push a new type to the layout
-    /// @tparam T the c++ type to push
-    /// @param index the index to be associated with this attribute
-    /// @param count the number of elements to be pushed
-    /// @param normalised whether fixed point values should be normalised or not
-    template <typename T>
-    void addAttribute(unsigned int index, unsigned int count, GLboolean normalised);
 
-    /// @brief push a new type to the layout (automatically assigns an index)
-    /// @tparam T the c++ type to push
-    /// @param count the number of elements to be pushed
-    /// @param normalised whether fixed point values should be normalised or not
-    template <typename T>
-    void addAttribute(unsigned int count, GLboolean normalised);
+    void addAttribute(unsigned int index, GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised);
+
+
+    void addAttribute(GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised);
 
     /// @brief get the elements in the layout
     /// @return the VertexBufferElements represented in this layout
@@ -101,6 +94,7 @@ public:
     /// @param layout the layout of this vbo
     void addVBO(VBO &&vbo, const VertexBufferLayout &layout);
 
+    void addEBO(EBO &&ebo);
 
     void addVertexAttrribSpec(unsigned int attrib_ID, unsigned int count, GLenum type, GLboolean normalised, unsigned int stride, unsigned int offset);
 
@@ -115,42 +109,11 @@ private:
     /// @brief the id of the Vertex Array Object in OpenGL
     unsigned int vao_ID;
 
+    /// @brief the vbos this vao owns
     std::vector<VBO> vbos;
+
+    /// @brief the ebo this vao owns
+    std::optional<EBO> ebo;
 };
 
-template <typename T>
-void VertexBufferLayout::addAttribute(unsigned int index, unsigned int count, GLboolean normalised)
-{
-    unsigned int type;
-    unsigned int totalSize;
 
-    if constexpr (std::is_same_v<T, int>)
-    {
-        type = GL_INT;
-        totalSize = count * sizeof(int);
-    }
-    else if constexpr (std::is_same_v<T, float>)
-    {
-        type = GL_FLOAT;
-        totalSize = count * sizeof(float);
-    }
-    else if constexpr (std::is_same_v<T, bool>)
-    {
-        type = GL_BOOL;
-        totalSize = count * sizeof(bool);
-    }
-    else
-    {
-        std::cerr << "ERROR::VERTEX_BUFFER_LAYOUT::UNSUPPORTED_TYPE" << std::endl;
-        return;
-    }
-
-    VertexBufferElement vertexBufferElement = VertexBufferElement(type, count, totalSize, normalised);
-    attributeToElements[index] = vertexBufferElement;
-}
-
-template <typename T>
-void VertexBufferLayout::addAttribute(unsigned int count, GLboolean normalised)
-{
-    addAttribute<T>(attributeToElements.size(), count, normalised);
-}
