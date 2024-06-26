@@ -37,7 +37,7 @@ void processInput(GLFWwindow *window)
 int main()
 {
     // set up GLFW
-    glfwInit(); // Initialize the GLFW library
+    glfwInit();
     // Set the major and minor version of OpenGL to use
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -107,18 +107,17 @@ int main()
                       GL_TEXTURE1);
 
     // we only have to set uniforms once!
-    shader.use();                      // use shader
+    shader.use();
     shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
     shader.setUniform("texture_2", 1); // texture2 is in GL_TEXTURE1
 
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window))
     {
-        // we clear the screen with a blue color
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT); // we clear the color buffer
+        glClear(GL_COLOR_BUFFER_BIT);
 
-        shader.use(); // use shader
+        shader.use();
 
         texture_1.bind();
         texture_2.bind();
@@ -128,10 +127,10 @@ int main()
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        processInput(window); // process input events
+        processInput(window);
 
         glfwSwapBuffers(window); // swap the buffer we have been drawing to into the front
-        glfwPollEvents();        // poll for events
+        glfwPollEvents();
     }
 
     glfwTerminate();
