@@ -67,13 +67,10 @@ int main()
     // assign our resizing function as the resizing window callback for our window
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // set up shaders
     Shader shader("shaders/test_vertex.vert", "shaders/test_fragment.frag");
 
-    // set up vao
     VAO vao = VAO();
 
-    // set up vbo
     VBO rectVBO = VBO();
     rectVBO.assignVertData(GL_ARRAY_BUFFER,
                            VERT_DATA::rectangle_textured_verts,
