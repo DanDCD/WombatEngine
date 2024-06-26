@@ -77,6 +77,7 @@ VAO::~VAO()
 
 void VAO::addVBO(VBO &&vbo, const VertexBufferLayout &layout)
 {
+    bind();
     vbo.bind();
     unsigned int currentOffset = 0; // the offset so far
     for (const auto &pair : layout.getMap())
@@ -90,9 +91,15 @@ void VAO::addVBO(VBO &&vbo, const VertexBufferLayout &layout)
     }
     vbo.unbind();
     vbos.push_back(std::move(vbo));
+    unbind();
 }
 
 void VAO::bind() const
 {
     glBindVertexArray(vao_ID);
+}
+
+void VAO::unbind() const
+{
+    glBindVertexArray(0);
 }

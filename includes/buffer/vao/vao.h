@@ -104,6 +104,9 @@ public:
     /// @brief bind this VAO to OpenGL
     void bind() const;
 
+    /// @brief unbind this VAO frrom OpenGL
+    void unbind() const;
+
 private:
     /// @brief the id of the Vertex Array Object in OpenGL
     unsigned int vao_ID;
