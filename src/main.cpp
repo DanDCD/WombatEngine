@@ -126,7 +126,7 @@ int main()
         vao.bind();
         checkGLError("VAO bound in main loop");
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // PROBLEM: NEEDS A BOUND EBO!
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         processInput(window); // process input events
 
