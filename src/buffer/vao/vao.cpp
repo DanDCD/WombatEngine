@@ -3,50 +3,17 @@
 #include <iostream>
 
 VertexBufferElement::VertexBufferElement(unsigned int type, unsigned int count, unsigned int totalSize, bool normalised)
-    : type(type), count(count), normalised(normalised)
+    : type(type), count(count), totalSize(totalSize), normalised(normalised)
+{
+}
+
+VertexBufferElement::VertexBufferElement()
 {
 }
 
 VertexBufferLayout::VertexBufferLayout()
     : attributeToElements(), stride()
 {
-}
-
-template <typename T>
-void VertexBufferLayout::addAttribute(unsigned int index, unsigned int count, bool normalised)
-{
-    unsigned int type;
-    unsigned int totalSize;
-
-    if constexpr (std::is_same_v<T, int>)
-    {
-        type = GL_INT;
-        totalSize = count * sizeof(int);
-    }
-    else if constexpr (std::is_same_v<T, float>)
-    {
-        type = GL_FLOAT;
-        totalSize = count * sizeof(float);
-    }
-    else if constexpr (std::is_same_v<T, bool>)
-    {
-        type = GL_BOOL;
-        totalSize = count * sizeof(bool);
-    }
-    else
-    {
-        std::cerr << "ERROR::VERTEX_BUFFER_LAYOUT::UNSUPPORTED_TYPE" << std::endl;
-        return;
-    }
-
-    VertexBufferElement vertexBufferElement(type, count, totalSize, normalised);
-    attributeToElements[index] = vertexBufferElement;
-}
-
-template <typename T>
-void VertexBufferLayout::addAttribute(unsigned int count, bool normalised)
-{
-    addAttribute<T>(attributeToElements.size(), count, normalised);
 }
 
 const std::vector<VertexBufferElement> VertexBufferLayout::getElements() const
@@ -80,6 +47,7 @@ const std::map<int, VertexBufferElement> VertexBufferLayout::getMap() const
 
 VAO::VAO()
 {
+    glGenVertexArrays(1, &vao_ID);
 }
 
 VAO::VAO(VAO &&other)
@@ -117,9 +85,14 @@ void VAO::addVBO(VBO &&vbo, const VertexBufferLayout &layout)
         VertexBufferElement bufferElement = pair.second;
 
         glEnableVertexAttribArray(attribute_id);
-        glVertexAttribPointer(attribute_id, bufferElement.count, bufferElement.type, bufferElement.normalised, layout.getStride(), (void *)(currentOffset));
+        glVertexAttribPointer(attribute_id, bufferElement.count, bufferElement.type, bufferElement.normalised, layout.getStride(), reinterpret_cast<void *>(currentOffset));
         currentOffset += bufferElement.totalSize;
     }
-    vbos.push_back(vbo);
     vbo.unbind();
+    vbos.push_back(std::move(vbo));
+}
+
+void VAO::bind() const
+{
+    glBindVertexArray(vao_ID);
 }

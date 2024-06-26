@@ -3,15 +3,20 @@
 #include <glad/glad.h>
 #include <map>
 #include <vector>
+#include <iostream>
 
-struct VertexBufferElement
+class VertexBufferElement
 {
+public:
     /// @brief constructor
     /// @param type the type of the element
     /// @param count the number of these types
     /// @param totalSize size in bytes of this element
     /// @param normalised if these are normalised
     VertexBufferElement(unsigned int type, unsigned int count, unsigned int totalSize, bool normalised);
+
+    /// @brief default constructor
+    VertexBufferElement();
 
     /// @brief the OpenGL type of this element
     unsigned int type;
@@ -96,9 +101,49 @@ public:
     /// @param layout the layout of this vbo
     void addVBO(VBO &&vbo, const VertexBufferLayout &layout);
 
+    /// @brief bind this VAO to OpenGL
+    void bind() const;
+
 private:
     /// @brief the id of the Vertex Array Object in OpenGL
     unsigned int vao_ID;
 
     std::vector<VBO> vbos;
 };
+
+template <typename T>
+void VertexBufferLayout::addAttribute(unsigned int index, unsigned int count, bool normalised)
+{
+    unsigned int type;
+    unsigned int totalSize;
+
+    if constexpr (std::is_same_v<T, int>)
+    {
+        type = GL_INT;
+        totalSize = count * sizeof(int);
+    }
+    else if constexpr (std::is_same_v<T, float>)
+    {
+        type = GL_FLOAT;
+        totalSize = count * sizeof(float);
+    }
+    else if constexpr (std::is_same_v<T, bool>)
+    {
+        type = GL_BOOL;
+        totalSize = count * sizeof(bool);
+    }
+    else
+    {
+        std::cerr << "ERROR::VERTEX_BUFFER_LAYOUT::UNSUPPORTED_TYPE" << std::endl;
+        return;
+    }
+
+    VertexBufferElement vertexBufferElement = VertexBufferElement(type, count, totalSize, normalised);
+    attributeToElements[index] = vertexBufferElement;
+}
+
+template <typename T>
+void VertexBufferLayout::addAttribute(unsigned int count, bool normalised)
+{
+    addAttribute<T>(attributeToElements.size(), count, normalised);
+}

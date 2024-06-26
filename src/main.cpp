@@ -69,7 +69,11 @@ int main()
     Shader shader("shaders/test_vertex.vert", "shaders/test_fragment.frag");
 
     // set up vao
-    unsigned int vao_id = setUpVAO();
+    // unsigned int vao_id = setUpVAO();
+    VAO vao = VAO();
+
+
+
     VBO rectVBO = VBO();
     rectVBO.assignVertData(GL_ARRAY_BUFFER,
                            VERT_DATA::rectangle_textured_verts,
@@ -81,12 +85,24 @@ int main()
 
     // set up vertex attributes
     // this is the stage where we tell open gl we get the attribute data for attribs 0, 1, 2 from the currently bound VBO (see setUpRectangle)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);                   // position
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float))); // color
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float))); // texture
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);                   // position
+    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float))); // color
+    // glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float))); // texture
+    // glEnableVertexAttribArray(0);
+    // glEnableVertexAttribArray(1);
+    // glEnableVertexAttribArray(2);
+
+    
+    
+    VertexBufferLayout layout = VertexBufferLayout();
+    layout.addAttribute<float>(3, false);
+    layout.addAttribute<float>(3, false);
+    layout.addAttribute<float>(2, false);
+
+
+    vao.addVBO(std::move(rectVBO), layout);
+
+
 
     Texture texture_1(GL_TEXTURE_2D,
                       {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
@@ -121,7 +137,7 @@ int main()
         texture_1.bind();
         texture_2.bind();
 
-        glBindVertexArray(vao_id);
+        vao.bind();
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
