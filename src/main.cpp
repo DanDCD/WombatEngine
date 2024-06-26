@@ -82,21 +82,23 @@ int main()
 
     vao.bind();
     rectVBO.bind();
-
+    vao.addVertexAttrribSpec(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
+    vao.addVertexAttrribSpec(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 3 * sizeof(float));
+    vao.addVertexAttrribSpec(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 6 * sizeof(float));
 
     // set up vertex attributes
     // this is the stage where we tell open gl we get the attribute data for attribs 0, 1, 2 from the currently bound VBO (see setUpRectangle)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);                   // position
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float))); // color
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float))); // texture
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);                   // position
+    // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float))); // color
+    // glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float))); // texture
+    // glEnableVertexAttribArray(0);
+    // glEnableVertexAttribArray(1);
+    // glEnableVertexAttribArray(2);
 
     // VertexBufferLayout layout = VertexBufferLayout();
-    // layout.addAttribute<float>(3, false);
-    // layout.addAttribute<float>(3, false);
-    // layout.addAttribute<float>(2, false);
+    // layout.addAttribute<float>(3, GL_FALSE);
+    // layout.addAttribute<float>(3, GL_FALSE);
+    // layout.addAttribute<float>(2, GL_FALSE);
 
     // vao.addVBO(std::move(rectVBO), layout);
 

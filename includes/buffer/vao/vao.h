@@ -13,7 +13,7 @@ public:
     /// @param count the number of these types
     /// @param totalSize size in bytes of this element
     /// @param normalised if these are normalised
-    VertexBufferElement(unsigned int type, unsigned int count, unsigned int totalSize, bool normalised);
+    VertexBufferElement(unsigned int type, unsigned int count, unsigned int totalSize, GLboolean normalised);
 
     /// @brief default constructor
     VertexBufferElement();
@@ -28,7 +28,7 @@ public:
     unsigned int totalSize;
 
     /// @brief if this type is a normalised type
-    bool normalised;
+    GLboolean normalised;
 };
 
 class VertexBufferLayout
@@ -43,14 +43,14 @@ public:
     /// @param count the number of elements to be pushed
     /// @param normalised whether fixed point values should be normalised or not
     template <typename T>
-    void addAttribute(unsigned int index, unsigned int count, bool normalised);
+    void addAttribute(unsigned int index, unsigned int count, GLboolean normalised);
 
     /// @brief push a new type to the layout (automatically assigns an index)
     /// @tparam T the c++ type to push
     /// @param count the number of elements to be pushed
     /// @param normalised whether fixed point values should be normalised or not
     template <typename T>
-    void addAttribute(unsigned int count, bool normalised);
+    void addAttribute(unsigned int count, GLboolean normalised);
 
     /// @brief get the elements in the layout
     /// @return the VertexBufferElements represented in this layout
@@ -101,6 +101,10 @@ public:
     /// @param layout the layout of this vbo
     void addVBO(VBO &&vbo, const VertexBufferLayout &layout);
 
+
+    void addVertexAttrribSpec(unsigned int attrib_ID, unsigned int count, GLenum type, GLboolean normalised, unsigned int stride, unsigned int offset);
+
+
     /// @brief bind this VAO to OpenGL
     void bind() const;
 
@@ -115,7 +119,7 @@ private:
 };
 
 template <typename T>
-void VertexBufferLayout::addAttribute(unsigned int index, unsigned int count, bool normalised)
+void VertexBufferLayout::addAttribute(unsigned int index, unsigned int count, GLboolean normalised)
 {
     unsigned int type;
     unsigned int totalSize;
@@ -146,7 +150,7 @@ void VertexBufferLayout::addAttribute(unsigned int index, unsigned int count, bo
 }
 
 template <typename T>
-void VertexBufferLayout::addAttribute(unsigned int count, bool normalised)
+void VertexBufferLayout::addAttribute(unsigned int count, GLboolean normalised)
 {
     addAttribute<T>(attributeToElements.size(), count, normalised);
 }

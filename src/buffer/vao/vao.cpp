@@ -2,7 +2,7 @@
 #include "glad/glad.h"
 #include <iostream>
 
-VertexBufferElement::VertexBufferElement(unsigned int type, unsigned int count, unsigned int totalSize, bool normalised)
+VertexBufferElement::VertexBufferElement(unsigned int type, unsigned int count, unsigned int totalSize, GLboolean normalised)
     : type(type), count(count), totalSize(totalSize), normalised(normalised)
 {
 }
@@ -77,21 +77,38 @@ VAO::~VAO()
 
 void VAO::addVBO(VBO &&vbo, const VertexBufferLayout &layout)
 {
-    bind();
-    vbo.bind();
-    unsigned int currentOffset = 0; // the offset so far
+    bind();     // Bind the VAO
+    vbo.bind(); // Bind the VBO
+
+    unsigned int stride = layout.getStride(); // Get the stride from the layout
+    unsigned int currentOffset = 0;           // Initialize the offset
+
+    // Iterate through the layout elements
     for (const auto &pair : layout.getMap())
     {
         unsigned int attribute_id = pair.first;
-        VertexBufferElement bufferElement = pair.second;
+        const VertexBufferElement &bufferElement = pair.second;
 
-        glEnableVertexAttribArray(attribute_id);
-        glVertexAttribPointer(attribute_id, bufferElement.count, bufferElement.type, bufferElement.normalised, layout.getStride(), reinterpret_cast<void *>(currentOffset));
+        glEnableVertexAttribArray(attribute_id); // Enable the vertex attribute
+
+        // Set the vertex attribute pointer
+        glVertexAttribPointer(attribute_id, bufferElement.count, bufferElement.type,
+                              bufferElement.normalised, stride,
+                              reinterpret_cast<void *>(currentOffset));
+
+        // Increment the offset
         currentOffset += bufferElement.totalSize;
     }
-    vbo.unbind();
-    vbos.push_back(std::move(vbo));
-    unbind();
+
+    vbo.unbind();                   // Unbind the VBO
+    vbos.push_back(std::move(vbo)); // Store the VBO
+    unbind();                       // Unbind the VAO
+}
+
+void VAO::addVertexAttrribSpec(unsigned int attrib_ID, unsigned int count, GLenum type, GLboolean normalised, unsigned int stride, unsigned int offset)
+{
+    glVertexAttribPointer(attrib_ID, count, type, normalised, stride, reinterpret_cast<void *>(offset));
+    glEnableVertexAttribArray(attrib_ID);
 }
 
 void VAO::bind() const
