@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "glm/glm.hpp"
 
 class Shader
 {
@@ -51,6 +52,8 @@ public:
     /// @param uniform_name
     /// @param value
     void setUniform(const std::string &uniform_name, float value) const;
+
+    void setUniform(const std::string &uniform_name, unsigned int count, bool transpose, const glm::mat4 value) const;
 
 private:
     /// @brief load a shader file and return its source code

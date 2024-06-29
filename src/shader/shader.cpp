@@ -1,4 +1,5 @@
 #include "shader/shader.h"
+#include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader(const char *vertex_shader_path, const char *fragment_shader_path)
 {
@@ -66,6 +67,11 @@ void Shader::setUniform(const std::string &uniform_name, int value) const
 void Shader::setUniform(const std::string &uniform_name, float value) const
 {
     glUniform1f(glGetUniformLocation(program_ID, uniform_name.c_str()), value);
+}
+
+void Shader::setUniform(const std::string &uniform_name, unsigned int count, bool transpose, const glm::mat4 value) const
+{
+    glUniformMatrix4fv(glGetUniformLocation(program_ID, uniform_name.c_str()), count, transpose, glm::value_ptr(value));
 }
 
 std::string Shader::loadShaderFile(const char *shader_path)

@@ -10,6 +10,9 @@
 #include "buffer/vao/vao.h"
 #include "buffer/vbo/vbo.h"
 #include "buffer/ebo/ebo.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 void checkGLError(const std::string &label)
 {
@@ -106,6 +109,11 @@ int main()
                       "textures/awesomeface.png",
                       GL_TEXTURE1);
 
+    // transform for the object
+    glm::mat4 trans = glm::mat4(1.0f);
+    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
+
     // we only have to set uniforms once!
     shader.use();
     shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
@@ -116,6 +124,11 @@ int main()
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        shader.setUniform("transform", 1, false, trans);
 
         shader.use();
 
