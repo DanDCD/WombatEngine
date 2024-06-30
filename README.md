@@ -40,3 +40,4 @@ These are some websites I refer to during development
 - [OpenGL Documentation](https://docs.gl/)
 - [Book of Shaders](https://thebookofshaders.com/)
 - [Essence of Linear Algebra](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab)
+- [Songho's Blog](https://www.songho.ca/index.html)
