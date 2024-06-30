@@ -65,6 +65,8 @@ int main()
         return -1;
     }
 
+    glEnable(GL_DEPTH_TEST); // enable depth TODO: Update comment
+
     // tell OpenGL the size of the rendering Window
     glViewport(0, 0, 800, 600);
     // assign our resizing function as the resizing window callback for our window
@@ -76,22 +78,22 @@ int main()
 
     VBO rectVBO = VBO();
     rectVBO.assignVertData(GL_ARRAY_BUFFER,
-                           VERT_DATA::rectangle_textured_verts,
-                           sizeof(VERT_DATA::rectangle_textured_verts),
+                           VERT_DATA::cube,
+                           sizeof(VERT_DATA::cube),
                            GL_STATIC_DRAW);
 
-    EBO rectEBO = EBO();
-    rectEBO.assignIndiceData(VERT_DATA::rectangle_indices,
-                             sizeof(VERT_DATA::rectangle_indices),
-                             GL_STATIC_DRAW);
+    // TODO: use EBO again for cube
+    // EBO rectEBO = EBO();
+    // rectEBO.assignIndiceData(VERT_DATA::rectangle_indices,
+    //                          sizeof(VERT_DATA::rectangle_indices),
+    //                          GL_STATIC_DRAW);
 
     VertexBufferLayout layout = VertexBufferLayout();
-    layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE);
-    layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE);
-    layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE);
+    layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
+    layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture position
 
     vao.addVBO(std::move(rectVBO), layout);
-    vao.addEBO(std::move(rectEBO));
+    // vao.addEBO(std::move(rectEBO));
 
     Texture texture_1(GL_TEXTURE_2D,
                       {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
@@ -109,16 +111,7 @@ int main()
                       "textures/awesomeface.png",
                       GL_TEXTURE1);
 
-    // transformations
-    // model matrix
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // rotate along x-axis slightly
-    // view matrix
-    glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-    // projection matrix
-    glm::mat4 projection;
-    projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+    
 
     // we only have to set uniforms once!
     shader.use();
@@ -129,7 +122,20 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        // transformations
+        // model matrix
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // rotate along x-axis slightly
+        // view matrix
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        // projection matrix
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+        // rotate model
+        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
         shader.use();
         shader.setUniform("model", 1, false, model);
@@ -142,7 +148,8 @@ int main()
         vao.bind();
         checkGLError("VAO bound in main loop");
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); not using EBO
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         processInput(window);
 
