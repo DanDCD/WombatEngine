@@ -109,10 +109,16 @@ int main()
                       "textures/awesomeface.png",
                       GL_TEXTURE1);
 
-    // transform for the object
-    glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    trans = glm::scale(trans, glm::vec3(0.5f, 0.5f, 0.5f));
+    // transformations
+    // model matrix
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // rotate along x-axis slightly
+    // view matrix
+    glm::mat4 view = glm::mat4(1.0f);
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    // projection matrix
+    glm::mat4 projection;
+    projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
     // we only have to set uniforms once!
     shader.use();
@@ -125,12 +131,10 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-        shader.setUniform("transform", 1, false, trans);
-
         shader.use();
+        shader.setUniform("model", 1, false, model);
+        shader.setUniform("view", 1, false, view);
+        shader.setUniform("projection", 1, false, projection);
 
         texture_1.bind();
         texture_2.bind();
