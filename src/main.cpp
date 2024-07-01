@@ -111,7 +111,18 @@ int main()
                       "textures/awesomeface.png",
                       GL_TEXTURE1);
 
-    
+    // box positions
+    glm::vec3 cubePositions[] = {
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(2.0f, 5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f, 3.0f, -7.5f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f, 2.0f, -2.5f),
+        glm::vec3(1.5f, 0.2f, -1.5f),
+        glm::vec3(-1.3f, 1.0f, -1.5f)};
 
     // we only have to set uniforms once!
     shader.use();
@@ -123,33 +134,35 @@ int main()
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+
         // transformations
-        // model matrix
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // rotate along x-axis slightly
         // view matrix
         glm::mat4 view = glm::mat4(1.0f);
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
         // projection matrix
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-        // rotate model
-        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
         shader.use();
-        shader.setUniform("model", 1, false, model);
-        shader.setUniform("view", 1, false, view);
-        shader.setUniform("projection", 1, false, projection);
+        // we no longer set mode here
+        shader.setUniform("view", 1, false, view); // set the view matrix
+        shader.setUniform("projection", 1, false, projection); // set the projection matrix
 
         texture_1.bind();
         texture_2.bind();
 
         vao.bind();
-        checkGLError("VAO bound in main loop");
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 1.0f + 20.0f * i;
+            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            shader.setUniform("model", 1, false, model);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
         // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); not using EBO
-        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         processInput(window);
 
