@@ -138,7 +138,7 @@ int main()
         // transformations
         // view matrix
         glm::mat4 view = glm::mat4(1.0f);
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); // we move the view backwards a little
         // projection matrix
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
