@@ -7,7 +7,7 @@
 #include <vert_data/vert_data.h>
 #include <stb/stb_image.h>
 #include <texture/texture.h>
-#include "buffer/vao/vao.h"
+#include "vao/vao.h"
 #include "buffer/vbo/vbo.h"
 #include "buffer/ebo/ebo.h"
 #include <glm/glm.hpp>
@@ -146,16 +146,12 @@ int main()
         glfwPollEvents();
         processInput(window);
 
-        // IMGUI test
-        // (Your code calls glfwPollEvents())
-        // ...
-        // Start the Dear ImGui frame
+        // imgui
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         ImGui::ShowDemoWindow(); // Show demo window! :)
 
-        // camera
         // camera rotation
         const float radius = 10.0f;
         float camX = sin(glfwGetTime()) * radius;
@@ -171,7 +167,6 @@ int main()
         projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
         shader.use();
-        // we no longer set mode here
         shader.setUniform("view", 1, false, view);             // set the view matrix
         shader.setUniform("projection", 1, false, projection); // set the projection matrix
 
@@ -186,7 +181,6 @@ int main()
             float angle = 1.0f + 20.0f * i;
             model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             shader.setUniform("model", 1, false, model);
-            // glDrawArrays(GL_TRIANGLES, 0, 36);
             glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
         }
 
@@ -194,10 +188,7 @@ int main()
         // (Your code clears your framebuffer, renders your other stuff etc.)
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        // (Your code calls glfwSwapBuffers() etc.)
-
         glfwSwapBuffers(window); // swap the buffer we have been drawing to into the front
-        
     }
 
     ImGui_ImplOpenGL3_Shutdown();

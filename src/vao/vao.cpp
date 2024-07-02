@@ -1,4 +1,4 @@
-#include "buffer/vao/vao.h"
+#include "vao/vao.h"
 #include "glad/glad.h"
 #include <iostream>
 #include "buffer/ebo/ebo.h"
