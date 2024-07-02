@@ -19,13 +19,11 @@ enable_testing()
 # set (GLFW_DIR "C:/Dev/Cpp/sources/glfw-3.4")
 # set (GLAD_DIR "C:/Dev/Cpp/sources/glad")
 
-
-# we can set these with ctrl+p cmake cache editor in vscode
 # Set directories for dependencies using cache variables
 set(GLFW_DIR "" CACHE PATH "Path to the GLFW library")
 set(GLAD_DIR "" CACHE PATH "Path to the GLAD library")
 set(GLM_DIR "" CACHE PATH "Path to the GLM library")
-
+set(IMGUI_DIR "" CACHE PATH "Path to the IMGUI library")
 
 # Add GLFW
 add_subdirectory(${GLFW_DIR} "binary_directory")
@@ -34,12 +32,31 @@ add_subdirectory(${GLFW_DIR} "binary_directory")
 add_library(glad "${GLAD_DIR}/src/glad.c")
 target_include_directories(glad PUBLIC "${GLAD_DIR}/include")
 
+# Include ImGui core source files
+file(GLOB IMGUI_SOURCES "${IMGUI_DIR}/*.cpp")
+
+# Include specific ImGui backend source files
+set(IMGUI_BACKEND_SOURCES
+    "${IMGUI_DIR}/backends/imgui_impl_glfw.cpp"
+    "${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp"
+)
+
+# Combine core and specific backend source files into a single library
+add_library(imgui ${IMGUI_SOURCES} ${IMGUI_BACKEND_SOURCES})
+
+# Set include directories for ImGui and GLFW
+target_include_directories(imgui PUBLIC 
+    ${IMGUI_DIR} 
+    ${IMGUI_DIR}/backends 
+    ${GLFW_DIR}/include
+)
+
 # Add executable
 file(GLOB_RECURSE ALL_CPP_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
 add_executable(threedimsim ${ALL_CPP_FILES})
 
 # Link libraries to the executable
-target_link_libraries(threedimsim glfw glad)
+target_link_libraries(threedimsim glfw glad imgui)
 
 # Set include directories for GLM
 target_include_directories(threedimsim PUBLIC "${GLM_DIR}" "${CMAKE_SOURCE_DIR}/includes")
@@ -47,7 +64,6 @@ target_include_directories(threedimsim PUBLIC "${GLM_DIR}" "${CMAKE_SOURCE_DIR}/
 # Find and link OpenGL
 find_package(OpenGL REQUIRED)
 target_link_libraries(threedimsim OpenGL::GL)
-
 
 # Custom command to copy shaders directory
 add_custom_command(TARGET threedimsim POST_BUILD
@@ -59,7 +75,6 @@ add_custom_command(TARGET threedimsim POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_SOURCE_DIR}/textures" $<TARGET_FILE_DIR:threedimsim>/textures)
 
-
 # CPack settings for packaging the project
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
@@ -69,7 +84,6 @@ include(CPack)
 message(STATUS "GLFW directory: ${GLFW_DIR}")
 message(STATUS "GLAD directory: ${GLAD_DIR}")
 message(STATUS "GLM directory: ${GLM_DIR}")
+message(STATUS "IMGUI directory: ${IMGUI_DIR}")
 message(STATUS "Project name: ${PROJECT_NAME}")
 message(STATUS "Project version: ${PROJECT_VERSION}")
-
-
