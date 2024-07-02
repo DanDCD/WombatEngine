@@ -78,22 +78,21 @@ int main()
 
     VBO rectVBO = VBO();
     rectVBO.assignVertData(GL_ARRAY_BUFFER,
-                           VERT_DATA::cube,
-                           sizeof(VERT_DATA::cube),
+                           VERT_DATA::vertices,
+                           sizeof(VERT_DATA::vertices),
                            GL_STATIC_DRAW);
 
-    // TODO: use EBO again for cube
-    // EBO rectEBO = EBO();
-    // rectEBO.assignIndiceData(VERT_DATA::rectangle_indices,
-    //                          sizeof(VERT_DATA::rectangle_indices),
-    //                          GL_STATIC_DRAW);
+    EBO rectEBO = EBO();
+    rectEBO.assignIndiceData(VERT_DATA::indices,
+                             sizeof(VERT_DATA::indices),
+                             GL_STATIC_DRAW);
 
     VertexBufferLayout layout = VertexBufferLayout();
     layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
     layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture position
 
     vao.addVBO(std::move(rectVBO), layout);
-    // vao.addEBO(std::move(rectEBO));
+    vao.addEBO(std::move(rectEBO));
 
     Texture texture_1(GL_TEXTURE_2D,
                       {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
@@ -137,7 +136,7 @@ int main()
 
         shader.use();
         // we no longer set mode here
-        shader.setUniform("view", 1, false, view); // set the view matrix
+        shader.setUniform("view", 1, false, view);             // set the view matrix
         shader.setUniform("projection", 1, false, projection); // set the projection matrix
 
         texture_1.bind();
@@ -150,10 +149,9 @@ int main()
             float angle = 1.0f + 20.0f * i;
             model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             shader.setUniform("model", 1, false, model);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            // glDrawArrays(GL_TRIANGLES, 0, 36);
+            glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
         }
-
-        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); not using EBO
 
         processInput(window);
 
