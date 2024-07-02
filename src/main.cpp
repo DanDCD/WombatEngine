@@ -103,14 +103,6 @@ int main()
                       "textures/container.jpg",
                       GL_TEXTURE0);
 
-    Texture texture_2(GL_TEXTURE_2D,
-                      {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
-                       TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
-                       TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
-                       TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
-                      "textures/awesomeface.png",
-                      GL_TEXTURE1);
-
     // box positions
     glm::vec3 cubePositions[] = {
         glm::vec3(0.0f, 0.0f, 0.0f),
@@ -149,7 +141,6 @@ int main()
         shader.setUniform("projection", 1, false, projection); // set the projection matrix
 
         texture_1.bind();
-        texture_2.bind();
 
         vao.bind();
         for (unsigned int i = 0; i < 10; i++)
