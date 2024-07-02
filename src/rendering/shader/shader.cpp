@@ -1,4 +1,4 @@
-#include "shader/shader.h"
+#include "rendering/shader/shader.h"
 #include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader(const char *vertex_shader_path, const char *fragment_shader_path)
