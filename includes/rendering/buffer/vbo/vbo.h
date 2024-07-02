@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "rendering/buffer/buffer/buffer.h"
 #include "glad/glad.h"
 
 class VBO
