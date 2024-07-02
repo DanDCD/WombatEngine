@@ -126,10 +126,17 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // transformations
-        // view matrix
-        glm::mat4 view = glm::mat4(1.0f);
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); // we move the view backwards a little
+        // camera
+        // camera rotation
+        const float radius = 10.0f;
+        float camX = sin(glfwGetTime()) * radius;
+        float camZ = cos(glfwGetTime()) * radius;
+        // camera view matrix
+        glm::mat4 view = glm::lookAt(
+            glm::vec3(camX, 0.0f, camZ),  // position
+            glm::vec3(0.0f, 0.0f, 0.0f),  // target
+            glm::vec3(0.0f, 1.0f, 0.0f)); // up
+
         // projection matrix
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
@@ -144,6 +151,7 @@ int main()
         vao.bind();
         for (unsigned int i = 0; i < 10; i++)
         {
+            // model matrix
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
             float angle = 1.0f + 20.0f * i;
