@@ -93,16 +93,11 @@ int main()
 
     VAO vao = VAO();
 
-    VBO rectVBO = VBO();
-    rectVBO.assignVertData(GL_ARRAY_BUFFER,
-                           VERT_DATA::vertices,
-                           sizeof(VERT_DATA::vertices),
-                           GL_STATIC_DRAW);
+    VBO rectVBO = VBO(GL_ARRAY_BUFFER);
+    rectVBO.assignData(VERT_DATA::vertices, sizeof(VERT_DATA::vertices), GL_STATIC_DRAW);
 
     EBO rectEBO = EBO();
-    rectEBO.assignIndiceData(VERT_DATA::indices,
-                             sizeof(VERT_DATA::indices),
-                             GL_STATIC_DRAW);
+    rectEBO.assignData(VERT_DATA::indices, sizeof(VERT_DATA::indices), GL_STATIC_DRAW);
 
     VertexBufferLayout layout = VertexBufferLayout();
     layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position

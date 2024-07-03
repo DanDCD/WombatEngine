@@ -5,7 +5,6 @@
 class Buffer
 {
 public:
-
     /// @brief initialise Buffer Object in OpenGL
     /// @param targetType the type of buffer we want to associate with
     Buffer(GLenum targetType);
@@ -28,18 +27,19 @@ public:
 
     void assignData(const float *data, GLsizeiptr dataSize, GLenum usage);
 
+    void assignData(const unsigned int *data, GLsizeiptr dataSize, GLenum usage);
+
     /// @brief binds this buffer to OpenGL
-    void bind();
+    void bind() const;
 
     /// @brief unbinds this buffer from OpenGL
-    void unbind();
+    void unbind() const;
 
     /// @brief get the id of this buffer
     /// @return the id
     unsigned int getID();
 
 private:
-
     /// @brief take over data of old buffer
     /// @param old the buffer to take control of data from (i.e. the buffer pointed to)
     void assumeData(Buffer &&old);

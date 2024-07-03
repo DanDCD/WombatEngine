@@ -1,9 +1,12 @@
 #include "rendering/buffer/buffer/buffer.h"
 #include "utility"
 
+
+
 Buffer::Buffer(GLenum targetType)
     : ID(0), targetType(targetType)
 {
+    glGenBuffers(1, &ID);
 }
 
 Buffer::Buffer(Buffer &&other)
@@ -36,16 +39,27 @@ void Buffer::assignData(const float *data, GLsizeiptr dataSize, GLenum usage)
     unbind();
 }
 
-void Buffer::bind()
+void Buffer::assignData(const unsigned int *data, GLsizeiptr dataSize, GLenum usage)
+{
+    bind();
+    glBufferData(targetType, dataSize, data, usage);
+    unbind();
+}
+
+void Buffer::bind() const
 {
     glBindBuffer(targetType, ID);
 }
 
-void Buffer::unbind()
+void Buffer::unbind() const
 {
     glBindBuffer(targetType, 0);
 }
 
+unsigned int Buffer::getID()
+{
+    return ID;
+}
 void Buffer::assumeData(Buffer &&old)
 {
     ID = old.ID;
