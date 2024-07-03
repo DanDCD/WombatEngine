@@ -21,6 +21,7 @@ Buffer &Buffer::operator=(Buffer &&other) noexcept
         // take over ownership of other's buffer
         assumeData(std::move(other));
     }
+    return *this;
 }
 
 Buffer::~Buffer()
