@@ -92,12 +92,11 @@ public:
     /// @brief add a Virtual Buffer Object to this VAO in OpenGL
     /// @param vbo the vbo to add
     /// @param layout the layout of this vbo
-    void addVBO(VBO &&vbo, const VertexBufferLayout &layout);
+    void addBuffer(VBO &&vbo, const VertexBufferLayout &layout);
 
-    void addEBO(EBO &&ebo);
-
-    void addVertexAttrribSpec(unsigned int attrib_ID, unsigned int count, GLenum type, GLboolean normalised, unsigned int stride, unsigned int offset);
-
+    /// @brief add an Element Buffer Object to this VAO
+    /// @param ebo the ebo to add
+    void addBuffer(EBO &&ebo);
 
     /// @brief bind this VAO to OpenGL
     void bind() const;
@@ -106,6 +105,15 @@ public:
     void unbind() const;
 
 private:
+    /// @brief add a vertex attribute to this VAO
+    /// @param attrib_ID 
+    /// @param count 
+    /// @param type 
+    /// @param normalised 
+    /// @param stride 
+    /// @param offset 
+    void addVertexAttrribSpec(unsigned int attrib_ID, unsigned int count, GLenum type, GLboolean normalised, unsigned int stride, unsigned int offset);
+
     /// @brief the id of the Vertex Array Object in OpenGL
     unsigned int vao_ID;
 

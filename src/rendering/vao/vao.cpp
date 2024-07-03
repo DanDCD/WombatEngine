@@ -87,7 +87,7 @@ VAO::~VAO()
     glDeleteVertexArrays(1, &vao_ID);
 }
 
-void VAO::addVBO(VBO &&vbo, const VertexBufferLayout &layout)
+void VAO::addBuffer(VBO &&vbo, const VertexBufferLayout &layout)
 {
     bind();     // Bind the VAO
     vbo.bind(); // Bind the VBO
@@ -112,7 +112,7 @@ void VAO::addVBO(VBO &&vbo, const VertexBufferLayout &layout)
     unbind();                       // Unbind the VAO
 }
 
-void VAO::addEBO(EBO &&ebo)
+void VAO::addBuffer(EBO &&ebo)
 {
     this->ebo = std::move(ebo);
 }

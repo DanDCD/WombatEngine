@@ -103,8 +103,8 @@ int main()
     layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
     layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture position
 
-    vao.addVBO(std::move(rectVBO), layout);
-    vao.addEBO(std::move(rectEBO));
+    vao.addBuffer(std::move(rectVBO), layout);
+    vao.addBuffer(std::move(rectEBO));
 
     Texture texture_1(GL_TEXTURE_2D,
                       {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
