@@ -11,7 +11,6 @@ EBO::EBO(EBO &&other)
 {
 }
 
-
 EBO &EBO::operator=(EBO &&other) noexcept
 {
     Buffer::operator=(std::move(other));

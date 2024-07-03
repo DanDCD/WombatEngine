@@ -1,7 +1,7 @@
 #pragma once
-
 #include "glad/glad.h"
 
+/// @brief encapsulates an OpenGL buffer: managing creation, deletion, and basic buffer operations
 class Buffer
 {
 public:
