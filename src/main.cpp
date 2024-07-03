@@ -127,10 +127,9 @@ int main()
         glm::vec3(1.5f, 0.2f, -1.5f),
         glm::vec3(-1.3f, 1.0f, -1.5f)};
 
-    // we only have to set uniforms once!
+    // we only have to set these uniforms once!
     shader.use();
     shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
-    shader.setUniform("texture_2", 1); // texture2 is in GL_TEXTURE1
 
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window))
