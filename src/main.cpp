@@ -16,6 +16,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "rendering/camera/camera.h"
 
 void checkGLError(const std::string &label)
 {
