@@ -1,5 +1,5 @@
 #include "rendering/camera/camera.h"
-#include "globals/world_consts.h"
+#include "rendering/render_consts.h"
 #include "algorithm"
 
 CameraParams::CameraParams()
