@@ -17,6 +17,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "rendering/camera/camera.h"
+#include "rendering/render_consts.h"
 
 void checkGLError(const std::string &label)
 {
@@ -52,7 +53,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Create a windowed mode window and its OpenGL context
-    GLFWwindow *window = glfwCreateWindow(800, 600, "ThreeDimSim", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(SRC_WIDTH, SRC_HEIGHT, "ThreeDimSim", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create a GLFW window." << std::endl;
@@ -86,7 +87,7 @@ int main()
     ImGui_ImplOpenGL3_Init();
 
     // tell OpenGL the size of the rendering Window
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, SRC_WIDTH, SRC_HEIGHT);
     // assign our resizing function as the resizing window callback for our window
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -159,7 +160,7 @@ int main()
 
         // projection matrix
         glm::mat4 projection;
-        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(45.0f), (float) SRC_WIDTH / (float) SRC_HEIGHT, 0.1f, 100.0f);
 
         shader.use();
         shader.setUniform("view", 1, false, view);             // set the view matrix
