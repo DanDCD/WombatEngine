@@ -18,6 +18,8 @@
 #include "imgui_impl_opengl3.h"
 #include "rendering/camera/camera.h"
 #include "rendering/render_consts.h"
+#include "controls/mouse/mouse_handler.h"
+#include <memory>
 
 void checkGLError(const std::string &label)
 {
@@ -34,16 +36,35 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height); // tell opengl the new window size (if changed)
 }
 
+
+bool M_was_pressed = false; // TODO: clean this up in a seperate input handler
+
 // function to process input events from user
-void processInput(GLFWwindow *window)
+void processInput(GLFWwindow *window, MouseHandler &mouseHandler)
 {
-    // if user presses escpape, we tell GLFW we want to close the given window
+    // if user presses escape, we tell GLFW we want to close the given window
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    // if user presses M, we tell GLFW to toggle mouse
+    bool M_is_pressed = glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS;
+    if (M_is_pressed)
+    {
+        if(M_was_pressed)
+            return;
+        // toggle mouse handling
+        bool isActive = mouseHandler.isEnabled();
+        if (isActive)
+            mouseHandler.disable();
+        else
+            mouseHandler.enable();
+        std::cout << "Pressed M!" << std::endl;
+    }
+    M_was_pressed = M_is_pressed;
 }
 
 int main()
 {
+
     // set up GLFW
     glfwInit();
     // Set the major and minor version of OpenGL to use
@@ -53,14 +74,14 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Create a windowed mode window and its OpenGL context
-    GLFWwindow *window = glfwCreateWindow(SRC_WIDTH, SRC_HEIGHT, "ThreeDimSim", NULL, NULL);
+    std::shared_ptr<GLFWwindow> window(glfwCreateWindow(SRC_WIDTH, SRC_HEIGHT, "ThreeDimSim", NULL, NULL), glfwDestroyWindow);
     if (window == NULL)
     {
         std::cout << "Failed to create a GLFW window." << std::endl;
         glfwTerminate();
         return -1;
     }
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window.get());
 
     // Initialise GLAD
     bool loaded_GLAD = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress); // tell GLAD to load the address of the OpenGL function pointers
@@ -69,6 +90,10 @@ int main()
         std::cout << "Failed to load GLAD" << std::endl;
         return -1;
     }
+
+    // setup controls
+    glm::vec2 windowSize(SRC_WIDTH, SRC_HEIGHT);
+    MouseHandler mouseHandler(window, windowSize);
 
     glEnable(GL_DEPTH_TEST); // enable depth TODO: Update comment
 
@@ -83,13 +108,13 @@ int main()
     ImGui::StyleColorsDark();
 
     // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true); // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+    ImGui_ImplGlfw_InitForOpenGL(window.get(), true); // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
     ImGui_ImplOpenGL3_Init();
 
     // tell OpenGL the size of the rendering Window
     glViewport(0, 0, SRC_WIDTH, SRC_HEIGHT);
     // assign our resizing function as the resizing window callback for our window
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
 
     Shader shader("shaders/test_vertex.vert", "shaders/test_fragment.frag");
 
@@ -134,13 +159,13 @@ int main()
     shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
 
     // keep doing this loop until user wants to close
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(window.get()))
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glfwPollEvents();
-        processInput(window);
+        processInput(window.get(), mouseHandler);
 
         // imgui
         ImGui_ImplOpenGL3_NewFrame();
@@ -160,7 +185,7 @@ int main()
 
         // projection matrix
         glm::mat4 projection;
-        projection = glm::perspective(glm::radians(45.0f), (float) SRC_WIDTH / (float) SRC_HEIGHT, 0.1f, 100.0f);
+        projection = glm::perspective(glm::radians(45.0f), (float)SRC_WIDTH / (float)SRC_HEIGHT, 0.1f, 100.0f);
 
         shader.use();
         shader.setUniform("view", 1, false, view);             // set the view matrix
@@ -184,7 +209,7 @@ int main()
         // (Your code clears your framebuffer, renders your other stuff etc.)
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        glfwSwapBuffers(window); // swap the buffer we have been drawing to into the front
+        glfwSwapBuffers(window.get()); // swap the buffer we have been drawing to into the front
     }
 
     ImGui_ImplOpenGL3_Shutdown();
