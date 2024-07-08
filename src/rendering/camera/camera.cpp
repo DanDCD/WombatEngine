@@ -1,5 +1,6 @@
 #include "rendering/camera/camera.h"
 #include "globals/world_consts.h"
+#include "algorithm"
 
 CameraParams::CameraParams()
     : cameraPos(0.0f, 0.0f, 0.0f),
@@ -41,8 +42,42 @@ glm::mat4 Camera::getViewMatrix()
     return glm::lookAt(cameraParams.cameraPos, cameraParams.cameraPos + cameraParams.cameraFront, cameraParams.cameraUp);
 }
 
-void Camera::processKeyboard(Movement direction, float deltaTime) {}
+void Camera::processKeyboard(Movement direction, float deltaTime)
+{
+    float velocity = cameraParams.movementSpeed * deltaTime;
+    if (direction == Movement::FORWARD)
+        cameraParams.cameraPos += cameraParams.cameraFront * velocity;
+    if (direction == Movement::BACKWARD)
+        cameraParams.cameraPos -= cameraParams.cameraFront * velocity;
+    if (direction == Movement::LEFT)
+        cameraParams.cameraPos -= cameraParams.cameraRight * velocity;
+    if (direction == Movement::RIGHT)
+        cameraParams.cameraPos += cameraParams.cameraRight * velocity;
+    // we don't need to update dirs as the pitch/yaw does not change here only position
+    // (so left/right/up/down dirs are constant)
+}
 
-void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch) {}
+void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
+{
+    // Scale mouse movement by sensitivity
+    xoffset *= cameraParams.mouseSensitivity;
+    yoffset *= cameraParams.mouseSensitivity;
 
-void Camera::processMouseScroll(float yoffset) {}
+    cameraParams.yaw += xoffset;
+    cameraParams.pitch += yoffset;
+
+    if (constrainPitch)
+    {
+        // Constrain pitch to avoid flipping
+        cameraParams.pitch = std::max(cameraParams.pitch, -89.0f);
+        cameraParams.pitch = std::min(cameraParams.pitch, 89.0f);
+    }
+    cameraParams.updateDirections(); // we do have to update dirs here, as we are modifying pitch and yaw
+}
+
+void Camera::processMouseScroll(float yoffset)
+{
+    cameraParams.zoom -= (float)yoffset;
+    cameraParams.zoom = std::max(cameraParams.zoom, 1.0f);
+    cameraParams.pitch = std::min(cameraParams.pitch, 45.0f);
+}
