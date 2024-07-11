@@ -21,6 +21,7 @@
 #include <memory>
 #include "utils/signal/signal/signal.h"
 #include "input/mouse_tracker/mouse_tracker.h"
+#include "rendering/camera/camera.h"
 
 void checkGLError(const std::string &label)
 {
@@ -38,6 +39,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 }
 
 bool M_was_pressed = false; // TODO: clean this up in a seperate input handler
+bool isActive = false;
 // function to process input events from user
 void processInput(GLFWwindow *window)
 {
@@ -45,20 +47,26 @@ void processInput(GLFWwindow *window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     // if user presses M, we tell GLFW to toggle mouse
-    // bool M_is_pressed = glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS;
-    // if (M_is_pressed)
-    // {
-    //     if (M_was_pressed)
-    //         return;
-    //     // toggle mouse handling
-    //     bool isActive = mouseHandler.isEnabled();
-    //     if (isActive)
-    //         mouseHandler.disable();
-    //     else
-    //         mouseHandler.enable();
-    //     std::cout << "Pressed M!" << std::endl;
-    // }
-    // M_was_pressed = M_is_pressed;
+    bool M_is_pressed = glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS;
+    
+    if (M_is_pressed)
+    {
+        if (!M_was_pressed)
+        {
+            // toggle mouse handling
+            if (isActive)
+            {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            }
+            else
+            {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            }
+            isActive = !isActive;
+            std::cout << "Pressed M!" << std::endl;
+        }
+    }
+    M_was_pressed = M_is_pressed;
 }
 
 int main()
@@ -111,12 +119,6 @@ int main()
     // assign our resizing function as the resizing window callback for our window
     glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
 
-    // Input Handling
-    MouseTracker::initialise(window);
-    SignalHandler<MouseData> mouseHandler([](MouseData mouseData)
-                                          { std::cout << "Mouse new pos " << mouseData.motion_direction.x << " " << mouseData.motion_direction.y << std::endl; });
-    MouseTracker::getOnMouseMovedSignal().addHandler(mouseHandler);
-
     // Set Up Rendering
     Shader shader("shaders/test_vertex.vert", "shaders/test_fragment.frag");
 
@@ -156,6 +158,16 @@ int main()
         glm::vec3(1.5f, 0.2f, -1.5f),
         glm::vec3(-1.3f, 1.0f, -1.5f)};
 
+    // Setup Camera
+    CameraParams cameraParams(glm::vec3(0.0f, 0.0f, 3.0f), 0.0f, 0.0f, 2.0f, 0.1f, 45.0f);
+    Camera camera = Camera(cameraParams);
+
+    // Input Handling
+    MouseTracker::initialise(window);
+    SignalHandler<MouseData> mouseHandler([&camera](MouseData mouseData)
+                                          { camera.processMouseMovement(mouseData.offset_from_last.x, mouseData.offset_from_last.y); });
+    MouseTracker::getOnMouseMovedSignal().addHandler(mouseHandler);
+
     // we only have to set these uniforms once!
     shader.use();
     shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
@@ -175,15 +187,16 @@ int main()
         ImGui::NewFrame();
         ImGui::ShowDemoWindow(); // Show demo window! :)
 
-        // camera rotation
-        const float radius = 10.0f;
-        float camX = sin(glfwGetTime()) * radius;
-        float camZ = cos(glfwGetTime()) * radius;
-        // camera view matrix
-        glm::mat4 view = glm::lookAt(
-            glm::vec3(camX, 0.0f, camZ),  // position
-            glm::vec3(0.0f, 0.0f, 0.0f),  // target
-            glm::vec3(0.0f, 1.0f, 0.0f)); // up
+        // // camera rotation
+        // const float radius = 10.0f;
+        // float camX = sin(glfwGetTime()) * radius;
+        // float camZ = cos(glfwGetTime()) * radius;
+        // // camera view matrix
+        // glm::mat4 view = glm::lookAt(
+        //     glm::vec3(camX, 0.0f, camZ),  // position
+        //     glm::vec3(0.0f, 0.0f, 0.0f),  // target
+        //     glm::vec3(0.0f, 1.0f, 0.0f)); // up
+        glm::mat4 view = camera.getViewMatrix();
 
         // projection matrix
         glm::mat4 projection;
