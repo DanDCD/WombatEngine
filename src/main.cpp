@@ -20,6 +20,7 @@
 #include "rendering/render_consts.h"
 #include <memory>
 #include "utils/signal/signal/signal.h"
+#include "input/mouse_tracker/mouse_tracker.h"
 
 void checkGLError(const std::string &label)
 {
@@ -34,10 +35,6 @@ void checkGLError(const std::string &label)
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height); // tell opengl the new window size (if changed)
-}
-
-void mouse_callback(GLFWwindow *window, double xpos, double ypos)
-{
 }
 
 bool M_was_pressed = false; // TODO: clean this up in a seperate input handler
@@ -67,13 +64,6 @@ void processInput(GLFWwindow *window)
 int main()
 {
 
-    Signal<int> signal;
-    SignalHandler<int> handler([](int value)
-                               { std::cout << "received: " << value << std::endl; });
-    signal.addHandler(handler);            
-    signal.emit(10);
-                
- 
     // set up GLFW
     glfwInit();
     // Set the major and minor version of OpenGL to use
@@ -120,8 +110,14 @@ int main()
     glViewport(0, 0, SRC_WIDTH, SRC_HEIGHT);
     // assign our resizing function as the resizing window callback for our window
     glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
-    glfwSetCursorPosCallback(window.get(), mouse_callback);
 
+    // Input Handling
+    MouseTracker::initialise(window);
+    SignalHandler<MouseData> mouseHandler([](MouseData mouseData)
+                                          { std::cout << "Mouse new pos " << mouseData.motion_direction.x << " " << mouseData.motion_direction.y << std::endl; });
+    MouseTracker::getOnMouseMovedSignal().addHandler(mouseHandler);
+
+    // Set Up Rendering
     Shader shader("shaders/test_vertex.vert", "shaders/test_fragment.frag");
 
     VAO vao = VAO();
