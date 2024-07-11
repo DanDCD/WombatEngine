@@ -22,6 +22,7 @@
 #include "utils/signal/signal/signal.h"
 #include "input/mouse_tracker/mouse_tracker.h"
 #include "rendering/camera/camera.h"
+#include "input/key_tracker/key_tracker.h"
 
 void checkGLError(const std::string &label)
 {
@@ -48,7 +49,7 @@ void processInput(GLFWwindow *window)
         glfwSetWindowShouldClose(window, true);
     // if user presses M, we tell GLFW to toggle mouse
     bool M_is_pressed = glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS;
-    
+
     if (M_is_pressed)
     {
         if (!M_was_pressed)
@@ -168,6 +169,15 @@ int main()
                                           { camera.processMouseMovement(mouseData.offset_from_last.x, mouseData.offset_from_last.y); });
     MouseTracker::getOnMouseMovedSignal().addHandler(mouseHandler);
 
+    KeyTracker::initialise(window);
+    SignalHandler<KeyData> keyHandler([](KeyData KeyData)
+                                      {
+        if(KeyData.action == GLFW_RELEASE) 
+        {
+            std::cout << "key released. key: " << KeyData.key_code << " duration: " << KeyData.hold_duration << std::endl;
+        } });
+    KeyTracker::getOnKeyPressedSignal().addHandler(keyHandler);
+
     // we only have to set these uniforms once!
     shader.use();
     shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
@@ -187,15 +197,7 @@ int main()
         ImGui::NewFrame();
         ImGui::ShowDemoWindow(); // Show demo window! :)
 
-        // // camera rotation
-        // const float radius = 10.0f;
-        // float camX = sin(glfwGetTime()) * radius;
-        // float camZ = cos(glfwGetTime()) * radius;
-        // // camera view matrix
-        // glm::mat4 view = glm::lookAt(
-        //     glm::vec3(camX, 0.0f, camZ),  // position
-        //     glm::vec3(0.0f, 0.0f, 0.0f),  // target
-        //     glm::vec3(0.0f, 1.0f, 0.0f)); // up
+        // get view matrix
         glm::mat4 view = camera.getViewMatrix();
 
         // projection matrix
@@ -221,7 +223,6 @@ int main()
         }
 
         // Rendering
-        // (Your code clears your framebuffer, renders your other stuff etc.)
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window.get()); // swap the buffer we have been drawing to into the front
