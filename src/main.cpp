@@ -18,8 +18,8 @@
 #include "imgui_impl_opengl3.h"
 #include "rendering/camera/camera.h"
 #include "rendering/render_consts.h"
-#include "controls/mouse/mouse_handler.h"
 #include <memory>
+#include "utils/signal/signal/signal.h"
 
 void checkGLError(const std::string &label)
 {
@@ -36,35 +36,44 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height); // tell opengl the new window size (if changed)
 }
 
+void mouse_callback(GLFWwindow *window, double xpos, double ypos)
+{
+}
 
 bool M_was_pressed = false; // TODO: clean this up in a seperate input handler
-
 // function to process input events from user
-void processInput(GLFWwindow *window, MouseHandler &mouseHandler)
+void processInput(GLFWwindow *window)
 {
     // if user presses escape, we tell GLFW we want to close the given window
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     // if user presses M, we tell GLFW to toggle mouse
-    bool M_is_pressed = glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS;
-    if (M_is_pressed)
-    {
-        if(M_was_pressed)
-            return;
-        // toggle mouse handling
-        bool isActive = mouseHandler.isEnabled();
-        if (isActive)
-            mouseHandler.disable();
-        else
-            mouseHandler.enable();
-        std::cout << "Pressed M!" << std::endl;
-    }
-    M_was_pressed = M_is_pressed;
+    // bool M_is_pressed = glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS;
+    // if (M_is_pressed)
+    // {
+    //     if (M_was_pressed)
+    //         return;
+    //     // toggle mouse handling
+    //     bool isActive = mouseHandler.isEnabled();
+    //     if (isActive)
+    //         mouseHandler.disable();
+    //     else
+    //         mouseHandler.enable();
+    //     std::cout << "Pressed M!" << std::endl;
+    // }
+    // M_was_pressed = M_is_pressed;
 }
 
 int main()
 {
 
+    Signal<int> signal;
+    SignalHandler<int> handler([](int value)
+                               { std::cout << "received: " << value << std::endl; });
+    signal.addHandler(handler);            
+    signal.emit(10);
+                
+ 
     // set up GLFW
     glfwInit();
     // Set the major and minor version of OpenGL to use
@@ -91,10 +100,6 @@ int main()
         return -1;
     }
 
-    // setup controls
-    glm::vec2 windowSize(SRC_WIDTH, SRC_HEIGHT);
-    MouseHandler mouseHandler(window, windowSize);
-
     glEnable(GL_DEPTH_TEST); // enable depth TODO: Update comment
 
     // Setup Dear ImGui context
@@ -115,6 +120,7 @@ int main()
     glViewport(0, 0, SRC_WIDTH, SRC_HEIGHT);
     // assign our resizing function as the resizing window callback for our window
     glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
+    glfwSetCursorPosCallback(window.get(), mouse_callback);
 
     Shader shader("shaders/test_vertex.vert", "shaders/test_fragment.frag");
 
@@ -165,7 +171,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glfwPollEvents();
-        processInput(window.get(), mouseHandler);
+        processInput(window.get());
 
         // imgui
         ImGui_ImplOpenGL3_NewFrame();
