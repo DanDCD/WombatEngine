@@ -23,6 +23,7 @@
 #include "input/mouse_tracker/mouse_tracker.h"
 #include "rendering/camera/camera.h"
 #include "input/key_tracker/key_tracker.h"
+#include "utils/delta_tracker/delta_tracker.h"
 
 void checkGLError(const std::string &label)
 {
