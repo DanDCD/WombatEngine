@@ -1,6 +1,7 @@
 #include "rendering/camera/camera.h"
 #include "rendering/render_consts.h"
 #include "algorithm"
+#include <iostream>
 
 CameraParams::CameraParams()
     : cameraPos(0.0f, 0.0f, 0.0f),
@@ -44,7 +45,8 @@ glm::mat4 Camera::getViewMatrix()
 
 void Camera::processKeyboard(Movement direction, float deltaTime)
 {
-    float velocity = cameraParams.movementSpeed * deltaTime;
+    std::cout << deltaTime << std::endl;
+    float velocity = cameraParams.movementSpeed * 0.075;
     if (direction == Movement::FORWARD)
         cameraParams.cameraPos += cameraParams.cameraFront * velocity;
     if (direction == Movement::BACKWARD)
@@ -53,6 +55,8 @@ void Camera::processKeyboard(Movement direction, float deltaTime)
         cameraParams.cameraPos -= cameraParams.cameraRight * velocity;
     if (direction == Movement::RIGHT)
         cameraParams.cameraPos += cameraParams.cameraRight * velocity;
+
+    std::cout << cameraParams.cameraPos.x << " " << cameraParams.cameraPos.y << std::endl;
     // we don't need to update dirs as the pitch/yaw does not change here only position
     // (so left/right/up/down dirs are constant)
 }

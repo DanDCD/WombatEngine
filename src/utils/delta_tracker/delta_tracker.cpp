@@ -9,6 +9,13 @@ DeltaTracker::DeltaTracker()
 float DeltaTracker::getDelta()
 {
     float currentTime = glfwGetTime();
+    // if we havent recorded a frame yet (i.e. this is the first frame)
+    if(lastFrameTime == 0)
+    {
+        lastFrameTime = currentTime;
+        return 0;
+    }
+    
     float deltaTime = currentTime - lastFrameTime;
     lastFrameTime = currentTime;
     return deltaTime;

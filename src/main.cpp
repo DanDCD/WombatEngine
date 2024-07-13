@@ -165,19 +165,26 @@ int main()
     Camera camera = Camera(cameraParams);
 
     // Input Handling
+    float delta; // the time between frames
     MouseTracker::initialise(window);
     SignalHandler<MouseData> mouseHandler([&camera](MouseData mouseData)
                                           { camera.processMouseMovement(mouseData.offset_from_last.x, mouseData.offset_from_last.y); });
     MouseTracker::getOnMouseMovedSignal().addHandler(mouseHandler);
 
     KeyTracker::initialise(window);
-    SignalHandler<KeyData> keyHandler([](KeyData KeyData)
-                                      {
-        if(KeyData.action == GLFW_RELEASE) 
-        {
-            std::cout << "key released. key: " << KeyData.key_code << " duration: " << KeyData.hold_duration << std::endl;
-        } });
+    SignalHandler<KeyData> keyHandler([&camera, &delta](KeyData keyData) {
+        if(keyData.key_code == GLFW_KEY_W)
+            camera.processKeyboard(Camera::Movement::FORWARD, delta);
+        if(keyData.key_code == GLFW_KEY_S)
+            camera.processKeyboard(Camera::Movement::BACKWARD, delta);
+        if(keyData.key_code == GLFW_KEY_A)
+            camera.processKeyboard(Camera::Movement::LEFT, delta);
+        if(keyData.key_code == GLFW_KEY_D)
+            camera.processKeyboard(Camera::Movement::RIGHT, delta);
+    });
     KeyTracker::getOnKeyPressedSignal().addHandler(keyHandler);
+
+    DeltaTracker deltaTracker;
 
     // we only have to set these uniforms once!
     shader.use();
@@ -197,6 +204,8 @@ int main()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         ImGui::ShowDemoWindow(); // Show demo window! :)
+
+        delta = deltaTracker.getDelta();
 
         // get view matrix
         glm::mat4 view = camera.getViewMatrix();
