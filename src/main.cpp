@@ -40,36 +40,36 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height); // tell opengl the new window size (if changed)
 }
 
-bool M_was_pressed = false; // TODO: clean this up in a seperate input handler
-bool isActive = false;
-// function to process input events from user
-void processInput(GLFWwindow *window, float delta)
-{
-    // if user presses escape, we tell GLFW we want to close the given window
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-    // if user presses M, we tell GLFW to toggle mouse
-    bool M_is_pressed = KeyTracker::isKeyPressed(GLFW_KEY_M);
+// bool M_was_pressed = false; // TODO: clean this up in a seperate input handler
+// bool isActive = false;
+// // function to process input events from user
+// void processInput(GLFWwindow *window, float delta)
+// {
+//     // if user presses escape, we tell GLFW we want to close the given window
+//     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+//         glfwSetWindowShouldClose(window, true);
+//     // if user presses M, we tell GLFW to toggle mouse
+//     bool M_is_pressed = KeyTracker::isKeyPressed(GLFW_KEY_M);
 
-    if (M_is_pressed)
-    {
-        if (!M_was_pressed)
-        {
-            // toggle mouse handling
-            if (isActive)
-            {
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            }
-            else
-            {
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            }
-            isActive = !isActive;
-            std::cout << "Pressed M!" << std::endl;
-        }
-    }
-    M_was_pressed = M_is_pressed;
-}
+//     if (M_is_pressed)
+//     {
+//         if (!M_was_pressed)
+//         {
+//             // toggle mouse handling
+//             if (isActive)
+//             {
+//                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+//             }
+//             else
+//             {
+//                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+//             }
+//             isActive = !isActive;
+//             std::cout << "Pressed M!" << std::endl;
+//         }
+//     }
+//     M_was_pressed = M_is_pressed;
+// }
 
 int main()
 {
@@ -172,11 +172,33 @@ int main()
     MouseTracker::getOnMouseMovedSignal().addHandler(mouseHandler);
 
     KeyTracker::initialise(window);
-    SignalHandler<KeyData> keyHandler([](KeyData keyData)
-                                      {
-                                        if(keyData.action == GLFW_RELEASE)
-                                            std::cout << keyData.hold_duration << std::endl; });
-    KeyTracker::getOnKeyPressedSignal().addHandler(keyHandler);
+    bool mouse_active = false;
+    SignalHandler<KeyData> keyEventHandler(
+        [&window, &mouse_active](KeyData keyData)
+        {
+        if (keyData.action == GLFW_PRESS && keyData.key_code == GLFW_KEY_ESCAPE)
+            glfwSetWindowShouldClose(window.get(), true);
+        if (keyData.action == GLFW_RELEASE && keyData.key_code == GLFW_KEY_M) 
+        {
+        glfwSetInputMode(window.get(), GLFW_CURSOR, mouse_active ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+        mouse_active = !mouse_active;
+        } });
+    KeyTracker::getOnKeyEventSignal().addHandler(keyEventHandler);
+
+    SignalHandler<KeyData> keyHoldHandler(
+        [&camera, &delta](KeyData keyData)
+        {
+            if (keyData.key_code == GLFW_KEY_W)
+                camera.processKeyboard(Camera::Movement::FORWARD, delta);
+            if (keyData.key_code == GLFW_KEY_S)
+                camera.processKeyboard(Camera::Movement::BACKWARD, delta);
+            if (keyData.key_code == GLFW_KEY_A)
+                camera.processKeyboard(Camera::Movement::LEFT, delta);
+            if (keyData.key_code == GLFW_KEY_D)
+                camera.processKeyboard(Camera::Movement::RIGHT, delta);
+        });
+    KeyTracker::getOnKeyHeldSignal().addHandler(keyHoldHandler);
+
     DeltaTracker deltaTracker;
 
     // we only have to set these uniforms once!
@@ -192,7 +214,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glfwPollEvents();
-        processInput(window.get(), delta);
+        KeyTracker::pollKeyEvents();
 
         // imgui
         ImGui_ImplOpenGL3_NewFrame();

@@ -3,14 +3,19 @@
 void KeyTracker::initialise(std::shared_ptr<GLFWwindow> window)
 {
     getInstance().trackedWindow = window;
-    getInstance().onKeyPressedSignal = Signal<KeyData>();
+    getInstance().onKeyEvent = Signal<KeyData>();
     getInstance().pressedKeys = std::unordered_map<int, KeyData>();
     glfwSetKeyCallback(getInstance().trackedWindow.get(), KeyTracker::keyCallBack);
 }
 
-Signal<KeyData> &KeyTracker::getOnKeyPressedSignal()
+Signal<KeyData> &KeyTracker::getOnKeyEventSignal()
 {
-    return getInstance().onKeyPressedSignal;
+    return getInstance().onKeyEvent;
+}
+
+Signal<KeyData> &KeyTracker::getOnKeyHeldSignal()
+{
+    return getInstance().onKeyHeld;
 }
 
 bool KeyTracker::isKeyPressed(int key_code)
@@ -22,7 +27,18 @@ std::optional<KeyData> KeyTracker::getKeyData(int key_code)
 {
     if (!isKeyPressed)
         return std::nullopt;
-    KeyData keyData;
+    return getInstance().pressedKeys[key_code];
+}
+
+void KeyTracker::pollKeyEvents()
+{
+    for (const auto &pair : getInstance().pressedKeys)
+    {
+        KeyData keyData = pair.second;
+        keyData.action = GLFW_REPEAT;
+        keyData.hold_duration = glfwGetTime() - keyData.timestamp;
+        getInstance().onKeyHeld.emit(keyData);
+    }
 }
 
 KeyTracker &KeyTracker::getInstance()
@@ -44,9 +60,15 @@ void KeyTracker::keyCallBack(GLFWwindow *window, int key, int scancode, int acti
     keyData.timestamp = glfwGetTime();
     keyData.hold_duration = 0;
 
-    // if a key is newly pressed we add it to the history (and keep hold_duration=0)
-    if (!isKeyPressed(keyData.key_code) && keyData.action == GLFW_PRESS)
-        getInstance().pressedKeys[keyData.key_code] = keyData;
+    if (keyData.action == GLFW_PRESS)
+    {
+        // if a key is newly pressed we add it to the history (and keep hold_duration=0)
+        if (!isKeyPressed(keyData.key_code)) 
+            getInstance().pressedKeys[keyData.key_code] = keyData;
+        // if key pressed event but its already in our history we dont want to emit a signal
+        else 
+            return;
+    }
     // if a key has been pressed and is now released, we calculate the hold duration and remove it from history
     else if (isKeyPressed(keyData.key_code) && keyData.action == GLFW_RELEASE)
     {
@@ -54,5 +76,5 @@ void KeyTracker::keyCallBack(GLFWwindow *window, int key, int scancode, int acti
         getInstance().pressedKeys.erase(keyData.key_code);
     }
     // emit our onKeyPressed signal
-    getInstance().onKeyPressedSignal.emit(keyData);
+    getInstance().onKeyEvent.emit(keyData);
 }

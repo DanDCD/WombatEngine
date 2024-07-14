@@ -35,9 +35,13 @@ public:
     /// @param window the GLFW window to track the keys in
     static void initialise(std::shared_ptr<GLFWwindow> window);
 
-    /// @brief obtain a Signal that is emitted whenever a key is pressed
+    /// @brief obtain a Signal that is emitted whenever a key is pressed or released
     /// @return a Signal that emits a KeyData struct on key press
-    static Signal<KeyData> &getOnKeyPressedSignal();
+    static Signal<KeyData> &getOnKeyEventSignal();
+
+    /// @brief obtain a signal that is emitted for each key that is held while pollKeyEvents is called
+    /// @return a Signal that emits a KeyData struct
+    static Signal<KeyData> &getOnKeyHeldSignal();
 
     /// @brief check if key is currently being pressed
     /// @param key_code the code of the key
@@ -48,6 +52,9 @@ public:
     /// @param key_code the code of the key to query
     /// @return an optional object - will be empty if the key is not pressed - will return data if key has been pressed
     static std::optional<KeyData> getKeyData(int key_code);
+
+    /// @brief polls for currently pressed keys and emits the onKeyHeldSignal for each
+    static void pollKeyEvents();
 
     // delete the copy constructor
     KeyTracker(KeyTracker const &) = delete;
@@ -73,8 +80,11 @@ private:
     /// @brief a pointer to the window of which the mouse is tracked
     std::shared_ptr<GLFWwindow> trackedWindow;
 
-    /// @brief signal that emits key data when a key is pressed
-    Signal<KeyData> onKeyPressedSignal;
+    /// @brief signal that emits key data when a key is pressed or released
+    Signal<KeyData> onKeyEvent;
+
+    /// @brief signal that emits key data when a key is held and pollKeyEvents() is called
+    Signal<KeyData> onKeyHeld;
 
     /// @brief a map of key codes to KeyData for all currently pressed keys
     std::unordered_map<int, KeyData> pressedKeys;
