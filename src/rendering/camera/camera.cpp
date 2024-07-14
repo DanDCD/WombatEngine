@@ -47,15 +47,13 @@ void Camera::processKeyboard(Movement direction, float deltaTime)
 {
     float velocity = cameraParams.movementSpeed * deltaTime;
     if (direction == Movement::FORWARD)
-        cameraParams.cameraPos += cameraParams.cameraFront * velocity;
+        cameraParams.cameraPos += glm::normalize(cameraParams.cameraFront) * velocity;
     if (direction == Movement::BACKWARD)
-        cameraParams.cameraPos -= cameraParams.cameraFront * velocity;
+        cameraParams.cameraPos -= glm::normalize(cameraParams.cameraFront) * velocity;
     if (direction == Movement::LEFT)
-        cameraParams.cameraPos -= cameraParams.cameraRight * velocity;
+        cameraParams.cameraPos -= glm::normalize(cameraParams.cameraRight) * velocity;
     if (direction == Movement::RIGHT)
-        cameraParams.cameraPos += cameraParams.cameraRight * velocity;
-
-    std::cout << cameraParams.cameraPos.x << " " << cameraParams.cameraPos.y << std::endl;
+        cameraParams.cameraPos += glm::normalize(cameraParams.cameraRight) * velocity;
     // we don't need to update dirs as the pitch/yaw does not change here only position
     // (so left/right/up/down dirs are constant)
 }
