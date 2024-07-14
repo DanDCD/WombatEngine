@@ -40,37 +40,6 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
     glViewport(0, 0, width, height); // tell opengl the new window size (if changed)
 }
 
-// bool M_was_pressed = false; // TODO: clean this up in a seperate input handler
-// bool isActive = false;
-// // function to process input events from user
-// void processInput(GLFWwindow *window, float delta)
-// {
-//     // if user presses escape, we tell GLFW we want to close the given window
-//     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-//         glfwSetWindowShouldClose(window, true);
-//     // if user presses M, we tell GLFW to toggle mouse
-//     bool M_is_pressed = KeyTracker::isKeyPressed(GLFW_KEY_M);
-
-//     if (M_is_pressed)
-//     {
-//         if (!M_was_pressed)
-//         {
-//             // toggle mouse handling
-//             if (isActive)
-//             {
-//                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-//             }
-//             else
-//             {
-//                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-//             }
-//             isActive = !isActive;
-//             std::cout << "Pressed M!" << std::endl;
-//         }
-//     }
-//     M_was_pressed = M_is_pressed;
-// }
-
 int main()
 {
 
