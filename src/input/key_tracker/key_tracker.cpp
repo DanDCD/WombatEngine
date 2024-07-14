@@ -4,13 +4,25 @@ void KeyTracker::initialise(std::shared_ptr<GLFWwindow> window)
 {
     getInstance().trackedWindow = window;
     getInstance().onKeyPressedSignal = Signal<KeyData>();
-    getInstance().lastKeyPressTimeStamps = std::unordered_map<int, double>();
+    getInstance().pressedKeys = std::unordered_map<int, KeyData>();
     glfwSetKeyCallback(getInstance().trackedWindow.get(), KeyTracker::keyCallBack);
 }
 
 Signal<KeyData> &KeyTracker::getOnKeyPressedSignal()
 {
     return getInstance().onKeyPressedSignal;
+}
+
+bool KeyTracker::isKeyPressed(int key_code)
+{
+    return (getInstance().pressedKeys.find(key_code) != getInstance().pressedKeys.end());
+}
+
+std::optional<KeyData> KeyTracker::getKeyData(int key_code)
+{
+    if (!isKeyPressed)
+        return std::nullopt;
+    KeyData keyData;
 }
 
 KeyTracker &KeyTracker::getInstance()
@@ -32,24 +44,15 @@ void KeyTracker::keyCallBack(GLFWwindow *window, int key, int scancode, int acti
     keyData.timestamp = glfwGetTime();
     keyData.hold_duration = 0;
 
-    // check and update history
-    if (keyData.action == GLFW_PRESS) // if we have just pressed this key start timing its press duration
-        getInstance().lastKeyPressTimeStamps[keyData.key_code] = keyData.timestamp;
-    else if (keyData.action == GLFW_RELEASE) // if we have instead let a key go calculate and update the hold duration
+    // if a key is newly pressed we add it to the history (and keep hold_duration=0)
+    if (!isKeyPressed(keyData.key_code) && keyData.action == GLFW_PRESS)
+        getInstance().pressedKeys[keyData.key_code] = keyData;
+    // if a key has been pressed and is now released, we calculate the hold duration and remove it from history
+    else if (isKeyPressed(keyData.key_code) && keyData.action == GLFW_RELEASE)
     {
-        // if the key press has been recorded in lastKeyPresTimeStamps
-        if (getInstance().lastKeyPressTimeStamps.find(keyData.key_code) != getInstance().lastKeyPressTimeStamps.end())
-        {
-            keyData.hold_duration = keyData.timestamp - getInstance().lastKeyPressTimeStamps[keyData.key_code];
-            getInstance().lastKeyPressTimeStamps.erase(keyData.key_code);
-        }
+        keyData.hold_duration = keyData.timestamp - getInstance().pressedKeys[keyData.key_code].timestamp;
+        getInstance().pressedKeys.erase(keyData.key_code);
     }
-
-    getInstance().updateKeyData(keyData);
-}
-
-void KeyTracker::updateKeyData(KeyData new_data)
-{
-    getInstance().lastCapturedData = new_data;
-    getInstance().onKeyPressedSignal.emit(new_data);
+    // emit our onKeyPressed signal
+    getInstance().onKeyPressedSignal.emit(keyData);
 }

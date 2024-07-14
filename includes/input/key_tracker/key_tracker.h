@@ -6,29 +6,28 @@
 #include <optional>
 #include <unordered_map>
 
-struct KeyData 
+struct KeyData
 {
     /// @brief
     int key_code;
 
-    /// @brief 
+    /// @brief
     int scancode;
 
-    /// @brief 
+    /// @brief
     int action;
 
-    /// @brief 
+    /// @brief
     int mods;
 
-    /// @brief 
+    /// @brief
     double timestamp;
 
-    /// @brief 
+    /// @brief
     float hold_duration;
 };
 
-
-/// @brief 
+/// @brief
 class KeyTracker
 {
 public:
@@ -39,6 +38,16 @@ public:
     /// @brief obtain a Signal that is emitted whenever a key is pressed
     /// @return a Signal that emits a KeyData struct on key press
     static Signal<KeyData> &getOnKeyPressedSignal();
+
+    /// @brief check if key is currently being pressed
+    /// @param key_code the code of the key
+    /// @return if the key is currently held down
+    static bool isKeyPressed(int key_code);
+
+    /// @brief fetch data for pressed key
+    /// @param key_code the code of the key to query
+    /// @return an optional object - will be empty if the key is not pressed - will return data if key has been pressed
+    static std::optional<KeyData> getKeyData(int key_code);
 
     // delete the copy constructor
     KeyTracker(KeyTracker const &) = delete;
@@ -59,11 +68,7 @@ private:
     /// @param scancode the platform specific scan code of the key
     /// @param action the action (GL_PRESS/GL_RELEASE/GL_REPEAT)
     /// @param mods modifier bits for if the key was pressed with alt/shift/etc.
-    static void keyCallBack(GLFWwindow *window,  int key, int scancode, int action, int mods);
-
-    /// @brief update the tracked data
-    /// @param new_data the new data
-    static void updateKeyData(KeyData new_data);
+    static void keyCallBack(GLFWwindow *window, int key, int scancode, int action, int mods);
 
     /// @brief a pointer to the window of which the mouse is tracked
     std::shared_ptr<GLFWwindow> trackedWindow;
@@ -71,9 +76,6 @@ private:
     /// @brief signal that emits key data when a key is pressed
     Signal<KeyData> onKeyPressedSignal;
 
-    /// @brief the last captured key data - will be empty if no key has been pressed yet
-    std::optional<KeyData> lastCapturedData;
-
-    /// @brief a map of key code to the timestamp it was last pressed at
-    std::unordered_map<int, double> lastKeyPressTimeStamps;
+    /// @brief a map of key codes to KeyData for all currently pressed keys
+    std::unordered_map<int, KeyData> pressedKeys;
 };

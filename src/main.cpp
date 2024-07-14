@@ -43,13 +43,13 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 bool M_was_pressed = false; // TODO: clean this up in a seperate input handler
 bool isActive = false;
 // function to process input events from user
-void processInput(GLFWwindow *window)
+void processInput(GLFWwindow *window, float delta)
 {
     // if user presses escape, we tell GLFW we want to close the given window
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     // if user presses M, we tell GLFW to toggle mouse
-    bool M_is_pressed = glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS;
+    bool M_is_pressed = KeyTracker::isKeyPressed(GLFW_KEY_M);
 
     if (M_is_pressed)
     {
@@ -172,18 +172,11 @@ int main()
     MouseTracker::getOnMouseMovedSignal().addHandler(mouseHandler);
 
     KeyTracker::initialise(window);
-    SignalHandler<KeyData> keyHandler([&camera, &delta](KeyData keyData) {
-        if(keyData.key_code == GLFW_KEY_W)
-            camera.processKeyboard(Camera::Movement::FORWARD, delta);
-        if(keyData.key_code == GLFW_KEY_S)
-            camera.processKeyboard(Camera::Movement::BACKWARD, delta);
-        if(keyData.key_code == GLFW_KEY_A)
-            camera.processKeyboard(Camera::Movement::LEFT, delta);
-        if(keyData.key_code == GLFW_KEY_D)
-            camera.processKeyboard(Camera::Movement::RIGHT, delta);
-    });
+    SignalHandler<KeyData> keyHandler([](KeyData keyData)
+                                      {
+                                        if(keyData.action == GLFW_RELEASE)
+                                            std::cout << keyData.hold_duration << std::endl; });
     KeyTracker::getOnKeyPressedSignal().addHandler(keyHandler);
-
     DeltaTracker deltaTracker;
 
     // we only have to set these uniforms once!
@@ -193,19 +186,19 @@ int main()
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window.get()))
     {
+        delta = deltaTracker.getDelta();
+
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glfwPollEvents();
-        processInput(window.get());
+        processInput(window.get(), delta);
 
         // imgui
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         ImGui::ShowDemoWindow(); // Show demo window! :)
-
-        delta = deltaTracker.getDelta();
 
         // get view matrix
         glm::mat4 view = camera.getViewMatrix();
