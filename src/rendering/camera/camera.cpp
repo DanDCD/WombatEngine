@@ -58,7 +58,6 @@ void Camera::processKeyboard(Movement direction, float deltaTime)
         cameraParams.cameraPos += glm::normalize(WORLD_UP) * velocity;
     if (direction == Movement::DOWN)
         cameraParams.cameraPos -= glm::normalize(WORLD_UP) * velocity;
-        
     // we don't need to update dirs as the pitch/yaw does not change here only position
     // (so left/right/up/down dirs are constant)
 }
