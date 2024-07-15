@@ -165,6 +165,10 @@ int main()
                 camera.processKeyboard(Camera::Movement::LEFT, delta);
             if (keyData.key_code == GLFW_KEY_D)
                 camera.processKeyboard(Camera::Movement::RIGHT, delta);
+            if (keyData.key_code == GLFW_KEY_SPACE)
+                camera.processKeyboard(Camera::Movement::UP, delta);
+            if (keyData.key_code == GLFW_KEY_LEFT_SHIFT)
+                camera.processKeyboard(Camera::Movement::DOWN, delta);
         });
     KeyTracker::getOnKeyHeldSignal().addHandler(keyHoldHandler);
 
