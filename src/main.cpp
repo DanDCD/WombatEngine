@@ -24,6 +24,7 @@
 #include "rendering/camera/camera.h"
 #include "input/key_tracker/key_tracker.h"
 #include "utils/delta_tracker/delta_tracker.h"
+#include"assimp/Importer.hpp"
 
 void checkGLError(const std::string &label)
 {
@@ -42,6 +43,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 int main()
 {
+
+    Assimp::Importer importer;
 
     // set up GLFW
     glfwInit();

@@ -15,6 +15,7 @@ enable_testing()
 # set(GLFW_DIR "C:/dev/cppsources/glfw-3.4")
 # set(GLAD_DIR "C:/dev/cppsources/glad")
 # set(GLM_DIR "C:/dev/cppsources/glm/glm")
+# set(ASSIMP_DIR "C:\dev\cppsources\assimp\assimp")
 #laptop
 # set (GLFW_DIR "C:/Dev/Cpp/sources/glfw-3.4")
 # set (GLAD_DIR "C:/Dev/Cpp/sources/glad")
@@ -24,6 +25,7 @@ set(GLFW_DIR "" CACHE PATH "Path to the GLFW library")
 set(GLAD_DIR "" CACHE PATH "Path to the GLAD library")
 set(GLM_DIR "" CACHE PATH "Path to the GLM library")
 set(IMGUI_DIR "" CACHE PATH "Path to the IMGUI library")
+set(ASSIMP_DIR "" CACHE PATH "Path to the ASSIMP library")
 
 # Add GLFW
 add_subdirectory(${GLFW_DIR} "binary_directory")
@@ -44,11 +46,15 @@ set(IMGUI_BACKEND_SOURCES
 # Combine core and specific backend source files into a single library
 add_library(imgui ${IMGUI_SOURCES} ${IMGUI_BACKEND_SOURCES})
 
-# Set include directories for ImGui and GLFW
+
+add_subdirectory(${ASSIMP_DIR} "binary_directory_2")
+
+# Set include directories 
 target_include_directories(imgui PUBLIC 
     ${IMGUI_DIR} 
     ${IMGUI_DIR}/backends 
     ${GLFW_DIR}/include
+    ${ASSIMP_DIR}/include
 )
 
 # Add executable
@@ -56,7 +62,7 @@ file(GLOB_RECURSE ALL_CPP_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
 add_executable(threedimsim ${ALL_CPP_FILES})
 
 # Link libraries to the executable
-target_link_libraries(threedimsim glfw glad imgui)
+target_link_libraries(threedimsim glfw glad imgui assimp)
 
 # Set include directories for GLM
 target_include_directories(threedimsim PUBLIC "${GLM_DIR}" "${CMAKE_SOURCE_DIR}/includes")
