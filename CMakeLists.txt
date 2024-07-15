@@ -26,12 +26,17 @@ message(STATUS "ASSIMP directory: ${ASSIMP_DIR}")
 message(STATUS "Project name: ${PROJECT_NAME}")
 message(STATUS "Project version: ${PROJECT_VERSION}")
 
+# Function to add a library from a given directory
+function(add_library_from_dir lib_name dir src_file)
+    add_library(${lib_name} "${dir}/${src_file}")
+    target_include_directories(${lib_name} PUBLIC "${dir}/include")
+endfunction()
+
 # Add GLFW
 add_subdirectory(${GLFW_DIR} "binary_directory")
 
 # Include GLAD
-add_library(glad "${GLAD_DIR}/src/glad.c")
-target_include_directories(glad PUBLIC "${GLAD_DIR}/include")
+add_library_from_dir(glad ${GLAD_DIR} "src/glad.c")
 
 # Include ImGui core source files
 file(GLOB IMGUI_SOURCES "${IMGUI_DIR}/*.cpp")
@@ -57,8 +62,12 @@ file(GLOB_RECURSE ALL_CPP_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
 add_executable(threedimsim ${ALL_CPP_FILES})
 
 # Set include directories for threedimsim
-target_include_directories(threedimsim PUBLIC "${ASSIMP_DIR}/include" "${ASSIMP_DIR}/build/include")
-target_include_directories(threedimsim PUBLIC "${GLM_DIR}" "${CMAKE_SOURCE_DIR}/includes")
+target_include_directories(threedimsim PUBLIC 
+    "${ASSIMP_DIR}/include" 
+    "${ASSIMP_DIR}/build/include" 
+    "${GLM_DIR}" 
+    "${CMAKE_SOURCE_DIR}/includes"
+)
 
 # Link libraries to the executable
 target_link_libraries(threedimsim glfw glad imgui assimp)
@@ -94,4 +103,3 @@ add_custom_command(TARGET threedimsim POST_BUILD
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
-
