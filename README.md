@@ -44,4 +44,3 @@ These are some websites I refer to during development
 - [Physically Based Rendering](https://www.pbr-book.org/4ed/contents)
 - [Assimp Documentation](https://assimp-docs.readthedocs.io/en/latest/index.html)
 - [GLFW Documentation](https://www.glfw.org/docs/latest/)
-- []
