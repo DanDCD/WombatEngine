@@ -67,6 +67,11 @@ VAO::VAO(VAO &&other)
     // transfer ownership of Vertex Array Object to this VAO
     this->vao_ID = other.vao_ID;
     other.vao_ID = 0;
+    // transfer VBOs and EBO
+    this->vbos = std::move(other.vbos);
+    this->ebo = std::move(other.ebo);
+    other.vbos.clear();
+    other.ebo = std::nullopt;
 }
 
 VAO &VAO::operator=(VAO &&other) noexcept
@@ -78,6 +83,11 @@ VAO &VAO::operator=(VAO &&other) noexcept
         // transfer ownership of the Vertex Array Object to this VAO
         this->vao_ID = other.vao_ID;
         other.vao_ID = 0;
+        // transfer VBOs and EBO
+        this->vbos = std::move(other.vbos);
+        this->ebo = std::move(other.ebo);
+        other.vbos.clear();
+        other.ebo = std::nullopt;
     }
     return *this;
 }
@@ -126,7 +136,8 @@ void VAO::addVertexAttrribSpec(unsigned int attrib_ID, unsigned int count, GLenu
 void VAO::bind() const
 {
     glBindVertexArray(vao_ID);
-    if(ebo.has_value()){
+    if (ebo.has_value())
+    {
         ebo->bind();
     }
 }

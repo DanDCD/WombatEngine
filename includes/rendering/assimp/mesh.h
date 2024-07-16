@@ -31,7 +31,6 @@ public:
     /// @param shader
     void draw(Shader &shader);
 
-    unsigned int VAO;
 private:
 
     void setupMesh();
@@ -45,5 +44,5 @@ private:
     /// @brief
     std::vector<Mesh::Texture> textures;
 
-    unsigned int VBO, EBO;
+    VAO vao;
 };
