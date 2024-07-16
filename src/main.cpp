@@ -24,16 +24,10 @@
 #include "rendering/camera/camera.h"
 #include "input/key_tracker/key_tracker.h"
 #include "utils/delta_tracker/delta_tracker.h"
-#include"assimp/Importer.hpp"
-
-void checkGLError(const std::string &label)
-{
-    GLenum err;
-    while ((err = glGetError()) != GL_NO_ERROR)
-    {
-        std::cerr << "OpenGL error [" << label << "]: " << err << std::endl;
-    }
-}
+#include "assimp/Importer.hpp"
+#include "rendering/assimp/mesh.h"
+#include "rendering/assimp/model.h"
+#include "rendering/log/check_gl.h"
 
 // A callback function to be called whenever the window is resized
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
@@ -43,8 +37,6 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 int main()
 {
-
-    Assimp::Importer importer;
 
     // set up GLFW
     glfwInit();
@@ -94,43 +86,47 @@ int main()
     glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
 
     // Set Up Rendering
-    Shader shader("shaders/test_vertex.vert", "shaders/test_fragment.frag");
+    Shader shader("shaders/test_vertex_new.vert", "shaders/test_fragment_new.frag");
 
-    VAO vao = VAO();
+    // test: load model
+    Model modelObj("models/backpack/backpack.obj");
 
-    VBO rectVBO = VBO(GL_ARRAY_BUFFER);
-    rectVBO.assignData(VERT_DATA::vertices, sizeof(VERT_DATA::vertices), GL_STATIC_DRAW);
 
-    EBO rectEBO = EBO();
-    rectEBO.assignData(VERT_DATA::indices, sizeof(VERT_DATA::indices), GL_STATIC_DRAW);
+    // VAO vao = VAO();
 
-    VertexBufferLayout layout = VertexBufferLayout();
-    layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
-    layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture position
+    // VBO rectVBO = VBO(GL_ARRAY_BUFFER);
+    // rectVBO.assignData(VERT_DATA::vertices, sizeof(VERT_DATA::vertices), GL_STATIC_DRAW);
 
-    vao.addBuffer(std::move(rectVBO), layout);
-    vao.addBuffer(std::move(rectEBO));
+    // EBO rectEBO = EBO();
+    // rectEBO.assignData(VERT_DATA::indices, sizeof(VERT_DATA::indices), GL_STATIC_DRAW);
 
-    Texture texture_1(GL_TEXTURE_2D,
-                      {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
-                       TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
-                       TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
-                       TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
-                      "textures/container.jpg",
-                      GL_TEXTURE0);
+    // VertexBufferLayout layout = VertexBufferLayout();
+    // layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
+    // layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture position
 
-    // box positions
-    glm::vec3 cubePositions[] = {
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(2.0f, 5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f, 3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f, 2.0f, -2.5f),
-        glm::vec3(1.5f, 0.2f, -1.5f),
-        glm::vec3(-1.3f, 1.0f, -1.5f)};
+    // vao.addBuffer(std::move(rectVBO), layout);
+    // vao.addBuffer(std::move(rectEBO));
+
+    // Texture texture_1(GL_TEXTURE_2D,
+    //                   {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
+    //                    TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
+    //                    TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
+    //                    TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
+    //                   "textures/container.jpg",
+    //                   GL_TEXTURE0);
+
+    // // box positions
+    // glm::vec3 cubePositions[] = {
+    //     glm::vec3(0.0f, 0.0f, 0.0f),
+    //     glm::vec3(2.0f, 5.0f, -15.0f),
+    //     glm::vec3(-1.5f, -2.2f, -2.5f),
+    //     glm::vec3(-3.8f, -2.0f, -12.3f),
+    //     glm::vec3(2.4f, -0.4f, -3.5f),
+    //     glm::vec3(-1.7f, 3.0f, -7.5f),
+    //     glm::vec3(1.3f, -2.0f, -2.5f),
+    //     glm::vec3(1.5f, 2.0f, -2.5f),
+    //     glm::vec3(1.5f, 0.2f, -1.5f),
+    //     glm::vec3(-1.3f, 1.0f, -1.5f)};
 
     // Setup Camera
     CameraParams cameraParams(glm::vec3(0.0f, 0.0f, 3.0f), 0.0f, 0.0f, 2.0f, 0.1f, 45.0f);
@@ -205,23 +201,31 @@ int main()
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(45.0f), (float)SRC_WIDTH / (float)SRC_HEIGHT, 0.1f, 100.0f);
 
+        // model matrix
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+
         shader.use();
         shader.setUniform("view", 1, false, view);             // set the view matrix
         shader.setUniform("projection", 1, false, projection); // set the projection matrix
+        shader.setUniform("model", 1, false, model);
 
-        texture_1.bind();
+        checkGLError("BEFORE MODEL DRAW");
+        modelObj.draw(shader);
+        // texture_1.bind();
 
-        vao.bind();
-        for (unsigned int i = 0; i < 10; i++)
-        {
-            // model matrix
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            float angle = 1.0f + 20.0f * i;
-            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            shader.setUniform("model", 1, false, model);
-            glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
-        }
+        // vao.bind();
+        // for (unsigned int i = 0; i < 10; i++)
+        // {
+        //     // model matrix
+        //     glm::mat4 model = glm::mat4(1.0f);
+        //     model = glm::translate(model, cubePositions[i]);
+        //     float angle = 1.0f + 20.0f * i;
+        //     model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+        //     shader.setUniform("model", 1, false, model);
+        //     glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+        // }
 
         // Rendering
         ImGui::Render();

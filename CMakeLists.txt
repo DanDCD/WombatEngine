@@ -93,6 +93,11 @@ add_custom_command(TARGET threedimsim POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_SOURCE_DIR}/textures" $<TARGET_FILE_DIR:threedimsim>/textures)
 
+# Custom command to copy models directory
+add_custom_command(TARGET threedimsim POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_SOURCE_DIR}/models" $<TARGET_FILE_DIR:threedimsim>/models)
+
 # Ensure the DLL for assimp is copied to the output directory
 add_custom_command(TARGET threedimsim POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different

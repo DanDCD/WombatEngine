@@ -1,8 +1,6 @@
 #include "rendering/buffer/buffer/buffer.h"
 #include "utility"
 
-
-
 Buffer::Buffer(GLenum targetType)
     : ID(0), targetType(targetType)
 {
@@ -40,6 +38,13 @@ void Buffer::assignData(const float *data, GLsizeiptr dataSize, GLenum usage)
 }
 
 void Buffer::assignData(const unsigned int *data, GLsizeiptr dataSize, GLenum usage)
+{
+    bind();
+    glBufferData(targetType, dataSize, data, usage);
+    unbind();
+}
+
+void Buffer::assignData(const Vertex *data, GLsizeiptr dataSize, GLenum usage)
 {
     bind();
     glBufferData(targetType, dataSize, data, usage);

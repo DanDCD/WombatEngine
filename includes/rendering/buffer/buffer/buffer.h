@@ -1,5 +1,6 @@
 #pragma once
 #include "glad/glad.h"
+#include "rendering/vertex/vertex.h"
 
 /// @brief encapsulates an OpenGL buffer: managing creation, deletion, and basic buffer operations
 class Buffer
@@ -28,6 +29,8 @@ public:
     void assignData(const float *data, GLsizeiptr dataSize, GLenum usage);
 
     void assignData(const unsigned int *data, GLsizeiptr dataSize, GLenum usage);
+
+    void assignData(const Vertex *data, GLsizeiptr dataSize, GLenum usage);
 
     /// @brief binds this buffer to OpenGL
     void bind() const;
