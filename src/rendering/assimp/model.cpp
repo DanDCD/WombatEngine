@@ -17,7 +17,7 @@ void Model::loadModel(std::string path)
     // when we import the model, if it contains non triangular primitives, make them triangular
     // where necessary, flip the texture coords
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices);
 
     // if loading failed
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -62,35 +62,35 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         vector.z = mesh->mVertices[i].z;
         vertex.position = vector;
         // normals
-        // if (mesh->HasNormals())
-        // {
-        //     vector.x = mesh->mNormals[i].x;
-        //     vector.y = mesh->mNormals[i].y;
-        //     vector.z = mesh->mNormals[i].z;
-        //     vertex.normal = vector;
-        // }
+        if (mesh->HasNormals())
+        {
+            vector.x = mesh->mNormals[i].x;
+            vector.y = mesh->mNormals[i].y;
+            vector.z = mesh->mNormals[i].z;
+            vertex.normal = vector;
+        }
         // texture coords
-        // if (mesh->mTextureCoords[0])
-        // {
-        //     glm::vec2 vec;
-        //     // a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't
-        //     // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
-        //     vec.x = mesh->mTextureCoords[0][i].x;
-        //     vec.y = mesh->mTextureCoords[0][i].y;
-        //     vertex.texture_coords = vec;
-        //     // tangent
-        //     // vector.x = mesh->mTangents[i].x;
-        //     // vector.y = mesh->mTangents[i].y;
-        //     // vector.z = mesh->mTangents[i].z;
-        //     // vertex.Tangent = vector;
-        //     // bitangent
-        //     // vector.x = mesh->mBitangents[i].x;
-        //     // vector.y = mesh->mBitangents[i].y;
-        //     // vector.z = mesh->mBitangents[i].z;
-        //     // vertex.Bitangent = vector;
-        // }
-        // else
-        //     vertex.texture_coords = glm::vec2(0.0f, 0.0f);
+        if (mesh->mTextureCoords[0])
+        {
+            glm::vec2 vec;
+            // a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't
+            // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
+            vec.x = mesh->mTextureCoords[0][i].x;
+            vec.y = mesh->mTextureCoords[0][i].y;
+            vertex.texture_coords = vec;
+            // tangent
+            // vector.x = mesh->mTangents[i].x;
+            // vector.y = mesh->mTangents[i].y;
+            // vector.z = mesh->mTangents[i].z;
+            // vertex.Tangent = vector;
+            // bitangent
+            // vector.x = mesh->mBitangents[i].x;
+            // vector.y = mesh->mBitangents[i].y;
+            // vector.z = mesh->mBitangents[i].z;
+            // vertex.Bitangent = vector;
+        }
+        else
+            vertex.texture_coords = glm::vec2(0.0f, 0.0f);
 
         vertices.push_back(vertex);
     }

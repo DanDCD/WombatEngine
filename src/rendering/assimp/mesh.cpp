@@ -25,6 +25,8 @@ void Mesh::setupMesh()
 
     VertexBufferLayout layout = VertexBufferLayout();
     layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // verts
+    layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // normals
+    layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture coords
 
     vao.addBuffer(std::move(vbo), layout);
     vao.addBuffer(std::move(ebo));
