@@ -24,7 +24,7 @@
 #include "rendering/camera/camera.h"
 #include "input/key_tracker/key_tracker.h"
 #include "utils/delta_tracker/delta_tracker.h"
-#include"assimp/Importer.hpp"
+#include "assimp/Importer.hpp"
 
 void checkGLError(const std::string &label)
 {
@@ -94,30 +94,51 @@ int main()
     glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
 
     // Set Up Rendering
-    Shader shader("shaders/test_vertex.vert", "shaders/test_fragment.frag");
+    Shader shader("shaders/test_vertex_no_texture.vert", "shaders/test_fragment_no_texture.frag");
 
-    VAO vao = VAO();
+    // set up container model VAO
+    VAO rectVAO = VAO();
 
     VBO rectVBO = VBO(GL_ARRAY_BUFFER);
-    rectVBO.assignData(VERT_DATA::vertices, sizeof(VERT_DATA::vertices), GL_STATIC_DRAW);
+    rectVBO.assignData(VERT_DATA::vertices_no_tex_coord, sizeof(VERT_DATA::vertices_no_tex_coord), GL_STATIC_DRAW);
 
     EBO rectEBO = EBO();
     rectEBO.assignData(VERT_DATA::indices, sizeof(VERT_DATA::indices), GL_STATIC_DRAW);
 
-    VertexBufferLayout layout = VertexBufferLayout();
-    layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
-    layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture position
+    VertexBufferLayout rectLayout = VertexBufferLayout();
+    rectLayout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
+    // layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture position
 
-    vao.addBuffer(std::move(rectVBO), layout);
-    vao.addBuffer(std::move(rectEBO));
+    rectVAO.addBuffer(std::move(rectVBO), rectLayout);
+    rectVAO.addBuffer(std::move(rectEBO));
 
-    Texture texture_1(GL_TEXTURE_2D,
-                      {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
-                       TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
-                       TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
-                       TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
-                      "textures/container.jpg",
-                      GL_TEXTURE0);
+    glm::vec3 rectColor = glm::vec3(0.15f, 0.24f, 0.95f);
+
+    // set up light source vao (note: we use same model as container right now)
+    VAO lightSourceVAO = VAO();
+
+    VBO lightSourceVBO = VBO(GL_ARRAY_BUFFER);
+    lightSourceVBO.assignData(VERT_DATA::vertices_no_tex_coord, sizeof(VERT_DATA::vertices_no_tex_coord), GL_STATIC_DRAW);
+
+    EBO lightSourceEBO = EBO();
+    lightSourceEBO.assignData(VERT_DATA::indices, sizeof(VERT_DATA::indices), GL_STATIC_DRAW);
+
+    VertexBufferLayout lightSourceLayout = VertexBufferLayout();
+    lightSourceLayout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
+
+    lightSourceVAO.addBuffer(std::move(lightSourceVBO), lightSourceLayout);
+    lightSourceVAO.addBuffer(std::move(lightSourceEBO));
+
+    glm::vec3 lightSourceColourEmission = glm::vec3(1.0f, 1.0f, 1.0f);
+    glm::vec3 lightSourceColour = glm::vec3(1.0f, 1.0f, 1.0f);
+
+    // Texture texture_1(GL_TEXTURE_2D,
+    //                   {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
+    //                    TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
+    //                    TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
+    //                    TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
+    //                   "textures/container.jpg",
+    //                   GL_TEXTURE0);
 
     // box positions
     glm::vec3 cubePositions[] = {
@@ -131,6 +152,9 @@ int main()
         glm::vec3(1.5f, 2.0f, -2.5f),
         glm::vec3(1.5f, 0.2f, -1.5f),
         glm::vec3(-1.3f, 1.0f, -1.5f)};
+
+    // light source position
+    glm::vec3 lightSourcePosition = glm::vec3(-5.0f, -5.0f, 0.0f);
 
     // Setup Camera
     CameraParams cameraParams(glm::vec3(0.0f, 0.0f, 3.0f), 0.0f, 0.0f, 2.0f, 0.1f, 45.0f);
@@ -179,7 +203,7 @@ int main()
 
     // we only have to set these uniforms once!
     shader.use();
-    shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
+    // shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
 
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window.get()))
@@ -209,17 +233,25 @@ int main()
         shader.setUniform("view", 1, false, view);             // set the view matrix
         shader.setUniform("projection", 1, false, projection); // set the projection matrix
 
-        texture_1.bind();
+        // texture_1.bind();
 
-        vao.bind();
+        // bind and draw lightsource
+        lightSourceVAO.bind();
+        glm::mat4 lightSourceModel = glm::mat4(1.0f);
+        lightSourceModel = glm::translate(lightSourceModel, lightSourcePosition);
+        shader.setUniform("model", 1, false, lightSourceModel);
+        glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+
+        // bind and draw containers
+        rectVAO.bind();
         for (unsigned int i = 0; i < 10; i++)
         {
-            // model matrix
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
+            // model matrix for containers
+            glm::mat4 rectModel = glm::mat4(1.0f);
+            rectModel = glm::translate(rectModel, cubePositions[i]);
             float angle = 1.0f + 20.0f * i;
-            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            shader.setUniform("model", 1, false, model);
+            rectModel = glm::rotate(rectModel, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            shader.setUniform("model", 1, false, rectModel);
             glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
         }
 
