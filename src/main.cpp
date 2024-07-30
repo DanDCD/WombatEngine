@@ -94,7 +94,8 @@ int main()
     glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
 
     // Set Up Rendering
-    Shader shader("shaders/test_vertex_no_texture.vert", "shaders/test_fragment_no_texture.frag");
+    Shader rectShaderProgram("shaders/test_vertex_no_texture.vert", "shaders/test_fragment_no_texture.frag");
+    Shader lightSourceShaderProgram("shaders/test_vertex_no_texture.vert", "shaders/test_fragment_light_source.frag");
 
     // set up container model VAO
     VAO rectVAO = VAO();
@@ -202,8 +203,8 @@ int main()
     DeltaTracker deltaTracker;
 
     // we only have to set these uniforms once!
-    shader.use();
-    // shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
+    rectShaderProgram.use();
+    // rectShaderProgram.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
 
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window.get()))
@@ -229,20 +230,24 @@ int main()
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(45.0f), (float)SRC_WIDTH / (float)SRC_HEIGHT, 0.1f, 100.0f);
 
-        shader.use();
-        shader.setUniform("view", 1, false, view);             // set the view matrix
-        shader.setUniform("projection", 1, false, projection); // set the projection matrix
-
-        // texture_1.bind();
-
         // bind and draw lightsource
+        lightSourceShaderProgram.use();
+        lightSourceShaderProgram.setUniform("view", 1, false, view);
+        lightSourceShaderProgram.setUniform("projection", 1, false, projection);
+
         lightSourceVAO.bind();
+
         glm::mat4 lightSourceModel = glm::mat4(1.0f);
         lightSourceModel = glm::translate(lightSourceModel, lightSourcePosition);
-        shader.setUniform("model", 1, false, lightSourceModel);
+        lightSourceShaderProgram.setUniform("model", 1, false, lightSourceModel);
         glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 
         // bind and draw containers
+        // texture_1.bind();
+        rectShaderProgram.use();
+        rectShaderProgram.setUniform("view", 1, false, view);             // set the view matrix
+        rectShaderProgram.setUniform("projection", 1, false, projection); // set the projection matrix
+
         rectVAO.bind();
         for (unsigned int i = 0; i < 10; i++)
         {
@@ -251,7 +256,7 @@ int main()
             rectModel = glm::translate(rectModel, cubePositions[i]);
             float angle = 1.0f + 20.0f * i;
             rectModel = glm::rotate(rectModel, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            shader.setUniform("model", 1, false, rectModel);
+            rectShaderProgram.setUniform("model", 1, false, rectModel);
             glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
         }
 
