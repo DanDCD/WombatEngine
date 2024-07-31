@@ -205,6 +205,12 @@ int main()
     // we only have to set these uniforms once!
     rectShaderProgram.use();
     // rectShaderProgram.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
+    rectShaderProgram.setUniform("objectColor", rectColor);
+    rectShaderProgram.setUniform("lightColor", lightSourceColourEmission);
+
+    lightSourceShaderProgram.use();
+    lightSourceShaderProgram.setUniform("objectColor", lightSourceColour);
+
 
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window.get()))
