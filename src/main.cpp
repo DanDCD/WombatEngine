@@ -201,13 +201,9 @@ int main()
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(45.0f), (float)SRC_WIDTH / (float)SRC_HEIGHT, 0.1f, 100.0f);
 
-        // // bind and draw lightsource
-        // lightSourceShaderProgram.use();
-        // lightSourceShaderProgram.setUniform("view", 1, false, view);
-        // lightSourceShaderProgram.setUniform("projection", 1, false, projection);
 
         rectVAO.bind();
-
+        
         // render cube
         rectShaderProgram.use();
         glm::mat4 rectModel = glm::mat4(1.0f);
@@ -222,6 +218,7 @@ int main()
         // render light source
         lightSourceShaderProgram.use();
         glm::mat4 lightSourceModel = glm::mat4(1.0f);
+        // we do scale, rotate, translate, but because matrix operations are in order of right-to-left, we apply translate, rotate, scale
         lightSourceModel = glm::translate(lightSourceModel, lightSourcePosition);
         lightSourceModel = glm::scale(lightSourceModel, glm::vec3(0.2f));
         lightSourceShaderProgram.setUniform("model", 1, false, lightSourceModel);
@@ -229,37 +226,7 @@ int main()
         lightSourceShaderProgram.setUniform("projection", 1, false, projection);
         glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 
-        // glm::mat4 lightSourceModel = glm::mat4(1.0f);
-        // lightSourceModel = glm::scale(lightSourceModel, glm::vec3(0.2f));         // Scale first
-        // lightSourceModel = glm::translate(lightSourceModel, lightSourcePosition); // Then translate
-        // lightSourceShaderProgram.setUniform("model", 1, false, lightSourceModel);
-
-        // glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
-
-        // // bind and draw containers
-        // // texture_1.bind();
-        // rectShaderProgram.use();
-        // rectShaderProgram.setUniform("view", 1, false, view);             // set the view matrix
-        // rectShaderProgram.setUniform("projection", 1, false, projection); // set the projection matrix
-
-        // rectVAO.bind();
-        // for (unsigned int i = 0; i < 2; i++)
-        // {
-        //     // model matrix for containers
-        //     glm::mat4 rectModel = glm::mat4(1.0f);
-            
-        //     float angle = 1.0f + 20.0f * i;
-        //     rectModel = glm::scale(rectModel, glm::vec3(1.2f));
-        //     rectModel = glm::rotate(rectModel, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-        //     rectModel = glm::translate(rectModel, cubePositions[i]);
-            
-
-        //     // set dynamic uniforms
-        //     rectShaderProgram.setUniform("model", 1, false, rectModel);
-        //     rectShaderProgram.setUniform("normalModel", 1, true, glm::inverse(glm::transpose(glm::mat3(rectModel))));
-        //     glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
-        // }
-
+  
         // Rendering
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
