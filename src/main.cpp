@@ -94,20 +94,22 @@ int main()
     glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
 
     // Set Up Rendering
-    Shader rectShaderProgram("shaders/test_vertex_no_texture.vert", "shaders/test_fragment_no_texture.frag");
-    Shader lightSourceShaderProgram("shaders/test_vertex_no_texture.vert", "shaders/test_fragment_light_source.frag");
+    Shader rectShaderProgram("shaders/test_phong.vert", "shaders/test_phong.frag");
+    Shader lightSourceShaderProgram("shaders/test_phong.vert", "shaders/test_fragment_light_source.frag");
 
-    // set up container model VAO
+
+    // set up the rect VAO 
     VAO rectVAO = VAO();
 
     VBO rectVBO = VBO(GL_ARRAY_BUFFER);
-    rectVBO.assignData(VERT_DATA::vertices_no_tex_coord, sizeof(VERT_DATA::vertices_no_tex_coord), GL_STATIC_DRAW);
+    rectVBO.assignData(VERT_DATA::verts_with_normals, sizeof(VERT_DATA::verts_with_normals), GL_STATIC_DRAW);
 
     EBO rectEBO = EBO();
     rectEBO.assignData(VERT_DATA::indices, sizeof(VERT_DATA::indices), GL_STATIC_DRAW);
 
     VertexBufferLayout rectLayout = VertexBufferLayout();
     rectLayout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
+    rectLayout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // normals
     // layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture position
 
     rectVAO.addBuffer(std::move(rectVBO), rectLayout);
@@ -115,17 +117,19 @@ int main()
 
     glm::vec3 rectColor = glm::vec3(0.15f, 0.24f, 0.95f);
 
+
     // set up light source vao (note: we use same model as container right now)
     VAO lightSourceVAO = VAO();
 
     VBO lightSourceVBO = VBO(GL_ARRAY_BUFFER);
-    lightSourceVBO.assignData(VERT_DATA::vertices_no_tex_coord, sizeof(VERT_DATA::vertices_no_tex_coord), GL_STATIC_DRAW);
+    lightSourceVBO.assignData(VERT_DATA::verts_with_normals, sizeof(VERT_DATA::verts_with_normals), GL_STATIC_DRAW);
 
     EBO lightSourceEBO = EBO();
     lightSourceEBO.assignData(VERT_DATA::indices, sizeof(VERT_DATA::indices), GL_STATIC_DRAW);
 
     VertexBufferLayout lightSourceLayout = VertexBufferLayout();
     lightSourceLayout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
+    lightSourceLayout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // normals
 
     lightSourceVAO.addBuffer(std::move(lightSourceVBO), lightSourceLayout);
     lightSourceVAO.addBuffer(std::move(lightSourceEBO));
@@ -210,7 +214,6 @@ int main()
 
     lightSourceShaderProgram.use();
     lightSourceShaderProgram.setUniform("objectColor", lightSourceColour);
-
 
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window.get()))
