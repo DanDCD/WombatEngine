@@ -97,7 +97,6 @@ int main()
     Shader rectShaderProgram("shaders/test_phong.vert", "shaders/test_phong.frag");
     Shader lightSourceShaderProgram("shaders/test_phong.vert", "shaders/test_fragment_light_source.frag");
 
-
     // set up the rect VAO (will be used for both container and light source)
     VAO rectVAO = VAO();
 
@@ -119,21 +118,9 @@ int main()
     glm::vec3 lightSourceColourEmission = glm::vec3(1.0f, 1.0f, 1.0f);
     glm::vec3 lightSourceColour = glm::vec3(1.0f, 1.0f, 1.0f);
 
-    // box positions
-    glm::vec3 cubePositions[] = {
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(2.0f, 5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f, 3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f, 2.0f, -2.5f),
-        glm::vec3(1.5f, 0.2f, -1.5f),
-        glm::vec3(-1.3f, 1.0f, -1.5f)};
-
+    
     // light source position
-    glm::vec3 lightSourcePosition = glm::vec3(-5.0f, -5.0f, 0.0f);
+    glm::vec3 lightSourcePosition = glm::vec3(2.0f, 0.0f, 0.0f);
 
     // Setup Camera
     CameraParams cameraParams(glm::vec3(0.0f, 0.0f, 3.0f), 0.0f, 0.0f, 2.0f, 0.1f, 45.0f);
@@ -185,6 +172,7 @@ int main()
     // rectShaderProgram.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
     rectShaderProgram.setUniform("objectColor", rectColor);
     rectShaderProgram.setUniform("lightColor", lightSourceColourEmission);
+    rectShaderProgram.setUniform("lightPos", lightSourcePosition);
 
     lightSourceShaderProgram.use();
     lightSourceShaderProgram.setUniform("objectColor", lightSourceColour);
@@ -204,7 +192,7 @@ int main()
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        ImGui::ShowDemoWindow(); // Show demo window! :)
+        ImGui::ShowDemoWindow(); // Show demo window! :D
 
         // get view matrix
         glm::mat4 view = camera.getViewMatrix();
@@ -213,35 +201,64 @@ int main()
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(45.0f), (float)SRC_WIDTH / (float)SRC_HEIGHT, 0.1f, 100.0f);
 
-        // bind and draw lightsource
-        lightSourceShaderProgram.use();
-        lightSourceShaderProgram.setUniform("view", 1, false, view);
-        lightSourceShaderProgram.setUniform("projection", 1, false, projection);
+        // // bind and draw lightsource
+        // lightSourceShaderProgram.use();
+        // lightSourceShaderProgram.setUniform("view", 1, false, view);
+        // lightSourceShaderProgram.setUniform("projection", 1, false, projection);
 
         rectVAO.bind();
 
-        glm::mat4 lightSourceModel = glm::mat4(1.0f);
-        lightSourceModel = glm::translate(lightSourceModel, lightSourcePosition);
-        lightSourceShaderProgram.setUniform("model", 1, false, lightSourceModel);
+        // render cube
+        rectShaderProgram.use();
+        glm::mat4 rectModel = glm::mat4(1.0f);
+        rectModel = glm::rotate(rectModel, (float)glfwGetTime() * glm::radians(5.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+        rectShaderProgram.setUniform("model", 1, false, rectModel);
+        rectShaderProgram.setUniform("view", 1, false, view);
+        rectShaderProgram.setUniform("projection", 1, false, projection);
+        rectShaderProgram.setUniform("normalModel", 1, false, glm::inverse(glm::transpose(glm::mat3(rectModel))));
         glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 
-        // bind and draw containers
-        // texture_1.bind();
-        rectShaderProgram.use();
-        rectShaderProgram.setUniform("view", 1, false, view);             // set the view matrix
-        rectShaderProgram.setUniform("projection", 1, false, projection); // set the projection matrix
 
-        rectVAO.bind();
-        for (unsigned int i = 0; i < 10; i++)
-        {
-            // model matrix for containers
-            glm::mat4 rectModel = glm::mat4(1.0f);
-            rectModel = glm::translate(rectModel, cubePositions[i]);
-            float angle = 1.0f + 20.0f * i;
-            rectModel = glm::rotate(rectModel, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            rectShaderProgram.setUniform("model", 1, false, rectModel);
-            glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
-        }
+        // render light source
+        lightSourceShaderProgram.use();
+        glm::mat4 lightSourceModel = glm::mat4(1.0f);
+        lightSourceModel = glm::translate(lightSourceModel, lightSourcePosition);
+        lightSourceModel = glm::scale(lightSourceModel, glm::vec3(0.2f));
+        lightSourceShaderProgram.setUniform("model", 1, false, lightSourceModel);
+        lightSourceShaderProgram.setUniform("view", 1, false, view);
+        lightSourceShaderProgram.setUniform("projection", 1, false, projection);
+        glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+
+        // glm::mat4 lightSourceModel = glm::mat4(1.0f);
+        // lightSourceModel = glm::scale(lightSourceModel, glm::vec3(0.2f));         // Scale first
+        // lightSourceModel = glm::translate(lightSourceModel, lightSourcePosition); // Then translate
+        // lightSourceShaderProgram.setUniform("model", 1, false, lightSourceModel);
+
+        // glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+
+        // // bind and draw containers
+        // // texture_1.bind();
+        // rectShaderProgram.use();
+        // rectShaderProgram.setUniform("view", 1, false, view);             // set the view matrix
+        // rectShaderProgram.setUniform("projection", 1, false, projection); // set the projection matrix
+
+        // rectVAO.bind();
+        // for (unsigned int i = 0; i < 2; i++)
+        // {
+        //     // model matrix for containers
+        //     glm::mat4 rectModel = glm::mat4(1.0f);
+            
+        //     float angle = 1.0f + 20.0f * i;
+        //     rectModel = glm::scale(rectModel, glm::vec3(1.2f));
+        //     rectModel = glm::rotate(rectModel, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+        //     rectModel = glm::translate(rectModel, cubePositions[i]);
+            
+
+        //     // set dynamic uniforms
+        //     rectShaderProgram.setUniform("model", 1, false, rectModel);
+        //     rectShaderProgram.setUniform("normalModel", 1, true, glm::inverse(glm::transpose(glm::mat3(rectModel))));
+        //     glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+        // }
 
         // Rendering
         ImGui::Render();

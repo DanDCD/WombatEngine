@@ -74,6 +74,11 @@ void Shader::setUniform(const std::string &uniform_name, unsigned int count, boo
     glUniformMatrix4fv(glGetUniformLocation(program_ID, uniform_name.c_str()), count, transpose, glm::value_ptr(value));
 }
 
+void Shader::setUniform(const std::string &uniform_name, unsigned int count, bool transpose, const glm::mat3 value) const
+{
+    glUniformMatrix3fv(glGetUniformLocation(program_ID, uniform_name.c_str()), count, transpose, glm::value_ptr(value));
+}
+
 void Shader::setUniform(const std::string &uniform_name, const glm::vec3 value) const
 {
     glUniform3f(glGetUniformLocation(program_ID, uniform_name.c_str()), value.x, value.y, value.z);
