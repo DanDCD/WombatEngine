@@ -212,6 +212,7 @@ int main()
         rectShaderProgram.setUniform("view", 1, false, view);
         rectShaderProgram.setUniform("projection", 1, false, projection);
         rectShaderProgram.setUniform("normalModel", 1, false, glm::inverse(glm::transpose(glm::mat3(rectModel))));
+        rectShaderProgram.setUniform("viewPos", camera.getPosition());
         glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 
 

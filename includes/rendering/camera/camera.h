@@ -79,6 +79,9 @@ public:
 
     void processMouseScroll(float yoffset);
 
+    glm::vec3 getPosition() const;
+
+
 private:
     CameraParams cameraParams;
 };

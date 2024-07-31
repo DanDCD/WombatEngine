@@ -8,6 +8,7 @@ out vec4 FragColor;
 uniform vec3 objectColor; // the colour of this object
 uniform vec3 lightColor; // the color of the light
 uniform vec3 lightPos; // the position of the light source
+uniform vec3 viewPos; // the world space coords of the viewer (i.e active camera)
 
 
 void main()
@@ -28,8 +29,19 @@ void main()
 
     vec3 diffuse = diff * lightColor; // the diffuse light color
 
+
+    // specular lighting
+    float specularStrength = 0.5;
+    int shininess = 32;
+    vec3 fragToViewDir = normalize(viewPos - FragPos);
+    vec3 lightToFragPosDir = -fragPosToLightDir;
+    vec3 reflectDir = reflect(lightToFragPosDir, norm);
+    float spec = pow(max(dot(fragToViewDir, reflectDir), 0.0), shininess);
+    vec3 specular = specularStrength * spec * lightColor;
+
+
     // result color
-    vec3 result = (ambient + diffuse) * objectColor; // the result of the ambient light
+    vec3 result = (ambient + diffuse + specular) * objectColor; // the result of the ambient light
     FragColor = vec4(result, 1.0);
     // debug normals
     // FragColor = vec4(norm, 1.0);
