@@ -98,7 +98,7 @@ int main()
     Shader lightSourceShaderProgram("shaders/test_phong.vert", "shaders/test_fragment_light_source.frag");
 
 
-    // set up the rect VAO 
+    // set up the rect VAO (will be used for both container and light source)
     VAO rectVAO = VAO();
 
     VBO rectVBO = VBO(GL_ARRAY_BUFFER);
@@ -116,34 +116,8 @@ int main()
     rectVAO.addBuffer(std::move(rectEBO));
 
     glm::vec3 rectColor = glm::vec3(0.15f, 0.24f, 0.95f);
-
-
-    // set up light source vao (note: we use same model as container right now)
-    VAO lightSourceVAO = VAO();
-
-    VBO lightSourceVBO = VBO(GL_ARRAY_BUFFER);
-    lightSourceVBO.assignData(VERT_DATA::verts_with_normals, sizeof(VERT_DATA::verts_with_normals), GL_STATIC_DRAW);
-
-    EBO lightSourceEBO = EBO();
-    lightSourceEBO.assignData(VERT_DATA::indices, sizeof(VERT_DATA::indices), GL_STATIC_DRAW);
-
-    VertexBufferLayout lightSourceLayout = VertexBufferLayout();
-    lightSourceLayout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
-    lightSourceLayout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // normals
-
-    lightSourceVAO.addBuffer(std::move(lightSourceVBO), lightSourceLayout);
-    lightSourceVAO.addBuffer(std::move(lightSourceEBO));
-
     glm::vec3 lightSourceColourEmission = glm::vec3(1.0f, 1.0f, 1.0f);
     glm::vec3 lightSourceColour = glm::vec3(1.0f, 1.0f, 1.0f);
-
-    // Texture texture_1(GL_TEXTURE_2D,
-    //                   {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
-    //                    TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
-    //                    TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
-    //                    TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
-    //                   "textures/container.jpg",
-    //                   GL_TEXTURE0);
 
     // box positions
     glm::vec3 cubePositions[] = {
@@ -244,7 +218,7 @@ int main()
         lightSourceShaderProgram.setUniform("view", 1, false, view);
         lightSourceShaderProgram.setUniform("projection", 1, false, projection);
 
-        lightSourceVAO.bind();
+        rectVAO.bind();
 
         glm::mat4 lightSourceModel = glm::mat4(1.0f);
         lightSourceModel = glm::translate(lightSourceModel, lightSourcePosition);
