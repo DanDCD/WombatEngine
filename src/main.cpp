@@ -118,7 +118,6 @@ int main()
     glm::vec3 lightSourceColourEmission = glm::vec3(1.0f, 1.0f, 1.0f);
     glm::vec3 lightSourceColour = glm::vec3(1.0f, 1.0f, 1.0f);
 
-    
     // light source position
     glm::vec3 lightSourcePosition = glm::vec3(2.0f, 0.0f, 0.0f);
 
@@ -170,9 +169,14 @@ int main()
     // we only have to set these uniforms once!
     rectShaderProgram.use();
     // rectShaderProgram.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
-    rectShaderProgram.setUniform("objectColor", rectColor);
-    rectShaderProgram.setUniform("lightColor", lightSourceColourEmission);
-    rectShaderProgram.setUniform("lightPos", lightSourcePosition);
+    rectShaderProgram.setUniform("material.ambientColor", glm::vec3(1.0f, 0.5f, 0.31f));
+    rectShaderProgram.setUniform("material.diffuseColor", glm::vec3(1.0f, 0.5f, 0.31f));
+    rectShaderProgram.setUniform("material.specularColor", glm::vec3(0.5f, 0.5f, 0.5f));
+    rectShaderProgram.setUniform("material.shininess", 32.0f);
+    rectShaderProgram.setUniform("light.position", lightSourcePosition);
+    rectShaderProgram.setUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    rectShaderProgram.setUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+    rectShaderProgram.setUniform("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
     lightSourceShaderProgram.use();
     lightSourceShaderProgram.setUniform("objectColor", lightSourceColour);
@@ -201,9 +205,8 @@ int main()
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(45.0f), (float)SRC_WIDTH / (float)SRC_HEIGHT, 0.1f, 100.0f);
 
-
         rectVAO.bind();
-        
+
         // render cube
         rectShaderProgram.use();
         glm::mat4 rectModel = glm::mat4(1.0f);
@@ -214,7 +217,6 @@ int main()
         rectShaderProgram.setUniform("normalModel", 1, false, glm::inverse(glm::transpose(glm::mat3(rectModel))));
         rectShaderProgram.setUniform("viewPos", camera.getPosition());
         glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
-
 
         // render light source
         lightSourceShaderProgram.use();
@@ -227,7 +229,6 @@ int main()
         lightSourceShaderProgram.setUniform("projection", 1, false, projection);
         glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 
-  
         // Rendering
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
