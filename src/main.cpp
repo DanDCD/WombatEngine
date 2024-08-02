@@ -93,29 +93,36 @@ int main()
     // assign our resizing function as the resizing window callback for our window
     glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
 
+    // load diffuse map
+    Texture cube_diffuse_texture(GL_TEXTURE_2D,
+                                 {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
+                                  TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
+                                  TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
+                                  TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
+                                 "textures/container_diffuse.png",
+                                 GL_TEXTURE0); // we associate this with texture unit 0
+
     // Set Up Rendering
-    Shader rectShaderProgram("shaders/test_phong.vert", "shaders/test_phong.frag");
+    Shader cubeShaderProgram("shaders/test_phong.vert", "shaders/test_phong.frag");
     Shader lightSourceShaderProgram("shaders/test_phong.vert", "shaders/test_fragment_light_source.frag");
 
-    // set up the rect VAO (will be used for both container and light source)
-    VAO rectVAO = VAO();
+    // set up the cube VAO (will be used for both container and light source)
+    VAO cubeVAO = VAO();
 
-    VBO rectVBO = VBO(GL_ARRAY_BUFFER);
-    rectVBO.assignData(VERT_DATA::verts_with_normals, sizeof(VERT_DATA::verts_with_normals), GL_STATIC_DRAW);
+    VBO cubeVBO = VBO(GL_ARRAY_BUFFER);
+    cubeVBO.assignData(VERT_DATA::verts_with_normals_and_texcoords, sizeof(VERT_DATA::verts_with_normals_and_texcoords), GL_STATIC_DRAW);
 
-    EBO rectEBO = EBO();
-    rectEBO.assignData(VERT_DATA::indices, sizeof(VERT_DATA::indices), GL_STATIC_DRAW);
+    EBO cubeEBO = EBO();
+    cubeEBO.assignData(VERT_DATA::indices, sizeof(VERT_DATA::indices), GL_STATIC_DRAW);
 
-    VertexBufferLayout rectLayout = VertexBufferLayout();
-    rectLayout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
-    rectLayout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // normals
-    // layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture position
+    VertexBufferLayout cubeLayout = VertexBufferLayout();
+    cubeLayout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
+    cubeLayout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // normals
+    cubeLayout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture position
 
-    rectVAO.addBuffer(std::move(rectVBO), rectLayout);
-    rectVAO.addBuffer(std::move(rectEBO));
+    cubeVAO.addBuffer(std::move(cubeVBO), cubeLayout);
+    cubeVAO.addBuffer(std::move(cubeEBO));
 
-    glm::vec3 rectColor = glm::vec3(0.15f, 0.24f, 0.95f);
-    glm::vec3 lightSourceColourEmission = glm::vec3(1.0f, 1.0f, 1.0f);
     glm::vec3 lightSourceColour = glm::vec3(1.0f, 1.0f, 1.0f);
 
     // light source position
@@ -167,16 +174,14 @@ int main()
     DeltaTracker deltaTracker;
 
     // we only have to set these uniforms once!
-    rectShaderProgram.use();
-    // rectShaderProgram.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
-    rectShaderProgram.setUniform("material.ambientColor", glm::vec3(1.0f, 0.5f, 0.31f));
-    rectShaderProgram.setUniform("material.diffuseColor", glm::vec3(1.0f, 0.5f, 0.31f));
-    rectShaderProgram.setUniform("material.specularColor", glm::vec3(0.5f, 0.5f, 0.5f));
-    rectShaderProgram.setUniform("material.shininess", 32.0f);
-    rectShaderProgram.setUniform("light.position", lightSourcePosition);
-    rectShaderProgram.setUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-    rectShaderProgram.setUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-    rectShaderProgram.setUniform("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    cubeShaderProgram.use();
+    cubeShaderProgram.setUniform("material.diffuseMap", 0); // texture1 is in GL_TEXTURE0
+    cubeShaderProgram.setUniform("material.specularColor", glm::vec3(0.5f, 0.5f, 0.5f));
+    cubeShaderProgram.setUniform("material.shininess", 32.0f);
+    cubeShaderProgram.setUniform("light.position", lightSourcePosition);
+    cubeShaderProgram.setUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    cubeShaderProgram.setUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+    cubeShaderProgram.setUniform("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
     lightSourceShaderProgram.use();
     lightSourceShaderProgram.setUniform("objectColor", lightSourceColour);
@@ -205,17 +210,20 @@ int main()
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(45.0f), (float)SRC_WIDTH / (float)SRC_HEIGHT, 0.1f, 100.0f);
 
-        rectVAO.bind();
+        cubeVAO.bind();
 
         // render cube
-        rectShaderProgram.use();
-        glm::mat4 rectModel = glm::mat4(1.0f);
-        rectModel = glm::rotate(rectModel, (float)glfwGetTime() * glm::radians(5.0f), glm::vec3(1.0f, 0.3f, 0.5f));
-        rectShaderProgram.setUniform("model", 1, false, rectModel);
-        rectShaderProgram.setUniform("view", 1, false, view);
-        rectShaderProgram.setUniform("projection", 1, false, projection);
-        rectShaderProgram.setUniform("normalModel", 1, false, glm::inverse(glm::transpose(glm::mat3(rectModel))));
-        rectShaderProgram.setUniform("viewPos", camera.getPosition());
+        cubeShaderProgram.use();
+        glm::mat4 cubeModel = glm::mat4(1.0f);
+        cubeModel = glm::rotate(cubeModel, (float)glfwGetTime() * glm::radians(5.0f), glm::vec3(1.0f, 0.3f, 0.5f));
+        cubeShaderProgram.setUniform("model", 1, false, cubeModel);
+        cubeShaderProgram.setUniform("view", 1, false, view);
+        cubeShaderProgram.setUniform("projection", 1, false, projection);
+        cubeShaderProgram.setUniform("normalModel", 1, false, glm::inverse(glm::transpose(glm::mat3(cubeModel))));
+        cubeShaderProgram.setUniform("viewPos", camera.getPosition());
+
+        cube_diffuse_texture.bind();
+
         glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 
         // render light source
