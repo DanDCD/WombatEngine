@@ -11,8 +11,8 @@ struct Light {
 
 struct Material
 {
-    sampler2D diffuseMap; 
-    vec3 specularColor;
+    sampler2D diffuseMap;
+    sampler2D specularMap;
     float shininess;
 };
 
@@ -43,7 +43,7 @@ void main()
     vec3 lightToFragPosDir = -fragPosToLightDir;
     vec3 reflectDir = reflect(lightToFragPosDir, norm);
     float spec = pow(max(dot(fragToViewDir, reflectDir), 0.0), material.shininess); // spec factor is how close the angle of frag to view is to the angle of reflection from light
-    vec3 specular = spec * light.specular * material.specularColor;
+    vec3 specular = spec * light.specular * vec3(texture(material.specularMap, Texcoord));
 
 
     // result color

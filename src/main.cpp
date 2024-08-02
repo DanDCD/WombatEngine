@@ -102,6 +102,15 @@ int main()
                                  "textures/container_diffuse.png",
                                  GL_TEXTURE0); // we associate this with texture unit 0
 
+    // load specular map
+    Texture cube_specular_texture(GL_TEXTURE_2D,
+                                 {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
+                                  TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
+                                  TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
+                                  TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
+                                 "textures/container_specular.png",
+                                 GL_TEXTURE1); // we associate this with texture unit 1
+
     // Set Up Rendering
     Shader cubeShaderProgram("shaders/test_phong.vert", "shaders/test_phong.frag");
     Shader lightSourceShaderProgram("shaders/test_phong.vert", "shaders/test_fragment_light_source.frag");
@@ -175,9 +184,10 @@ int main()
 
     // we only have to set these uniforms once!
     cubeShaderProgram.use();
-    cubeShaderProgram.setUniform("material.diffuseMap", 0); // texture1 is in GL_TEXTURE0
-    cubeShaderProgram.setUniform("material.specularColor", glm::vec3(0.5f, 0.5f, 0.5f));
-    cubeShaderProgram.setUniform("material.shininess", 32.0f);
+    cubeShaderProgram.setUniform("material.diffuseMap", 0); // diffuse map is in GL_TEXTURE0
+    cubeShaderProgram.setUniform("material.specularMap", 1); // specular map is in GL_TEXTURE1
+    cubeShaderProgram.setUniform("material.shininess", 64.0f);
+
     cubeShaderProgram.setUniform("light.position", lightSourcePosition);
     cubeShaderProgram.setUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
     cubeShaderProgram.setUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
@@ -223,6 +233,7 @@ int main()
         cubeShaderProgram.setUniform("viewPos", camera.getPosition());
 
         cube_diffuse_texture.bind();
+        cube_specular_texture.bind();
 
         glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 
