@@ -114,7 +114,7 @@ unsigned int Shader::compileShader(const char *shader_code, GLenum shader_type)
 {
     // create and compile shader
     unsigned int shader_id;
-    shader_id = glCreateShader(shader_type);          // init shader object in OpenGL
+    shader_id = glCreateShader(shader_type); // init shader object in OpenGL
     glShaderSource(shader_id, 1, &shader_code, NULL); // provide object with source code
     glCompileShader(shader_id);
     // check success
@@ -123,7 +123,7 @@ unsigned int Shader::compileShader(const char *shader_code, GLenum shader_type)
     glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
     if (!success)
     {
-        glGetProgramInfoLog(shader_id, 512, NULL, infoLog);
+        glGetShaderInfoLog(shader_id, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::COMPILATION_FAILED\n"
                   << infoLog << std::endl;
     }
