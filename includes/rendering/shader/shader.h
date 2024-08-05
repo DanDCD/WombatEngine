@@ -53,7 +53,22 @@ public:
     /// @param value
     void setUniform(const std::string &uniform_name, float value) const;
 
+    /// @brief set the value of a uniform in the shader program
+    /// @param uniform_name
+    /// @param value
     void setUniform(const std::string &uniform_name, unsigned int count, bool transpose, const glm::mat4 value) const;
+
+    /// @brief set the value of a uniform in the shader program
+    /// @param uniform_name
+    /// @param value
+    void setUniform(const std::string &uniform_name, unsigned int count, bool transpose, const glm::mat3 value) const;
+
+    /// @brief
+    /// @param uniform_name
+    /// @param count
+    /// @param transpose
+    /// @param value
+    void setUniform(const std::string &uniform_name, const glm::vec3 value) const;
 
 private:
     /// @brief load a shader file and return its source code

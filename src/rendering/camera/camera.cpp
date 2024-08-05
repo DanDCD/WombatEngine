@@ -86,3 +86,7 @@ void Camera::processMouseScroll(float yoffset)
     cameraParams.zoom = std::max(cameraParams.zoom, 1.0f);
     cameraParams.pitch = std::min(cameraParams.pitch, 45.0f);
 }
+
+glm::vec3 Camera::getPosition() const {
+    return cameraParams.cameraPos;
+}
