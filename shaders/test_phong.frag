@@ -18,6 +18,7 @@ struct PointLight {
     float linear; // the linear factor in attenuation
     float quadratic; // the quadratic factor in attenuation
 
+    // values used for attenuation
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -41,11 +42,11 @@ uniform Material material; // the material of the object
 
 uniform DirectionalLight dirLight; // the directional light data for this scene
 
-#define NR_POINT_LIGHTS 4 // the number of point lights
+#define NR_POINT_LIGHTS 1 // the number of point lights
 uniform PointLight pointLights[NR_POINT_LIGHTS]; // the uniform for the point lights data
 
 
-
+// calculate phong lighting for a directional light and return resulting RGB for frag
 vec3 CalculateDirectionalLight(DirectionalLight dirLight, vec3 normal, vec3 fragToViewDir)
 {
     // calculate normalised light directions (both forwards and reverse)
@@ -70,6 +71,7 @@ vec3 CalculateDirectionalLight(DirectionalLight dirLight, vec3 normal, vec3 frag
     return (ambient + diffuse + specular);
 }
 
+// calculate phong lighting for a point light and return resulting RGB for frag
 vec3 CalculatePointLight(PointLight pointLight, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     // calculate normalised directions between this frag and the lightsource

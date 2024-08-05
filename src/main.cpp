@@ -104,12 +104,12 @@ int main()
 
     // load specular map
     Texture cube_specular_texture(GL_TEXTURE_2D,
-                                 {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
-                                  TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
-                                  TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
-                                  TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
-                                 "textures/container_specular.png",
-                                 GL_TEXTURE1); // we associate this with texture unit 1
+                                  {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
+                                   TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
+                                   TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
+                                   TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
+                                  "textures/container_specular.png",
+                                  GL_TEXTURE1); // we associate this with texture unit 1
 
     // Set Up Rendering
     Shader cubeShaderProgram("shaders/test_phong.vert", "shaders/test_phong.frag");
@@ -184,14 +184,22 @@ int main()
 
     // we only have to set these uniforms once!
     cubeShaderProgram.use();
-    cubeShaderProgram.setUniform("material.diffuseMap", 0); // diffuse map is in GL_TEXTURE0
+    cubeShaderProgram.setUniform("material.diffuseMap", 0);  // diffuse map is in GL_TEXTURE0
     cubeShaderProgram.setUniform("material.specularMap", 1); // specular map is in GL_TEXTURE1
     cubeShaderProgram.setUniform("material.shininess", 64.0f);
-
-    cubeShaderProgram.setUniform("light.position", lightSourcePosition);
-    cubeShaderProgram.setUniform("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-    cubeShaderProgram.setUniform("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-    cubeShaderProgram.setUniform("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    // setup directional light
+    cubeShaderProgram.setUniform("dirLight.direction", glm::vec3(0.1f, -1.0f, 0.1f));
+    cubeShaderProgram.setUniform("dirLight.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    cubeShaderProgram.setUniform("dirLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+    cubeShaderProgram.setUniform("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    // seup point light(s)
+    cubeShaderProgram.setUniform("pointLights[0].position", glm::vec3(lightSourcePosition));
+    cubeShaderProgram.setUniform("pointLights[0].constant", 1.0f);
+    cubeShaderProgram.setUniform("pointLights[0].linear", 0.09f);
+    cubeShaderProgram.setUniform("pointLights[0].quadratic", 0.032f);
+    cubeShaderProgram.setUniform("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+    cubeShaderProgram.setUniform("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+    cubeShaderProgram.setUniform("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
     lightSourceShaderProgram.use();
     lightSourceShaderProgram.setUniform("objectColor", lightSourceColour);
