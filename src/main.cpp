@@ -91,43 +91,6 @@ int main()
     // test: load model
     Model modelObj("models/backpack/backpack.obj");
 
-
-    // VAO vao = VAO();
-
-    // VBO rectVBO = VBO(GL_ARRAY_BUFFER);
-    // rectVBO.assignData(VERT_DATA::vertices, sizeof(VERT_DATA::vertices), GL_STATIC_DRAW);
-
-    // EBO rectEBO = EBO();
-    // rectEBO.assignData(VERT_DATA::indices, sizeof(VERT_DATA::indices), GL_STATIC_DRAW);
-
-    // VertexBufferLayout layout = VertexBufferLayout();
-    // layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // vertex local position
-    // layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture position
-
-    // vao.addBuffer(std::move(rectVBO), layout);
-    // vao.addBuffer(std::move(rectEBO));
-
-    // Texture texture_1(GL_TEXTURE_2D,
-    //                   {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
-    //                    TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
-    //                    TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
-    //                    TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
-    //                   "textures/container.jpg",
-    //                   GL_TEXTURE0);
-
-    // // box positions
-    // glm::vec3 cubePositions[] = {
-    //     glm::vec3(0.0f, 0.0f, 0.0f),
-    //     glm::vec3(2.0f, 5.0f, -15.0f),
-    //     glm::vec3(-1.5f, -2.2f, -2.5f),
-    //     glm::vec3(-3.8f, -2.0f, -12.3f),
-    //     glm::vec3(2.4f, -0.4f, -3.5f),
-    //     glm::vec3(-1.7f, 3.0f, -7.5f),
-    //     glm::vec3(1.3f, -2.0f, -2.5f),
-    //     glm::vec3(1.5f, 2.0f, -2.5f),
-    //     glm::vec3(1.5f, 0.2f, -1.5f),
-    //     glm::vec3(-1.3f, 1.0f, -1.5f)};
-
     // Setup Camera
     CameraParams cameraParams(glm::vec3(0.0f, 0.0f, 3.0f), 0.0f, 0.0f, 2.0f, 0.1f, 45.0f);
     Camera camera = Camera(cameraParams);
@@ -173,10 +136,6 @@ int main()
 
     DeltaTracker deltaTracker;
 
-    // we only have to set these uniforms once!
-    shader.use();
-    shader.setUniform("texture_1", 0); // texture1 is in GL_TEXTURE0
-
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window.get()))
     {
@@ -213,19 +172,6 @@ int main()
 
         checkGLError("BEFORE MODEL DRAW");
         modelObj.draw(shader);
-        // texture_1.bind();
-
-        // vao.bind();
-        // for (unsigned int i = 0; i < 10; i++)
-        // {
-        //     // model matrix
-        //     glm::mat4 model = glm::mat4(1.0f);
-        //     model = glm::translate(model, cubePositions[i]);
-        //     float angle = 1.0f + 20.0f * i;
-        //     model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-        //     shader.setUniform("model", 1, false, model);
-        //     glDrawElements(GL_TRIANGLES, sizeof(VERT_DATA::indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
-        // }
 
         // Rendering
         ImGui::Render();
