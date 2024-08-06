@@ -3,18 +3,17 @@
 #include <string>
 #include "rendering/log/check_gl.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Mesh::Texture> textures)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
 {
     this->vertices = vertices;
     this->indices = indices;
-    this->textures = textures;
+    this->textures = std::move(textures);
 
     setupMesh();
 }
 
 void Mesh::setupMesh()
 {
-    // TODO: use classes
     VAO vao = VAO();
 
     VBO vbo = VBO(GL_ARRAY_BUFFER);
@@ -36,8 +35,6 @@ void Mesh::setupMesh()
 
 void Mesh::draw(Shader &shader)
 {
-    // BUG! vao has no ebo or vbo here? some kind of lifetime problem
     vao.bind();
-    // checkGLError("Mesh bound");
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }

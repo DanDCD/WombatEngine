@@ -84,35 +84,19 @@ void Texture::bind()
 
 void Texture::assignTexture(const std::string &texture_path)
 {
-    auto has_extension = [](const std::string &file_path, const std::string &extension) -> bool
-    {
-        return file_path.compare(file_path.length() - extension.length(), extension.length(), extension) == 0;
-    };
-
-    const std::string jpg_trail = ".jpg";
-    const std::string png_trail = ".png";
-
-    // determine underlying format of texture file
-    GLenum format;
-    if (has_extension(texture_path, jpg_trail)) // for jpgs we use rgb
-        format = GL_RGB;
-
-    else if (has_extension(texture_path, png_trail)) // for pngs we need rgba
-        format = GL_RGBA;
-
-    else
-    {
-        std::cout << "ERROR::TEXTURE::INVALID_FILE_FORMAT_FOR_TEXTURE" << std::endl;
-        return;
-    }
-
     // load texture
     int width, height, nrChannels;
     unsigned char *texture_data = stbi_load(texture_path.c_str(), &width, &height, &nrChannels, 0);
-
-    // apply loaded texture data to OpenGL texture object
     if (texture_data)
     {
+        // determine underlying format of texture file
+        GLenum format;
+        if (nrChannels == 1)
+            format = GL_RED;
+        if (nrChannels == 3)
+            format = GL_RGB;
+        if (nrChannels == 4)
+            format = GL_RGBA;
         // bind the texture (should already be bound but just in case)
         glBindTexture(this->textureTargetType, this->texture_ID);
         // bind texture data to the currently bound texture object
