@@ -28,6 +28,7 @@
 #include "rendering/assimp/mesh.h"
 #include "rendering/assimp/model.h"
 #include "rendering/log/check_gl.h"
+#include "rendering/texture/texture_manager.h"
 
 // A callback function to be called whenever the window is resized
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
