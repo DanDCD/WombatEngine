@@ -6,6 +6,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "rendering/texture/texture.h"
+#include "rendering/texture/texture_manager.h"
 
 class Model
 {

@@ -79,16 +79,6 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
             vec.x = mesh->mTextureCoords[0][i].x;
             vec.y = mesh->mTextureCoords[0][i].y;
             vertex.texture_coords = vec;
-            // tangent
-            // vector.x = mesh->mTangents[i].x;
-            // vector.y = mesh->mTangents[i].y;
-            // vector.z = mesh->mTangents[i].z;
-            // vertex.Tangent = vector;
-            // bitangent
-            // vector.x = mesh->mBitangents[i].x;
-            // vector.y = mesh->mBitangents[i].y;
-            // vector.z = mesh->mBitangents[i].z;
-            // vertex.Bitangent = vector;
         }
         else
             vertex.texture_coords = glm::vec2(0.0f, 0.0f);
@@ -133,14 +123,18 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
         fullPath+=textureName.C_Str();
 
         // load the texture into a wrapper and add to return list
-        Texture texture(GL_TEXTURE_2D,
-                        {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
-                         TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
-                         TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
-                         TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
-                        fullPath,
-                        GL_TEXTURE0 + i); // we associate this with texture unit i
-        textures.push_back(std::move(texture));
+        // Texture texture(GL_TEXTURE_2D,
+        //                 {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
+        //                  TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
+        //                  TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
+        //                  TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
+        //                 fullPath,
+        //                 GL_TEXTURE0 + i); // we associate this with texture unit i
+
+        TextureManager::loadNewTexture(fullPath, i);
+
+
+        // textures.push_back(std::move(texture));
     }
     return std::move(textures);
 }
