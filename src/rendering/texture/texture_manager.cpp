@@ -1,6 +1,6 @@
 #include "rendering/texture/texture_manager.h"
 
-TextureInfo::TextureInfo(const std::string file_path, const std::weak_ptr<Texture> texture)
+TextureInfo::TextureInfo(std::string file_path, std::weak_ptr<Texture> texture)
     : file_path(file_path), texture(texture)
 {
 }

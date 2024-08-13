@@ -10,9 +10,9 @@
 struct TextureInfo
 {
 public:
-    TextureInfo(const std::string file_path, const std::weak_ptr<Texture> texture);
-    const std::string file_path;
-    const std::weak_ptr<Texture> texture;
+    TextureInfo(std::string file_path, std::weak_ptr<Texture> texture);
+    std::string file_path;
+    std::weak_ptr<Texture> texture;
 };
 
 class TextureManager

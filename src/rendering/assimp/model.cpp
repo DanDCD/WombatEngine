@@ -50,7 +50,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Texture> textures;
+    std::vector<TextureInfo> textures;
 
     // populate vertices from the vertices of the mesh
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -98,18 +98,18 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex]; // get material from assimp scene
 
         // load the different texture types and add them to the textures list (note: we have to use move iterators as Texture has deleted copying)
-        std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        std::vector<TextureInfo> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
         textures.insert(textures.end(), std::make_move_iterator(diffuseMaps.begin()), std::make_move_iterator(diffuseMaps.end()));
 
-        std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        std::vector<TextureInfo> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), std::make_move_iterator(specularMaps.begin()), std::make_move_iterator(specularMaps.end()));
     }
-    return Mesh(vertices, indices, std::move(textures));
+    return Mesh(vertices, indices, textures);
 }
 
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
+std::vector<TextureInfo> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
 {
-    std::vector<Texture> textures;
+    std::vector<TextureInfo> textures;
     unsigned int numTexturesInMat = mat->GetTextureCount(type);
     for (unsigned int i = 0; i < numTexturesInMat; i++)
     {
@@ -122,19 +122,8 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
         fullPath+="/";
         fullPath+=textureName.C_Str();
 
-        // load the texture into a wrapper and add to return list
-        // Texture texture(GL_TEXTURE_2D,
-        //                 {TextureParam(GL_TEXTURE_WRAP_S, GL_REPEAT),
-        //                  TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
-        //                  TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
-        //                  TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
-        //                 fullPath,
-        //                 GL_TEXTURE0 + i); // we associate this with texture unit i
-
-        TextureManager::loadNewTexture(fullPath, i);
-
-
-        // textures.push_back(std::move(texture));
+        auto texture_info = TextureManager::loadNewTexture(fullPath, i);
+        textures.push_back(texture_info);
     }
-    return std::move(textures);
+    return textures;
 }

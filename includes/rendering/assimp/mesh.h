@@ -7,6 +7,7 @@
 #include "rendering/buffer/vbo/vbo.h"
 #include "rendering/buffer/ebo/ebo.h"
 #include "rendering/texture/texture.h"
+#include "rendering/texture/texture_manager.h"
 
 class Mesh
 {
@@ -15,14 +16,13 @@ public:
     /// @param vertices
     /// @param indices
     /// @param textures
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureInfo> textures);
 
     /// @brief
     /// @param shader
     void draw(Shader &shader);
 
 private:
-
     void setupMesh();
 
     /// @brief
@@ -32,7 +32,7 @@ private:
     std::vector<unsigned int> indices;
 
     /// @brief
-    std::vector<Texture> textures;
+    std::vector<TextureInfo> textures;
 
     VAO vao;
 };

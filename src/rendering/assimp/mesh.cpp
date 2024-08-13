@@ -3,11 +3,11 @@
 #include <string>
 #include "rendering/log/check_gl.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureInfo> textures)
 {
     this->vertices = vertices;
     this->indices = indices;
-    this->textures = std::move(textures);
+    this->textures = textures;
 
     setupMesh();
 }
@@ -36,5 +36,12 @@ void Mesh::setupMesh()
 void Mesh::draw(Shader &shader)
 {
     vao.bind();
+
+    unsigned int num_diffuse, num_specular; // the current number of diffuse/specular shaders processed by this mesh
+    for(auto &textureInfo : textures)
+    {
+        int x;
+    }
+
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }
