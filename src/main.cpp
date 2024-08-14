@@ -30,6 +30,7 @@
 #include "rendering/log/check_gl.h"
 #include "rendering/texture/texture_manager.h"
 #include "utils/logging/logging.h"
+#include "utils/text_reading/text_reading.h"
 
 // A callback function to be called whenever the window is resized
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
@@ -40,7 +41,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 int main()
 {
     Logging::set_minimum_priority(Logging::LOG_PRIORITY::MEDIUM);
-    LOG("\n" + welcome_message + "\nWelcome to the Wombat Game Engine!\nCheck out the repo here: https://github.com/DanDCD/WombatEngine", Logging::LOG_TYPE::INFO, Logging::LOG_PRIORITY::HIGH);
+    LOG("\n" + readFile("text/wombat_screen.txt") + "\nWelcome to the Wombat Game Engine!\nCheck out the repo here: https://github.com/DanDCD/WombatEngine \n", Logging::LOG_TYPE::INFO, Logging::LOG_PRIORITY::HIGH);
 
     // set up GLFW
     glfwInit();

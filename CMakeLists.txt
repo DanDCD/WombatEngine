@@ -96,6 +96,11 @@ add_custom_command(TARGET threedimsim POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_SOURCE_DIR}/textures" $<TARGET_FILE_DIR:threedimsim>/textures)
 
+# Custom command to copy text directory
+add_custom_command(TARGET threedimsim POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_SOURCE_DIR}/text" $<TARGET_FILE_DIR:threedimsim>/text)
+
 # Custom command to copy models directory
 add_custom_command(TARGET threedimsim POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
