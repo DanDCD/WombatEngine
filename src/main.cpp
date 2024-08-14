@@ -29,6 +29,7 @@
 #include "rendering/assimp/model.h"
 #include "rendering/log/check_gl.h"
 #include "rendering/texture/texture_manager.h"
+#include "utils/logging/logging.h"
 
 // A callback function to be called whenever the window is resized
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
@@ -38,6 +39,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 int main()
 {
+    LOG("Hello World", Logging::LOG_TYPE::INFO);
 
     // set up GLFW
     glfwInit();
@@ -51,7 +53,7 @@ int main()
     std::shared_ptr<GLFWwindow> window(glfwCreateWindow(SRC_WIDTH, SRC_HEIGHT, "ThreeDimSim", NULL, NULL), glfwDestroyWindow);
     if (window == NULL)
     {
-        std::cout << "Failed to create a GLFW window." << std::endl;
+        LOG("Failed to create GLFW window", Logging::LOG_TYPE::ERROR);
         glfwTerminate();
         return -1;
     }
@@ -61,7 +63,7 @@ int main()
     bool loaded_GLAD = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress); // tell GLAD to load the address of the OpenGL function pointers
     if (!loaded_GLAD)
     {
-        std::cout << "Failed to load GLAD" << std::endl;
+        LOG("Failed to load GLAD", Logging::LOG_TYPE::ERROR);
         return -1;
     }
 

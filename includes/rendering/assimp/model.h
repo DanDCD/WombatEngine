@@ -11,19 +11,41 @@
 class Model
 {
 public:
+    /// @brief 
+    /// @param path 
     Model(const char *path);
 
+    /// @brief 
+    /// @param shader 
     void draw(Shader &shader);
 
 private:
+    /// @brief 
+    /// @param path 
     void loadModel(std::string path);
 
+    /// @brief 
+    /// @param node 
+    /// @param scene 
     void processNode(aiNode *node, const aiScene *scene);
 
+    /// @brief 
+    /// @param mesh 
+    /// @param scene 
+    /// @return 
     Mesh processMesh(aiMesh *mesh, const aiScene *scene);
 
-    std::vector<TextureInfo> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
+    /// @brief 
+    /// @param mat 
+    /// @param type 
+    /// @param typeName 
+    /// @param count_offset 
+    /// @return 
+    std::vector<TextureInfo> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName, unsigned int count_offset);
 
+    /// @brief 
     std::vector<Mesh> meshes;
+
+    /// @brief 
     std::string directory;
 };

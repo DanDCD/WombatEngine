@@ -1,5 +1,7 @@
 #include "rendering/assimp/model.h"
 #include "iostream"
+#include "utils/logging/logging.h"
+#include "string"
 
 Model::Model(const char *path)
 {
@@ -16,15 +18,17 @@ void Model::loadModel(std::string path)
 {
     // when we import the model, if it contains non triangular primitives, make them triangular
     // where necessary, flip the texture coords
+    LOG("Attempting to load model from " + path, Logging::LOG_TYPE::INFO);
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices);
 
     // if loading failed
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
+        LOG(std::string("Error loading model with ASSIMP ") + importer.GetErrorString(), Logging::LOG_TYPE::ERROR);
         return;
     }
+    LOG("Assimp successfuly read model file " + path, Logging::LOG_TYPE::INFO);
 
     directory = path.substr(0, path.find_last_of('/')); // assign the directory the path ends at (not the file)
     processNode(scene->mRootNode, scene);
@@ -32,6 +36,7 @@ void Model::loadModel(std::string path)
 
 void Model::processNode(aiNode *node, const aiScene *scene)
 {
+    
     // process all the meshes belonging to this node
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
@@ -40,7 +45,7 @@ void Model::processNode(aiNode *node, const aiScene *scene)
 
         meshes.push_back(processMesh(mesh, scene));
     }
-    std::cout << "node processed" << std::endl;
+    
     // then process all the child nodes belonging to the node
     for (unsigned int i = 0; i < node->mNumChildren; i++)
         processNode(node->mChildren[i], scene);
@@ -98,16 +103,16 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex]; // get material from assimp scene
 
         // load the different texture types and add them to the textures list (note: we have to use move iterators as Texture has deleted copying)
-        std::vector<TextureInfo> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        std::vector<TextureInfo> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", 0);
         textures.insert(textures.end(), std::make_move_iterator(diffuseMaps.begin()), std::make_move_iterator(diffuseMaps.end()));
 
-        std::vector<TextureInfo> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        std::vector<TextureInfo> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular", textures.size());
         textures.insert(textures.end(), std::make_move_iterator(specularMaps.begin()), std::make_move_iterator(specularMaps.end()));
     }
     return Mesh(vertices, indices, textures);
 }
 
-std::vector<TextureInfo> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
+std::vector<TextureInfo> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName, unsigned int count_offset)
 {
     std::vector<TextureInfo> textures;
     unsigned int numTexturesInMat = mat->GetTextureCount(type);
@@ -122,7 +127,7 @@ std::vector<TextureInfo> Model::loadMaterialTextures(aiMaterial *mat, aiTextureT
         fullPath+="/";
         fullPath+=textureName.C_Str();
 
-        auto texture_info = TextureManager::loadNewTexture(fullPath, i);
+        auto texture_info = TextureManager::loadNewTexture(fullPath, count_offset + i);
         textures.push_back(texture_info);
     }
     return textures;

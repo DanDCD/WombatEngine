@@ -60,6 +60,9 @@ set_target_properties(assimp PROPERTIES
 # Add executable
 file(GLOB_RECURSE ALL_CPP_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
 add_executable(threedimsim ${ALL_CPP_FILES})
+message(STATUS "Source files: ${ALL_CPP_FILES}")
+
+
 
 # Set include directories for threedimsim
 target_include_directories(threedimsim PUBLIC 

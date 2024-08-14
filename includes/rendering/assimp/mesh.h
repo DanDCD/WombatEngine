@@ -12,27 +12,29 @@
 class Mesh
 {
 public:
-    /// @brief
-    /// @param vertices
-    /// @param indices
-    /// @param textures
+    /// @brief constructor
+    /// @param vertices the vertex data (verts, normals, texture coords)
+    /// @param indices the indices for the vertex data
+    /// @param textures list of textures associated with this mesh (specular, diffuse, etc.)
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureInfo> textures);
 
-    /// @brief
-    /// @param shader
+    /// @brief draw this mesh
+    /// @param shader the shader to render this mesh with
     void draw(Shader &shader);
 
 private:
+    /// @brief create VAO, VBO, and EBO for this mesh in OpenGL
     void setupMesh();
 
-    /// @brief
+    /// @brief the vertices associated with this mesh
     std::vector<Vertex> vertices;
 
-    /// @brief
+    /// @brief the indices defining the order in which vertices are drawn
     std::vector<unsigned int> indices;
 
-    /// @brief
+    /// @brief the textures associated with this mesh
     std::vector<TextureInfo> textures;
 
+    /// @brief this mesh's VAO (containing the VBO and EBO)
     VAO vao;
 };

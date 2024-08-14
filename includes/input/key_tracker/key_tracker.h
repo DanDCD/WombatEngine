@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <optional>
 #include <unordered_map>
+#include "utils/logging/logging.h"
 
 struct KeyData
 {

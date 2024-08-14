@@ -1,4 +1,5 @@
 #include "rendering/texture/texture.h"
+#include "utils/logging/logging.h"
 
 TextureParam::TextureParam(GLenum paramName, GLenum value)
 {
@@ -84,6 +85,7 @@ void Texture::bind()
 
 void Texture::assignTexture(const std::string &texture_path)
 {
+    LOG("Attempting to load texture from: " + texture_path, Logging::LOG_TYPE::INFO);
     // load texture
     int width, height, nrChannels;
     unsigned char *texture_data = stbi_load(texture_path.c_str(), &width, &height, &nrChannels, 0);
@@ -105,10 +107,11 @@ void Texture::assignTexture(const std::string &texture_path)
         glGenerateMipmap(this->textureTargetType);
         // set dimensions
         this->dimensions = glm::vec2(width, height);
+        LOG("Successfuly loaded texture from: " + texture_path, Logging::LOG_TYPE::INFO);
     }
     else
     {
-        std::cout << "ERROR::TEXTURE::FAILED_TO_LOAD_TEXTURE_DATA" << std::endl;
+        LOG("Failed to load texture file: " + texture_path, Logging::LOG_TYPE::ERROR);
     }
 
     stbi_image_free(texture_data);

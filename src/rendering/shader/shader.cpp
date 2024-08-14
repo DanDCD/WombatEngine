@@ -1,5 +1,6 @@
 #include "rendering/shader/shader.h"
 #include <glm/gtc/type_ptr.hpp>
+#include "utils/logging/logging.h"
 
 Shader::Shader(const char *vertex_shader_path, const char *fragment_shader_path)
 {
@@ -105,7 +106,7 @@ std::string Shader::loadShaderFile(const char *shader_path)
     }
     catch (std::ifstream::failure e)
     {
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY READ: " << shader_path << std::endl;
+        LOG(std::string("Failed to read shader file: ") + shader_path, Logging::LOG_TYPE::ERROR);
     }
     return shaderCode;
 }
@@ -124,8 +125,7 @@ unsigned int Shader::compileShader(const char *shader_code, GLenum shader_type)
     if (!success)
     {
         glGetShaderInfoLog(shader_id, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::COMPILATION_FAILED\n"
-                  << infoLog << std::endl;
+        LOG(std::string("Failed to compile shader file: \n") + infoLog, Logging::LOG_TYPE::ERROR);
     }
     return shader_id;
 }
@@ -145,8 +145,7 @@ unsigned int Shader::buildShaderProgram(unsigned int vertexShader_id, unsigned i
     if (!success)
     {
         glGetProgramInfoLog(shaderProgram_id, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
-                  << infoLog << std::endl;
+        LOG(std::string("Failed to link shader program: \n") + infoLog, Logging::LOG_TYPE::ERROR);
     }
     return shaderProgram_id;
 }

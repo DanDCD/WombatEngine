@@ -14,7 +14,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 
 void Mesh::setupMesh()
 {
-    VAO vao = VAO();
+    this->vao = VAO();
 
     VBO vbo = VBO(GL_ARRAY_BUFFER);
     vbo.assignData(&vertices[0], vertices.size() * sizeof(Vertex), GL_STATIC_DRAW);
@@ -29,8 +29,6 @@ void Mesh::setupMesh()
 
     vao.addBuffer(std::move(vbo), layout);
     vao.addBuffer(std::move(ebo));
-
-    this->vao = std::move(vao);
 }
 
 void Mesh::draw(Shader &shader)

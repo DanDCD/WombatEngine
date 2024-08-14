@@ -2,6 +2,7 @@
 #include "glad/glad.h"
 #include <iostream>
 #include "rendering/buffer/ebo/ebo.h"
+#include "utils/logging/logging.h"
 
 VertexBufferElement::VertexBufferElement(GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised)
     : type(type), count(count), totalSize(totalSize), normalised(normalised)
@@ -60,6 +61,7 @@ const std::map<int, VertexBufferElement> VertexBufferLayout::getMap() const
 VAO::VAO()
 {
     glGenVertexArrays(1, &vao_ID);
+    LOG("Initialised new VAO: " + std::to_string(vao_ID), Logging::LOG_TYPE::INFO);
 }
 
 VAO::VAO(VAO &&other)
@@ -95,6 +97,8 @@ VAO &VAO::operator=(VAO &&other) noexcept
 VAO::~VAO()
 {
     glDeleteVertexArrays(1, &vao_ID);
+    if (vao_ID != 0)
+        LOG("Deleted VAO: " + std::to_string(vao_ID), Logging::LOG_TYPE::INFO);
 }
 
 void VAO::addBuffer(VBO &&vbo, const VertexBufferLayout &layout)
@@ -119,7 +123,8 @@ void VAO::addBuffer(VBO &&vbo, const VertexBufferLayout &layout)
 
     vbo.unbind();                   // Unbind the VBO
     vbos.push_back(std::move(vbo)); // Store the VBO
-    unbind();                       // Unbind the VAO
+    LOG(std::string("Assigned VBO: ") + std::to_string(vbo.getID()) + " to VAO: " + std::to_string(vao_ID), Logging::LOG_TYPE::INFO);
+    unbind(); // Unbind the VAO
 }
 
 void VAO::addBuffer(EBO &&ebo)
