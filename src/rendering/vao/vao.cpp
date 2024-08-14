@@ -122,14 +122,17 @@ void VAO::addBuffer(VBO &&vbo, const VertexBufferLayout &layout)
     }
 
     vbo.unbind();                   // Unbind the VBO
+    unsigned int vbo_id = vbo.getID();
     vbos.push_back(std::move(vbo)); // Store the VBO
-    LOG(std::string("Assigned VBO: ") + std::to_string(vbo.getID()) + " to VAO: " + std::to_string(vao_ID), Logging::LOG_TYPE::INFO);
+    LOG(std::string("Assigned VBO: ") + std::to_string(vbo_id) + " to VAO: " + std::to_string(vao_ID), Logging::LOG_TYPE::INFO);
     unbind(); // Unbind the VAO
 }
 
 void VAO::addBuffer(EBO &&ebo)
-{
+{   
+    unsigned int ebo_id = ebo.getID();
     this->ebo = std::move(ebo);
+    LOG(std::string("Assigned EBO: ") + std::to_string(ebo_id) + " to VAO: " + std::to_string(vao_ID), Logging::LOG_TYPE::INFO);
 }
 
 void VAO::addVertexAttrribSpec(unsigned int attrib_ID, unsigned int count, GLenum type, GLboolean normalised, unsigned int stride, unsigned int offset)

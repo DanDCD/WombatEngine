@@ -4,7 +4,9 @@
 Buffer::Buffer(GLenum targetType)
     : ID(0), targetType(targetType)
 {
-    glGenBuffers(1, &ID);
+    unsigned int id;
+    glGenBuffers(1, &id);
+    ID = id;
 }
 
 Buffer::Buffer(Buffer &&other)
