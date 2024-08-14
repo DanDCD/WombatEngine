@@ -4,6 +4,7 @@
 #include "rendering/log/check_gl.h"
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureInfo> textures)
+: vao()
 {
     this->vertices = vertices;
     this->indices = indices;
@@ -14,8 +15,6 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 
 void Mesh::setupMesh()
 {
-    this->vao = VAO();
-
     VBO vbo = VBO(GL_ARRAY_BUFFER);
     vbo.assignData(&vertices[0], vertices.size() * sizeof(Vertex), GL_STATIC_DRAW);
 
