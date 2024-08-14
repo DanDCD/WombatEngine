@@ -39,7 +39,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 
 int main()
 {
-    LOG("Hello World", Logging::LOG_TYPE::INFO);
+    Logging::set_minimum_priority(Logging::LOG_PRIORITY::MEDIUM);
+    LOG("\n" + welcome_message + "\nWelcome to the Wombat Game Engine!\nCheck out the repo here: https://github.com/DanDCD/WombatEngine", Logging::LOG_TYPE::INFO, Logging::LOG_PRIORITY::HIGH);
 
     // set up GLFW
     glfwInit();
@@ -166,7 +167,7 @@ int main()
         // model matrix
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));     // it's a bit too big for our scene, so scale it down
 
         shader.use();
         shader.setUniform("view", 1, false, view);             // set the view matrix

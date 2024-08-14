@@ -18,7 +18,7 @@ void Model::loadModel(std::string path)
 {
     // when we import the model, if it contains non triangular primitives, make them triangular
     // where necessary, flip the texture coords
-    LOG("Attempting to load model from " + path, Logging::LOG_TYPE::INFO);
+    LOG("Attempting to load model from " + path, Logging::LOG_TYPE::INFO, Logging::LOG_PRIORITY::MEDIUM);
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices);
 
@@ -28,7 +28,7 @@ void Model::loadModel(std::string path)
         LOG(std::string("Error loading model with ASSIMP ") + importer.GetErrorString(), Logging::LOG_TYPE::ERROR);
         return;
     }
-    LOG("Assimp successfuly read model file " + path, Logging::LOG_TYPE::INFO);
+    LOG("Assimp successfuly read model file " + path, Logging::LOG_TYPE::INFO, Logging::LOG_PRIORITY::MEDIUM);
 
     directory = path.substr(0, path.find_last_of('/')); // assign the directory the path ends at (not the file)
     processNode(scene->mRootNode, scene);

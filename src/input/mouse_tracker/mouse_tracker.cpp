@@ -7,7 +7,7 @@ void MouseTracker::initialise(std::shared_ptr<GLFWwindow> window)
     getInstance().trackedWindow = window;
     getInstance().onMouseMovedSignal = Signal<MouseData>();
     glfwSetCursorPosCallback(getInstance().trackedWindow.get(), MouseTracker::cursorPosCallback);
-    LOG("Initialised Mouse Tracking", Logging::LOG_TYPE::INFO);
+    LOG("Initialised Mouse Tracking", Logging::LOG_TYPE::INFO, Logging::LOG_PRIORITY::MEDIUM);
 }
 
 Signal<MouseData> &MouseTracker::getOnMouseMovedSignal()

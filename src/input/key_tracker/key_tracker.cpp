@@ -6,7 +6,7 @@ void KeyTracker::initialise(std::shared_ptr<GLFWwindow> window)
     getInstance().onKeyEvent = Signal<KeyData>();
     getInstance().pressedKeys = std::unordered_map<int, KeyData>();
     glfwSetKeyCallback(getInstance().trackedWindow.get(), KeyTracker::keyCallBack);
-    LOG("Initialised Key Tracking", Logging::LOG_TYPE::INFO);
+    LOG("Initialised Key Tracking", Logging::LOG_TYPE::INFO, Logging::LOG_PRIORITY::MEDIUM);
 }
 
 Signal<KeyData> &KeyTracker::getOnKeyEventSignal()
