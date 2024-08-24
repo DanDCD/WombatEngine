@@ -103,19 +103,34 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex]; // get material from assimp scene
 
         // load the different texture types and add them to the textures list (note: we have to use move iterators as Texture has deleted copying)
-        std::vector<TextureInfo> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", 0);
+        std::vector<TextureInfo> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, 0);
         textures.insert(textures.end(), std::make_move_iterator(diffuseMaps.begin()), std::make_move_iterator(diffuseMaps.end()));
 
-        std::vector<TextureInfo> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular", textures.size());
+        std::vector<TextureInfo> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, textures.size());
         textures.insert(textures.end(), std::make_move_iterator(specularMaps.begin()), std::make_move_iterator(specularMaps.end()));
     }
     return Mesh(vertices, indices, textures);
 }
 
-std::vector<TextureInfo> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName, unsigned int count_offset)
+std::vector<TextureInfo> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, unsigned int count_offset)
 {
     std::vector<TextureInfo> textures;
     unsigned int numTexturesInMat = mat->GetTextureCount(type);
+
+    Texture::TEXTURE_USECASE usecase;
+    switch (type)
+    {
+        case aiTextureType_DIFFUSE:
+            usecase = Texture::TEXTURE_USECASE::DIFFUSE;
+            break;
+        case aiTextureType_SPECULAR:
+            usecase = Texture::TEXTURE_USECASE::SPECULAR;
+            break;
+        default:
+            usecase = Texture::TEXTURE_USECASE::OTHER;
+            break;
+    }
+
     for (unsigned int i = 0; i < numTexturesInMat; i++)
     {
         // get the location of texture of type 'type' and index 'i'
@@ -127,7 +142,7 @@ std::vector<TextureInfo> Model::loadMaterialTextures(aiMaterial *mat, aiTextureT
         fullPath+="/";
         fullPath+=textureName.C_Str();
 
-        auto texture_info = TextureManager::loadNewTexture(fullPath, count_offset + i);
+        auto texture_info = TextureManager::loadNewTexture(fullPath, usecase, count_offset + i);
         textures.push_back(texture_info);
     }
     return textures;

@@ -22,7 +22,7 @@ public:
     /// @param file_path the file location of the new texture
     /// @param texture_unit the GL texture unit in shaders to associate this texture with
     /// @return information for the loaded texture
-    static const TextureInfo loadNewTexture(std::string file_path, unsigned int texture_unit);
+    static const TextureInfo loadNewTexture(std::string file_path, Texture::TEXTURE_USECASE usecase, unsigned int texture_unit);
 
     /// @brief assume control of an existing texture (useful if you need more fine control over instantiation)
     /// @param file_path the path of this texture

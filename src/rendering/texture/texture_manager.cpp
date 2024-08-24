@@ -5,7 +5,7 @@ TextureInfo::TextureInfo(std::string file_path, std::weak_ptr<Texture> texture)
 {
 }
 
-const TextureInfo TextureManager::loadNewTexture(std::string file_path, unsigned int texture_unit)
+const TextureInfo TextureManager::loadNewTexture(std::string file_path, Texture::TEXTURE_USECASE usecase, unsigned int texture_unit)
 {
     // if this path already has a texture, skip loading and return original texture info
     if (auto queried_info = getInstance().getTexture(file_path); queried_info.has_value())
@@ -20,6 +20,7 @@ const TextureInfo TextureManager::loadNewTexture(std::string file_path, unsigned
             TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
             TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
         file_path,
+        usecase,
         GL_TEXTURE0 + texture_unit);
 
     // build and output info struct

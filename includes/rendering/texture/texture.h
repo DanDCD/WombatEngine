@@ -30,12 +30,22 @@ public:
 class Texture
 {
 public:
+
+    /// @brief the different usecases a texture might have (used for mesh drawing)
+    enum class TEXTURE_USECASE
+    {
+        DIFFUSE,
+        SPECULAR,
+        OTHER
+    };
+
     /// @brief constructor - creates the texture object in OpenGL
     /// @param textureTargetType \copydoc textureTargetType
     /// @param params a vector of OpenGL texture options to apply to this texture object
     /// @param texture_path the path to the image file from which the texture data will be loaded
+    /// @param usecase what this texture is expected to be used for (specular/diffuse maps etc.)
     /// @param texture_unit the OpenGL texture unit that this texture will be assigned to and accessed via a Sampler in a shader etc.
-    Texture(GLenum texture_target_type, const std::vector<TextureParam> &params, const std::string &texture_path, GLenum texture_unit);
+    Texture(GLenum texture_target_type, const std::vector<TextureParam> &params, const std::string &texture_path, TEXTURE_USECASE usecase, GLenum texture_unit);
 
     /// @brief constructor - creates the texture object in OpenGL
     /// @param textureTargetType \copydoc textureTargetType
@@ -72,6 +82,9 @@ private:
 
     /// @brief the type of texture (i.e. GL_TEXTURE_2D)
     GLenum textureTargetType;
+
+    /// @brief the usecase of this texture (i.e. DIFFUSE, SPECULAR, OTHER)
+    TEXTURE_USECASE usecase;
 
     /// @brief the texture unit to be associated with this texture (i.e. GL_TEXTURE1)
     GLenum textureUnit;

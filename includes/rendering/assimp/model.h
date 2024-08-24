@@ -41,7 +41,7 @@ private:
     /// @param typeName 
     /// @param count_offset 
     /// @return 
-    std::vector<TextureInfo> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName, unsigned int count_offset);
+    std::vector<TextureInfo> loadMaterialTextures(aiMaterial *mat, aiTextureType type, unsigned int count_offset);
 
     /// @brief 
     std::vector<Mesh> meshes;
