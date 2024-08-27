@@ -90,6 +90,7 @@ void Texture::assignTexture(const std::string &texture_path)
     LOG("Attempting to load texture from: " + texture_path, Logging::LOG_TYPE::INFO, Logging::LOG_PRIORITY::MEDIUM);
     // load texture
     int width, height, nrChannels;
+    stbi_set_flip_vertically_on_load(true);
     unsigned char *texture_data = stbi_load(texture_path.c_str(), &width, &height, &nrChannels, 0);
     if (texture_data)
     {
@@ -122,4 +123,14 @@ void Texture::assignTexture(const std::string &texture_path)
 void Texture::unbind()
 {
     glBindTexture(this->textureTargetType, 0);
+}
+
+Texture::TEXTURE_USECASE Texture::getUseCase() const
+{
+    return usecase;
+}
+
+unsigned int Texture::getTextureUnit() const
+{
+    return textureUnit - GL_TEXTURE0;
 }

@@ -27,8 +27,8 @@ struct PointLight {
 
 struct Material
 {
-    sampler2D diffuseMap;
-    sampler2D specularMap;
+    sampler2D texture_diffuse0;
+    sampler2D texture_specular0;
     float shininess;
 };
 
@@ -61,11 +61,11 @@ vec3 CalculateDirectionalLight(DirectionalLight dirLight, vec3 normal, vec3 frag
     float specFactor = pow(max(dot(fragToViewDir, reflectDir), 0.0), material.shininess);
 
     // calculate ambient result
-    vec3 ambient = dirLight.ambient * vec3(texture(material.diffuseMap, Texcoord));
+    vec3 ambient = dirLight.ambient * vec3(texture(material.texture_diffuse0, Texcoord));
     // calculate diffuse result
-    vec3 diffuse = dirLight.diffuse * diffFactor * vec3(texture(material.diffuseMap, Texcoord));
+    vec3 diffuse = dirLight.diffuse * diffFactor * vec3(texture(material.texture_diffuse0, Texcoord));
     // calculate specular result
-    vec3 specular = dirLight.specular * specFactor * vec3(texture(material.specularMap, Texcoord));
+    vec3 specular = dirLight.specular * specFactor * vec3(texture(material.texture_specular0, Texcoord));
     
     // calculate final result
     return (ambient + diffuse + specular);
@@ -86,11 +86,11 @@ vec3 CalculatePointLight(PointLight pointLight, vec3 normal, vec3 fragPos, vec3 
     float specFactor = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
     // calculate ambient result
-    vec3 ambient = pointLight.ambient * vec3(texture(material.diffuseMap, Texcoord));
+    vec3 ambient = pointLight.ambient * vec3(texture(material.texture_diffuse0, Texcoord));
     // calculate diffuse result
-    vec3 diffuse = pointLight.diffuse * diffFactor * vec3(texture(material.diffuseMap, Texcoord));
+    vec3 diffuse = pointLight.diffuse * diffFactor * vec3(texture(material.texture_diffuse0, Texcoord));
     // calculate specular result
-    vec3 specular = pointLight.specular * specFactor * vec3(texture(material.specularMap, Texcoord));
+    vec3 specular = pointLight.specular * specFactor * vec3(texture(material.texture_specular0, Texcoord));
 
     // calculate attenuation
     float distanceToLight = length(pointLight.position - fragPos);
@@ -114,10 +114,11 @@ void main()
     vec3 result = CalculateDirectionalLight(dirLight, normal, fragToViewDir);
 
     // process point lights
-    for(int i = 0; i < NR_POINT_LIGHTS; i++)
-        result += CalculatePointLight(pointLights[i], normal, FragPos, fragToViewDir);
+    // for(int i = 0; i < NR_POINT_LIGHTS; i++)
+    //     result += CalculatePointLight(pointLights[i], normal, FragPos, fragToViewDir);
 
     // TODO: process spot lights
 
-    FragColor = vec4(result, 1.0);
+    // FragColor = vec4(result, 1.0);
+    FragColor = texture(material.texture_diffuse0, Texcoord);
 }

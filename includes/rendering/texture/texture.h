@@ -30,7 +30,6 @@ public:
 class Texture
 {
 public:
-
     /// @brief the different usecases a texture might have (used for mesh drawing)
     enum class TEXTURE_USECASE
     {
@@ -75,6 +74,14 @@ public:
 
     /// @brief unbind the texture from active state in OpenGL
     void unbind();
+
+    /// @brief get the usecase of this texture
+    /// @return the usecase of this texture
+    TEXTURE_USECASE getUseCase() const;
+
+    /// @brief get the texture unit this texture is associated with
+    /// @return the int corresponding to the texture unit (i.e. 0 for GL_TEXTURE0)
+    unsigned int getTextureUnit() const;
 
 private:
     /// @brief the id of the texture object in OpenGL

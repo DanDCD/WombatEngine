@@ -29,22 +29,33 @@ void Mesh::setupMesh()
 
     vao.addBuffer(std::move(vbo), layout);
     vao.addBuffer(std::move(ebo));
-}
+}   
 
 void Mesh::draw(Shader &shader)
 {
     shader.use();
     vao.bind();
 
-    unsigned int num_diffuse, num_specular; // the current number of diffuse/specular shaders processed by this mesh
+    unsigned int num_diffuse, num_specular, num_other = 0; // the current number of diffuse/specular shaders processed by this mesh
     for (auto &textureInfo : textures)
     {
         // convert weak texture pointer into shared pointer
         if (auto texture_ptr = textureInfo.texture.lock())
+        {
+            std::string uniformName = "material.texture_";
+            if (texture_ptr->getUseCase() == Texture::TEXTURE_USECASE::DIFFUSE)
+                uniformName.append("diffuse" + std::to_string(num_diffuse++)); // e.g. material.texture_diffuse0, ...
+            else if (texture_ptr->getUseCase() == Texture::TEXTURE_USECASE::SPECULAR)
+                uniformName.append("specular" + std::to_string(num_specular++));
+            else if (texture_ptr->getUseCase() == Texture::TEXTURE_USECASE::OTHER)
+                uniformName.append("other" + std::to_string(num_other++));
+            else
+                LOG("Invalid texture usecase in draw call for: " + textureInfo.file_path, Logging::LOG_TYPE::ERROR);
+            shader.setUniform(uniformName, (int)texture_ptr->getTextureUnit());
             texture_ptr->bind();
+        }
         else // if the weak ptr in texture info has expired, log an error and skip it
             LOG("Trying to bind non-existent texture: " + textureInfo.file_path, Logging::LOG_TYPE::ERROR);
     }
-
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }

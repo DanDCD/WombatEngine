@@ -95,7 +95,7 @@ int main()
     glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
 
     // Set Up Rendering
-    Shader shader("shaders/test_vertex_new.vert", "shaders/test_fragment_new.frag");
+    Shader shader("shaders/test_phong.vert", "shaders/test_phong.frag");
 
     // test: load model
     Model modelObj("models/backpack/backpack.obj");
@@ -145,6 +145,13 @@ int main()
 
     DeltaTracker deltaTracker;
 
+    // we only need to set some uniforms for the guitar shader once
+    shader.use();
+    shader.setUniform("dirLight.direction", glm::vec3(0.1f, -1.0f, 0.1f));
+    shader.setUniform("dirLight.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    shader.setUniform("dirLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+    shader.setUniform("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window.get()))
     {
@@ -178,7 +185,6 @@ int main()
         shader.setUniform("view", 1, false, view);             // set the view matrix
         shader.setUniform("projection", 1, false, projection); // set the projection matrix
         shader.setUniform("model", 1, false, model);
-
         checkGLError("BEFORE MODEL DRAW");
         modelObj.draw(shader);
 
