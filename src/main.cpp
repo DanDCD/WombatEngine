@@ -150,7 +150,16 @@ int main()
     shader.setUniform("dirLight.direction", glm::vec3(0.1f, -1.0f, 0.1f));
     shader.setUniform("dirLight.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
     shader.setUniform("dirLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-    shader.setUniform("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    shader.setUniform("dirLight.specular", glm::vec3(0.50f, 0.5f, 0.5f));
+
+    glm::vec3 lightSourcePosition = glm::vec3(10.0f, 0.0f, -5.0f);
+    shader.setUniform("pointLights[0].position", glm::vec3(lightSourcePosition));
+    shader.setUniform("pointLights[0].constant", 1.0f);
+    shader.setUniform("pointLights[0].linear", 0.09f);
+    shader.setUniform("pointLights[0].quadratic", 0.032f);
+    shader.setUniform("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+    shader.setUniform("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+    shader.setUniform("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window.get()))
@@ -179,12 +188,15 @@ int main()
         // model matrix
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));     // it's a bit too big for our scene, so scale it down
+        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(5.0f), glm::vec3(0.0f, 0.5f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f)); // it's a bit too big for our scene, so scale it down
 
         shader.use();
         shader.setUniform("view", 1, false, view);             // set the view matrix
         shader.setUniform("projection", 1, false, projection); // set the projection matrix
         shader.setUniform("model", 1, false, model);
+        shader.setUniform("viewPos", camera.getPosition());
+        shader.setUniform("normalModel", 1, false, glm::inverse(glm::transpose(glm::mat3(model))));
         checkGLError("BEFORE MODEL DRAW");
         modelObj.draw(shader);
 

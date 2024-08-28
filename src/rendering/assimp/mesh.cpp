@@ -36,7 +36,7 @@ void Mesh::draw(Shader &shader)
     shader.use();
     vao.bind();
 
-    unsigned int num_diffuse, num_specular, num_other = 0; // the current number of diffuse/specular shaders processed by this mesh
+    unsigned int num_diffuse = 0, num_specular = 0, num_other = 0; // the current number of diffuse/specular shaders processed by this mesh
     for (auto &textureInfo : textures)
     {
         // convert weak texture pointer into shared pointer
