@@ -80,6 +80,16 @@ int main()
     // assign our resizing function as the resizing window callback for our window
     glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
 
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+
+    // style
+    ImGui::StyleColorsDark();
+
     // Set Up Rendering
     Shader shader("shaders/test_phong.vert", "shaders/test_phong.frag");
 
@@ -147,22 +157,9 @@ int main()
     shader.setUniform("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
     shader.setUniform("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-
-    // style
-    ImGui::StyleColorsDark();
-
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window.get(), true); // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
     ImGui_ImplOpenGL3_Init();
-
-
-
 
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window.get()))
@@ -173,11 +170,11 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         ImGuiIO &io = ImGui::GetIO();
-        if(!io.WantCaptureMouse)
+        if (!io.WantCaptureMouse)
         {
             // do our mouse tracking
         }
-        if(!io.WantCaptureKeyboard)
+        if (!io.WantCaptureKeyboard)
         {
             // do our keyboard tracking
         }

@@ -4,6 +4,7 @@
 #include "utils/signal/signal/signal.h"
 #include <glm/glm.hpp>
 #include <optional>
+#include "imgui.h"
 
 /// @brief struct containing tracked mouse data
 struct MouseData
