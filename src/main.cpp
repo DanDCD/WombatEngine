@@ -75,20 +75,6 @@ int main()
 
     glEnable(GL_DEPTH_TEST); // enable depth TODO: Update comment
 
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-
-    // style
-    ImGui::StyleColorsDark();
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window.get(), true); // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
-    ImGui_ImplOpenGL3_Init();
-
     // tell OpenGL the size of the rendering Window
     glViewport(0, 0, SRC_WIDTH, SRC_HEIGHT);
     // assign our resizing function as the resizing window callback for our window
@@ -161,6 +147,23 @@ int main()
     shader.setUniform("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
     shader.setUniform("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+
+    // style
+    ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window.get(), true); // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+    ImGui_ImplOpenGL3_Init();
+
+
+
+
     // keep doing this loop until user wants to close
     while (!glfwWindowShouldClose(window.get()))
     {
@@ -169,6 +172,15 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        ImGuiIO &io = ImGui::GetIO();
+        if(!io.WantCaptureMouse)
+        {
+            // do our mouse tracking
+        }
+        if(!io.WantCaptureKeyboard)
+        {
+            // do our keyboard tracking
+        }
         glfwPollEvents();
         KeyTracker::pollKeyEvents();
 
