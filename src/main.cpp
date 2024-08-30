@@ -101,7 +101,7 @@ int main()
     Model modelObj("models/backpack/backpack.obj");
 
     // Setup Camera
-    CameraParams cameraParams(glm::vec3(0.0f, 0.0f, 3.0f), 0.0f, 0.0f, 2.0f, 0.1f, 45.0f);
+    CameraParams cameraParams(glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, 2.0f, 0.1f, 45.0f);
     Camera camera = Camera(cameraParams);
 
     // Input Handling
@@ -148,11 +148,11 @@ int main()
     // we only need to set some uniforms for the guitar shader once
     shader.use();
     shader.setUniform("dirLight.direction", glm::vec3(0.1f, -1.0f, 0.1f));
-    shader.setUniform("dirLight.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    shader.setUniform("dirLight.ambient", glm::vec3(0.02f, 0.02f, 0.02f));
     shader.setUniform("dirLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
     shader.setUniform("dirLight.specular", glm::vec3(0.50f, 0.5f, 0.5f));
 
-    glm::vec3 lightSourcePosition = glm::vec3(10.0f, 0.0f, -5.0f);
+    glm::vec3 lightSourcePosition = glm::vec3(0.0f, 0.0f, 0.0f);
     shader.setUniform("pointLights[0].position", glm::vec3(lightSourcePosition));
     shader.setUniform("pointLights[0].constant", 1.0f);
     shader.setUniform("pointLights[0].linear", 0.09f);
@@ -187,7 +187,7 @@ int main()
 
         // model matrix
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.0f)); // translate it down so it's at the center of the scene
         model = glm::rotate(model, (float)glfwGetTime() * glm::radians(5.0f), glm::vec3(0.0f, 0.5f, 0.0f));
         model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f)); // it's a bit too big for our scene, so scale it down
 
