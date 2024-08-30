@@ -16,7 +16,8 @@ public:
     /// @param vertices the vertex data (verts, normals, texture coords)
     /// @param indices the indices for the vertex data
     /// @param textures list of textures associated with this mesh (specular, diffuse, etc.)
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureInfo> textures);
+    /// @param shininess the shininiess value of this mesh's material
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureInfo> textures, float shininess);
 
     /// @brief draw this mesh
     /// @param shader the shader to render this mesh with
@@ -34,6 +35,9 @@ private:
 
     /// @brief the textures associated with this mesh
     std::vector<TextureInfo> textures;
+
+    /// @brief the shininess of this mesh's material
+    float shininess;
 
     /// @brief this mesh's VAO (containing the VBO and EBO)
     VAO vao;

@@ -59,7 +59,7 @@ vec3 CalculateDirectionalLight(DirectionalLight dirLight, vec3 normal, vec3 frag
     // specular shading factor (how close the view direction is to the natural reflection of the light)
     vec3 reflectDir = reflect(lightDir, normal);
     // float specFactor = pow(max(dot(fragToViewDir, reflectDir), 0.0), material.shininess);
-    float specFactor = pow(max(dot(fragToViewDir, reflectDir), 0.0), 64.0);
+    float specFactor = pow(max(dot(fragToViewDir, reflectDir), 0.0), material.shininess);
     // calculate ambient result
     vec3 ambient = dirLight.ambient * vec3(texture(material.texture_diffuse0, Texcoord));
     // calculate diffuse result
@@ -84,7 +84,7 @@ vec3 CalculatePointLight(PointLight pointLight, vec3 normal, vec3 fragPos, vec3 
 
     // specular shading factor (how close the view direction is to the natural reflection of the light)
     vec3 reflectDir = reflect(lightToFragDir, normal);
-    float specFactor = pow(max(dot(viewDir, reflectDir), 0.0), 64.0);
+    float specFactor = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
     // calculate ambient result
     vec3 ambient = pointLight.ambient * vec3(texture(material.texture_diffuse0, Texcoord));

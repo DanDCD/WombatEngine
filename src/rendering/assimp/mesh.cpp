@@ -4,13 +4,13 @@
 #include "rendering/log/check_gl.h"
 #include "utils/logging/logging.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureInfo> textures)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureInfo> textures, float shininess)
     : vao()
 {
     this->vertices = vertices;
     this->indices = indices;
     this->textures = textures;
-
+    this->shininess = shininess;
     setupMesh();
 }
 
@@ -29,13 +29,14 @@ void Mesh::setupMesh()
 
     vao.addBuffer(std::move(vbo), layout);
     vao.addBuffer(std::move(ebo));
-}   
+}
 
 void Mesh::draw(Shader &shader)
 {
     shader.use();
     vao.bind();
 
+    // bind textures associated with this mesh to their respective uniforms
     unsigned int num_diffuse = 0, num_specular = 0, num_other = 0; // the current number of diffuse/specular shaders processed by this mesh
     for (auto &textureInfo : textures)
     {
@@ -57,5 +58,8 @@ void Mesh::draw(Shader &shader)
         else // if the weak ptr in texture info has expired, log an error and skip it
             LOG("Trying to bind non-existent texture: " + textureInfo.file_path, Logging::LOG_TYPE::ERROR);
     }
+    // bind the 'shininess' of this mesh to its uniform
+    shader.setUniform("material.shininess", shininess);
+
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }

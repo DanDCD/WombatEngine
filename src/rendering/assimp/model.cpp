@@ -36,7 +36,7 @@ void Model::loadModel(std::string path)
 
 void Model::processNode(aiNode *node, const aiScene *scene)
 {
-    
+
     // process all the meshes belonging to this node
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
@@ -45,7 +45,7 @@ void Model::processNode(aiNode *node, const aiScene *scene)
 
         meshes.push_back(processMesh(mesh, scene));
     }
-    
+
     // then process all the child nodes belonging to the node
     for (unsigned int i = 0; i < node->mNumChildren; i++)
         processNode(node->mChildren[i], scene);
@@ -97,6 +97,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         for (unsigned int j = 0; j < face.mNumIndices; j++)
             indices.push_back(face.mIndices[j]);
     }
+    float shininess;
     // populate textures from the material of the mesh
     if (mesh->mMaterialIndex >= 0)
     {
@@ -108,8 +109,17 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 
         std::vector<TextureInfo> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, textures.size());
         textures.insert(textures.end(), std::make_move_iterator(specularMaps.begin()), std::make_move_iterator(specularMaps.end()));
+
+        // load shininess from assimp material
+
+        bool shininess_loaded = aiGetMaterialFloat(material, AI_MATKEY_SHININESS, &shininess);
+        if (!shininess_loaded)
+        {
+            LOG("Failed to load shininess value from Assimp Material", Logging::LOG_TYPE::WARNING, Logging::LOG_PRIORITY::LOW);
+            shininess = 64.0f;
+        }
     }
-    return Mesh(vertices, indices, textures);
+    return Mesh(vertices, indices, textures, shininess);
 }
 
 std::vector<TextureInfo> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, unsigned int count_offset)
@@ -120,15 +130,15 @@ std::vector<TextureInfo> Model::loadMaterialTextures(aiMaterial *mat, aiTextureT
     Texture::TEXTURE_USECASE usecase;
     switch (type)
     {
-        case aiTextureType_DIFFUSE:
-            usecase = Texture::TEXTURE_USECASE::DIFFUSE;
-            break;
-        case aiTextureType_SPECULAR:
-            usecase = Texture::TEXTURE_USECASE::SPECULAR;
-            break;
-        default:
-            usecase = Texture::TEXTURE_USECASE::OTHER;
-            break;
+    case aiTextureType_DIFFUSE:
+        usecase = Texture::TEXTURE_USECASE::DIFFUSE;
+        break;
+    case aiTextureType_SPECULAR:
+        usecase = Texture::TEXTURE_USECASE::SPECULAR;
+        break;
+    default:
+        usecase = Texture::TEXTURE_USECASE::OTHER;
+        break;
     }
 
     for (unsigned int i = 0; i < numTexturesInMat; i++)
@@ -138,9 +148,9 @@ std::vector<TextureInfo> Model::loadMaterialTextures(aiMaterial *mat, aiTextureT
         mat->GetTexture(type, i, &textureName);
 
         std::string fullPath;
-        fullPath+=directory.c_str();
-        fullPath+="/";
-        fullPath+=textureName.C_Str();
+        fullPath += directory.c_str();
+        fullPath += "/";
+        fullPath += textureName.C_Str();
 
         auto texture_info = TextureManager::loadNewTexture(fullPath, usecase, count_offset + i);
         textures.push_back(texture_info);
