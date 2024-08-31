@@ -31,6 +31,10 @@ public:
     /// @return a Signal that emits a MouseData struct on cursor movement
     static Signal<MouseData> &getOnMouseMovedSignal();
 
+    /// @brief update the tracked data
+    /// @param new_data the new data
+    static void updateMouseData(MouseData new_data);
+
     // delete the copy constructor
     MouseTracker(MouseTracker const &) = delete;
     // delete the copy assignement operator
@@ -49,10 +53,6 @@ private:
     /// @param xpos the x position of the mouse
     /// @param ypos the y position of the mouse
     static void cursorPosCallback(GLFWwindow *window, double xpos, double ypos);
-
-    /// @brief update the tracked data
-    /// @param new_data the new data
-    static void updateMouseData(MouseData new_data);
 
     /// @brief a pointer to the window of which the mouse is tracked
     std::shared_ptr<GLFWwindow> trackedWindow;

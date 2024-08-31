@@ -102,23 +102,39 @@ int main()
 
     // Input Handling
     float delta; // the time between frames
+    bool mouse_active = false;
     MouseTracker::initialise(window);
-    SignalHandler<MouseData> mouseHandler([&camera](MouseData mouseData)
-                                          { camera.processMouseMovement(mouseData.offset_from_last.x, mouseData.offset_from_last.y); });
+    SignalHandler<MouseData> mouseHandler([&camera, &mouse_active](MouseData mouseData)
+                                          { 
+                                            if(mouse_active)
+                                                return;
+                                            camera.processMouseMovement(mouseData.offset_from_last.x, mouseData.offset_from_last.y); });
     MouseTracker::getOnMouseMovedSignal().addHandler(mouseHandler);
 
     KeyTracker::initialise(window);
-    bool mouse_active = false;
     SignalHandler<KeyData> keyEventHandler(
-        [&window, &mouse_active](KeyData keyData)
+        [&window, &mouse_active, &io](KeyData keyData)
         {
-        if (keyData.action == GLFW_PRESS && keyData.key_code == GLFW_KEY_ESCAPE)
-            glfwSetWindowShouldClose(window.get(), true);
-        if (keyData.action == GLFW_RELEASE && keyData.key_code == GLFW_KEY_M) 
-        {
-        glfwSetInputMode(window.get(), GLFW_CURSOR, mouse_active ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
-        mouse_active = !mouse_active;
-        } });
+            if (keyData.action == GLFW_PRESS && keyData.key_code == GLFW_KEY_ESCAPE)
+                glfwSetWindowShouldClose(window.get(), true);
+            if (keyData.action == GLFW_RELEASE && keyData.key_code == GLFW_KEY_M)
+            {
+                mouse_active = !mouse_active;
+                if (mouse_active)
+                    io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+                else
+                    io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
+                glfwSetInputMode(window.get(), GLFW_CURSOR, mouse_active ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+                // Immediately update the last captured mouse position after toggling
+                double xpos, ypos;
+                glfwGetCursorPos(window.get(), &xpos, &ypos);
+                MouseData mouseData;
+                mouseData.position = glm::vec2((float)xpos, (float)ypos);
+                mouseData.offset_from_last = glm::vec2(0.0f, 0.0f); // Reset the offset
+                mouseData.motion_direction = glm::vec2(0.0f, 0.0f);
+                MouseTracker::updateMouseData(mouseData);
+            }
+        });
     KeyTracker::getOnKeyEventSignal().addHandler(keyEventHandler);
 
     SignalHandler<KeyData> keyHoldHandler(
@@ -169,15 +185,6 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        ImGuiIO &io = ImGui::GetIO();
-        if (!io.WantCaptureMouse)
-        {
-            // do our mouse tracking
-        }
-        if (!io.WantCaptureKeyboard)
-        {
-            // do our keyboard tracking
-        }
         glfwPollEvents();
         KeyTracker::pollKeyEvents();
 
