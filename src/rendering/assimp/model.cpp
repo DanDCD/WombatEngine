@@ -8,10 +8,27 @@ Model::Model(const char *path)
     loadModel(path);
 }
 
+Model::Model(Model &&other)
+{
+    this->directory = other.directory;
+    this->meshes = std::move(meshes);
+}
+
+Model &Model::operator=(Model &&other) noexcept
+{
+    this->directory = other.directory;
+    this->meshes = std::move(meshes);
+    return *this;
+}
+
 void Model::draw(Shader &shader)
 {
     for (auto &mesh : meshes)
         mesh.draw(shader);
+}
+
+Model::~Model()
+{
 }
 
 void Model::loadModel(std::string path)

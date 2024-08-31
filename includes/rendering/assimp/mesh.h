@@ -19,6 +19,26 @@ public:
     /// @param shininess the shininiess value of this mesh's material
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureInfo> textures, float shininess);
 
+    /// @brief
+    /// @param other
+    Mesh(Mesh &&other);
+
+    /// @brief
+    /// @param other
+    /// @return
+    Mesh &operator=(Mesh &&other) noexcept;
+
+    /// @brief delete the copy constructor
+    /// @param
+    Mesh(const Mesh &) = delete;
+
+    /// @brief delete the copy assignment operator
+    /// @param
+    /// @return
+    Mesh &operator=(const Mesh &) = delete;
+
+    ~Mesh();
+
     /// @brief draw this mesh
     /// @param shader the shader to render this mesh with
     void draw(Shader &shader);

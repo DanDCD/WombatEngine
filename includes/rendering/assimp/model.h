@@ -11,41 +11,62 @@
 class Model
 {
 public:
-    /// @brief 
-    /// @param path 
+    /// @brief
+    /// @param path
     Model(const char *path);
 
-    /// @brief 
-    /// @param shader 
+    /// @brief
+    /// @param other
+    Model(Model &&other);
+
+    /// @brief
+    /// @param other
+    /// @return
+    Model &operator=(Model &&other) noexcept;
+
+    /// @brief delete the copy constructor
+    /// @param
+    Model(const Model &) = delete;
+
+    /// @brief delete the copy assignment operator
+    /// @param
+    /// @return
+    Model &operator=(const Model &) = delete;
+
+    /// @brief destructor
+    ~Model();
+
+    /// @brief
+    /// @param shader
     void draw(Shader &shader);
 
 private:
-    /// @brief 
-    /// @param path 
+    /// @brief
+    /// @param path
     void loadModel(std::string path);
 
-    /// @brief 
-    /// @param node 
-    /// @param scene 
+    /// @brief
+    /// @param node
+    /// @param scene
     void processNode(aiNode *node, const aiScene *scene);
 
-    /// @brief 
-    /// @param mesh 
-    /// @param scene 
-    /// @return 
+    /// @brief
+    /// @param mesh
+    /// @param scene
+    /// @return
     Mesh processMesh(aiMesh *mesh, const aiScene *scene);
 
-    /// @brief 
-    /// @param mat 
-    /// @param type 
-    /// @param typeName 
-    /// @param count_offset 
-    /// @return 
+    /// @brief
+    /// @param mat
+    /// @param type
+    /// @param typeName
+    /// @param count_offset
+    /// @return
     std::vector<TextureInfo> loadMaterialTextures(aiMaterial *mat, aiTextureType type, unsigned int count_offset);
 
-    /// @brief 
+    /// @brief
     std::vector<Mesh> meshes;
 
-    /// @brief 
+    /// @brief
     std::string directory;
 };

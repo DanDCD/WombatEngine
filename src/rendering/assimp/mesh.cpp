@@ -14,6 +14,37 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     setupMesh();
 }
 
+Mesh::Mesh(Mesh &&other)
+    : vao(std::move(other.vao))
+{
+    this->vertices = other.vertices;
+    this->indices = other.indices;
+    this->textures = other.textures;
+    this->shininess = other.shininess;
+    other.vertices.clear();
+    other.indices.clear();
+    other.textures.clear();
+    other.shininess = 0.0f;
+}
+
+Mesh &Mesh::operator=(Mesh &&other) noexcept
+{
+    this->vertices = other.vertices;
+    this->indices = other.indices;
+    this->textures = other.textures;
+    this->shininess = other.shininess;
+    this->vao = std::move(other.vao);
+    other.vertices.clear();
+    other.indices.clear();
+    other.textures.clear();
+    other.shininess = 0.0f;
+    return *this;
+}
+
+Mesh::~Mesh()
+{
+}
+
 void Mesh::setupMesh()
 {
     VBO vbo = VBO(GL_ARRAY_BUFFER);
