@@ -31,13 +31,6 @@ MouseTracker::MouseTracker() {}
 
 void MouseTracker::cursorPosCallback(GLFWwindow *window, double xpos, double ypos)
 {
-    // check that imgui does not want to handle this instead
-    if(ImGui::GetCurrentContext())
-    {
-        ImGuiIO &io = ImGui::GetIO();
-        if(io.WantCaptureMouse)
-            return;
-    }
     // set current position
     MouseData mouseData;
     mouseData.position = glm::vec2((float)xpos, (float)ypos);

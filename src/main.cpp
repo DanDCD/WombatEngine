@@ -32,10 +32,42 @@
 #include "utils/logging/logging.h"
 #include "utils/text_reading/text_reading.h"
 
-// A callback function to be called whenever the window is resized
+/// @brief a callback for when the window is resized
+/// @param window the glfw window
+/// @param width the new width
+/// @param height the new height
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height); // tell opengl the new window size (if changed)
+}
+
+/// @brief initialise glfw
+/// @return a pointer to the glfw window
+std::shared_ptr<GLFWwindow> init_glfw()
+{
+    glfwInit();
+    // Set the major and minor version of OpenGL to use
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    // Set the OpenGL profile to use
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // Create a windowed mode window and its OpenGL context
+    std::shared_ptr<GLFWwindow> window(glfwCreateWindow(SRC_WIDTH, SRC_HEIGHT, "ThreeDimSim", NULL, NULL), glfwDestroyWindow);
+    if (window == NULL)
+    {
+        LOG("Failed to create GLFW window", Logging::LOG_TYPE::ERROR);
+        glfwTerminate();
+    }
+    else
+        glfwMakeContextCurrent(window.get());
+    return window;
+}
+
+/// @brief initialise glad (i.e. set up functions to access glfw)
+void init_glad()
+{
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+        LOG("Failed to load GLAD", Logging::LOG_TYPE::ERROR);
 }
 
 int main()
@@ -47,37 +79,11 @@ int main()
         Logging::LOG_TYPE::INFO,
         Logging::LOG_PRIORITY::HIGH);
 
-    // set up GLFW
-    glfwInit();
-    // Set the major and minor version of OpenGL to use
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    // Set the OpenGL profile to use
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    std::shared_ptr<GLFWwindow> window = init_glfw();
+    init_glad();
 
-    // Create a windowed mode window and its OpenGL context
-    std::shared_ptr<GLFWwindow> window(glfwCreateWindow(SRC_WIDTH, SRC_HEIGHT, "ThreeDimSim", NULL, NULL), glfwDestroyWindow);
-    if (window == NULL)
-    {
-        LOG("Failed to create GLFW window", Logging::LOG_TYPE::ERROR);
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window.get());
-
-    // Initialise GLAD
-    bool loaded_GLAD = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress); // tell GLAD to load the address of the OpenGL function pointers
-    if (!loaded_GLAD)
-    {
-        LOG("Failed to load GLAD", Logging::LOG_TYPE::ERROR);
-        return -1;
-    }
-
-    glEnable(GL_DEPTH_TEST); // enable depth TODO: Update comment
-
-    // tell OpenGL the size of the rendering Window
+    glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, SRC_WIDTH, SRC_HEIGHT);
-    // assign our resizing function as the resizing window callback for our window
     glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
 
     // Setup Dear ImGui context
@@ -86,8 +92,6 @@ int main()
     ImGuiIO &io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-
-    // style
     ImGui::StyleColorsDark();
 
     // Set Up Rendering
@@ -104,11 +108,15 @@ int main()
     float delta; // the time between frames
     bool mouse_active = false;
     MouseTracker::initialise(window);
-    SignalHandler<MouseData> mouseHandler([&camera, &mouse_active](MouseData mouseData)
-                                          { 
-                                            if(mouse_active)
-                                                return;
-                                            camera.processMouseMovement(mouseData.offset_from_last.x, mouseData.offset_from_last.y); });
+    SignalHandler<MouseData> mouseHandler(
+        [&camera, &mouse_active, &io](MouseData mouseData)
+        { 
+            if(io.WantCaptureMouse)
+                return;
+            if(mouse_active)
+                return;
+            camera.processMouseMovement(mouseData.offset_from_last.x, mouseData.offset_from_last.y); 
+        });
     MouseTracker::getOnMouseMovedSignal().addHandler(mouseHandler);
 
     KeyTracker::initialise(window);
