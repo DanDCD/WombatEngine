@@ -31,6 +31,7 @@
 #include "rendering/texture/texture_manager.h"
 #include "utils/logging/logging.h"
 #include "utils/text_reading/text_reading.h"
+#include "dependencies/entt/entt.hpp"
 
 /// @brief a callback for when the window is resized
 /// @param window the glfw window
@@ -72,6 +73,54 @@ void init_glad()
 
 int main()
 {
+
+    struct TransformComponent
+    {
+        TransformComponent(const glm::mat4 &transform)
+            : transform(transform)
+        {
+        }
+        TransformComponent(const glm::mat4 &&transform)
+            : transform(std::move(transform))
+        {
+        }
+        TransformComponent() = default;
+        TransformComponent(const TransformComponent &other) = default;
+
+        glm::mat4 transform;
+    };
+
+    struct NameComponent
+    {
+        NameComponent(const std::string &name)
+            : name(name)
+        {
+        }
+
+        std::string name;
+    };
+
+    entt::registry registry;
+
+    entt::entity entity = registry.create();
+    registry.emplace<TransformComponent>(entity, glm::mat4(1.0f));
+    registry.emplace<NameComponent>(entity, "Cowboy");
+
+    auto view = registry.view<TransformComponent, NameComponent>();
+    for (auto entity : view)
+    {
+        auto &transform = view.get<TransformComponent>(entity);
+        auto &name = view.get<NameComponent>(entity);
+        std::cout << name.name << std::endl;
+    }
+
+
+
+
+
+
+
+
     Logging::set_minimum_priority(Logging::LOG_PRIORITY::MEDIUM);
     LOG("\n" +
             readFile("text/wombat_screen.txt") +
@@ -110,12 +159,12 @@ int main()
     MouseTracker::initialise(window);
     SignalHandler<MouseData> mouseHandler(
         [&camera, &mouse_active, &io](MouseData mouseData)
-        { 
-            if(io.WantCaptureMouse)
+        {
+            if (io.WantCaptureMouse)
                 return;
-            if(mouse_active)
+            if (mouse_active)
                 return;
-            camera.processMouseMovement(mouseData.offset_from_last.x, mouseData.offset_from_last.y); 
+            camera.processMouseMovement(mouseData.offset_from_last.x, mouseData.offset_from_last.y);
         });
     MouseTracker::getOnMouseMovedSignal().addHandler(mouseHandler);
 
