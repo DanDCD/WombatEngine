@@ -71,71 +71,98 @@ void init_glad()
         LOG("Failed to load GLAD", Logging::LOG_TYPE::ERROR);
 }
 
-struct ShaderLoader final // NOTE: SHADER HAS TO HAVE Shader() = default constructor
+// struct ShaderLoader final // NOTE: SHADER HAS TO HAVE Shader() = default constructor
+// {
+//     using result_type = std::shared_ptr<Shader>;
+
+//     template <typename... Args>
+//     result_type operator()(Args &&...args) const
+//     {
+//         return std::make_shared<Shader>(std::forward<Args>(args)...);
+//     }
+// };
+
+class PretendTexture
 {
-    using result_type = std::shared_ptr<Shader>;
+public:
+    PretendTexture() = default;
+
+    PretendTexture(std::string data)
+        : pretend_data(data)
+    {
+    }
+
+    std::string pretend_data;
+};
+
+class PretendMaterial
+{
+public:
+    PretendMaterial() = default;
+
+    PretendMaterial(std::string data)
+        : pretend_data(data), pretend_texture(nullptr)
+    {
+    }
+
+    PretendMaterial(std::string data, std::shared_ptr<PretendTexture> texture)
+        : pretend_data(data), pretend_texture(texture)
+    {
+    }
+
+    std::string pretend_data;
+    std::shared_ptr<PretendTexture> pretend_texture;
+};
+
+struct TextureLoader final
+{
+    using result_type = std::shared_ptr<PretendTexture>;
 
     template <typename... Args>
     result_type operator()(Args &&...args) const
     {
-        return std::make_shared<Shader>(std::forward<Args>(args)...);
+        return std::make_shared<PretendTexture>(std::forward<Args>(args)...);
     }
 };
+
+struct MaterialLoader final
+{
+    using result_type = std::shared_ptr<PretendMaterial>;
+
+    template <typename... Args>
+    result_type operator()(Args &&...args) const
+    {
+        return std::make_shared<PretendMaterial>(std::forward<Args>(args)...);
+    }
+};
+
+entt::id_type load_material_from_file(const std::string &path,
+                                                         entt::resource_cache<PretendMaterial, MaterialLoader> &material_cache,
+                                                         entt::resource_cache<PretendTexture, TextureLoader> &texture_cache)
+{
+    std::string fake_data = "11010101010"; // "load" data from file
+    // this data has a pretend texture encoded inside it
+    std::string texture_data = "i am a texture at " + path;
+    auto texture_has = entt::hashed_string::value("texture");
+    texture_cache.load(texture_has, texture_data);
+
+    auto material_has = entt::hashed_string::value("material");
+    // if we successfully loaded the texture create a material with the texture
+    if (entt::resource<PretendTexture> texture = texture_cache[texture_has]; texture)
+        material_cache.load(material_has, fake_data, texture.handle());
+    else
+        material_cache.load(material_has, fake_data);
+    return material_has;
+}
 
 int main()
 {
 
-    struct TransformComponent
-    {
-        TransformComponent(const glm::mat4 &transform)
-            : transform(transform)
-        {
-        }
-        TransformComponent(const glm::mat4 &&transform)
-            : transform(std::move(transform))
-        {
-        }
-        TransformComponent() = default;
-        TransformComponent(const TransformComponent &other) = default;
+    entt::resource_cache<PretendMaterial, MaterialLoader> material_cache{};
+    entt::resource_cache<PretendTexture, TextureLoader> texture_cache{};
+    auto material_hs = load_material_from_file("pretendpath", material_cache, texture_cache);
 
-        glm::mat4 transform;
-    };
-
-    struct NameComponent
-    {
-        NameComponent(const std::string &name)
-            : name(name)
-        {
-        }
-
-        std::string name;
-    };
-
-    entt::registry registry;
-
-    entt::entity entity = registry.create();
-    registry.emplace<TransformComponent>(entity, glm::mat4(1.0f));
-    registry.emplace<NameComponent>(entity, "Cowboy");
-
-    auto view = registry.view<TransformComponent, NameComponent>();
-    for (auto entity : view)
-    {
-        auto &transform = view.get<TransformComponent>(entity);
-        auto &name = view.get<NameComponent>(entity);
-        std::cout << name.name << std::endl;
-    }
-
-    std::string vert_path = "shaders/test_phong.vert";
-    std::string frag_path = "shaders/test_phong.frag";
-
-    entt::resource_cache<Shader, ShaderLoader> cache{};
-
-    constexpr auto shader_hs = entt::hashed_string::value("shader/phong");
-
-
-
-
-
+    auto ret = material_cache[material_hs];
 
     Logging::set_minimum_priority(Logging::LOG_PRIORITY::MEDIUM);
     LOG("\n" +
@@ -158,10 +185,6 @@ int main()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
     ImGui::StyleColorsDark();
-
-    cache.load(shader_hs, vert_path.c_str(), frag_path.c_str());
-    auto ret = cache.load(shader_hs);
-    auto res = cache[shader_hs];
 
     // Set Up Rendering
     Shader shader("shaders/test_phong.vert", "shaders/test_phong.frag");
