@@ -1,0 +1,91 @@
+struct ShaderLoader final // NOTE: SHADER HAS TO HAVE Shader() = default constructor
+{
+    using result_type = std::shared_ptr<Shader>;
+
+    template <typename... Args>
+    result_type operator()(Args &&...args) const
+    {
+        return std::make_shared<Shader>(std::forward<Args>(args)...);
+    }
+};
+
+class PretendTexture
+{
+public:
+    PretendTexture() = default;
+
+    PretendTexture(std::string data)
+        : pretend_data(data)
+    {
+    }
+
+    std::string pretend_data;
+};
+
+class PretendMaterial
+{
+public:
+    PretendMaterial() = default;
+
+    PretendMaterial(std::string data)
+        : pretend_data(data), pretend_texture(nullptr)
+    {
+    }
+
+    PretendMaterial(std::string data, std::shared_ptr<PretendTexture> texture)
+        : pretend_data(data), pretend_texture(texture)
+    {
+    }
+
+    std::string pretend_data;
+    std::shared_ptr<PretendTexture> pretend_texture;
+};
+
+struct TextureLoader final
+{
+    using result_type = std::shared_ptr<PretendTexture>;
+
+    template <typename... Args>
+    result_type operator()(Args &&...args) const
+    {
+        return std::make_shared<PretendTexture>(std::forward<Args>(args)...);
+    }
+};
+
+struct MaterialLoader final
+{
+    using result_type = std::shared_ptr<PretendMaterial>;
+
+    template <typename... Args>
+    result_type operator()(Args &&...args) const
+    {
+        return std::make_shared<PretendMaterial>(std::forward<Args>(args)...);
+    }
+};
+
+entt::id_type load_material_from_file(const std::string &path,
+                                                         entt::resource_cache<PretendMaterial, MaterialLoader> &material_cache,
+                                                         entt::resource_cache<PretendTexture, TextureLoader> &texture_cache)
+{
+    std::string fake_data = "11010101010"; // "load" data from file
+    // this data has a pretend texture encoded inside it
+    std::string texture_data = "i am a texture at " + path;
+    auto texture_has = entt::hashed_string::value("texture");
+    texture_cache.load(texture_has, texture_data);
+
+    auto material_has = entt::hashed_string::value("material");
+    // if we successfully loaded the texture create a material with the texture
+    if (entt::resource<PretendTexture> texture = texture_cache[texture_has]; texture)
+        material_cache.load(material_has, fake_data, texture.handle());
+    else
+        material_cache.load(material_has, fake_data);
+    return material_has;
+}
+
+{
+    entt::resource_cache<PretendMaterial, MaterialLoader> material_cache{};
+    entt::resource_cache<PretendTexture, TextureLoader> texture_cache{};
+    auto material_hs = load_material_from_file("pretendpath", material_cache, texture_cache);
+
+    auto ret = material_cache[material_hs];
+}
