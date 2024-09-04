@@ -15,6 +15,8 @@ public:
     /// @brief the id of this Shader Object's shader program in OpenGL
     unsigned int program_ID;
 
+    Shader() = default;
+
     // constructer that reads shader code and builds the shader program
     Shader(const char *vertex_shader_path, const char *fragment_shader_path);
 

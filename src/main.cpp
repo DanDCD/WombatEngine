@@ -71,6 +71,17 @@ void init_glad()
         LOG("Failed to load GLAD", Logging::LOG_TYPE::ERROR);
 }
 
+struct ShaderLoader final // NOTE: SHADER HAS TO HAVE Shader() = default constructor
+{
+    using result_type = std::shared_ptr<Shader>;
+
+    template <typename... Args>
+    result_type operator()(Args &&...args) const
+    {
+        return std::make_shared<Shader>(std::forward<Args>(args)...);
+    }
+};
+
 int main()
 {
 
@@ -114,7 +125,12 @@ int main()
         std::cout << name.name << std::endl;
     }
 
+    std::string vert_path = "shaders/test_phong.vert";
+    std::string frag_path = "shaders/test_phong.frag";
 
+    entt::resource_cache<Shader, ShaderLoader> cache{};
+
+    constexpr auto shader_hs = entt::hashed_string::value("shader/phong");
 
 
 
@@ -142,6 +158,10 @@ int main()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
     ImGui::StyleColorsDark();
+
+    cache.load(shader_hs, vert_path.c_str(), frag_path.c_str());
+    auto ret = cache.load(shader_hs);
+    auto res = cache[shader_hs];
 
     // Set Up Rendering
     Shader shader("shaders/test_phong.vert", "shaders/test_phong.frag");
