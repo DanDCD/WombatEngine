@@ -1,4 +1,4 @@
-#include "rendering/assimp/mesh.h"
+#include "root/graphics/implementation/mesh.h"
 #include "rendering/vertex/vertex.h"
 #include <string>
 #include "rendering/log/check_gl.h"

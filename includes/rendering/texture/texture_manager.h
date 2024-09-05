@@ -1,6 +1,6 @@
 #pragma once
 #include <unordered_map>
-#include "rendering/texture/texture.h"
+#include "root/graphics/implementation/texture.h"
 #include <string>
 #include <memory>
 #include "utils/signal/signal/signal.h"

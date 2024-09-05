@@ -3,10 +3,10 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <math.h>
-#include <rendering/shader/shader.h>
+#include "root/graphics/implementation/shader.h"
 #include <vert_data/vert_data.h>
 #include <stb/stb_image.h>
-#include <rendering/texture/texture.h>
+#include "root/graphics/implementation/texture.h"
 #include "rendering/vao/vao.h"
 #include "rendering/buffer/vbo/vbo.h"
 #include "rendering/buffer/ebo/ebo.h"
@@ -25,13 +25,14 @@
 #include "input/key_tracker/key_tracker.h"
 #include "utils/delta_tracker/delta_tracker.h"
 #include "assimp/Importer.hpp"
-#include "rendering/assimp/mesh.h"
-#include "rendering/assimp/model.h"
+#include "root/graphics/implementation/mesh.h"
+#include "root/graphics/implementation/model.h"
 #include "rendering/log/check_gl.h"
 #include "rendering/texture/texture_manager.h"
 #include "utils/logging/logging.h"
 #include "utils/text_reading/text_reading.h"
 #include "dependencies/entt/entt.hpp"
+#include "root/graphics/interface/resource_manager.h"
 
 /// @brief a callback for when the window is resized
 /// @param window the glfw window

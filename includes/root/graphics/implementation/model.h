@@ -1,11 +1,11 @@
 #pragma once
 #include <vector>
-#include "rendering/shader/shader.h"
-#include "rendering/assimp/mesh.h"
+#include "root/graphics/implementation/shader.h"
+#include "root/graphics/implementation/mesh.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include "rendering/texture/texture.h"
+#include "root/graphics/implementation/texture.h"
 #include "rendering/texture/texture_manager.h"
 
 class Model

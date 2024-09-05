@@ -88,4 +88,3 @@ entt::id_type load_material_from_file(const std::string &path,
     auto material_hs = load_material_from_file("pretendpath", material_cache, texture_cache);
 
     auto ret = material_cache[material_hs];
-}

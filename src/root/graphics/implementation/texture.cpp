@@ -1,4 +1,4 @@
-#include "rendering/texture/texture.h"
+#include "root/graphics/implementation/texture.h"
 #include "utils/logging/logging.h"
 
 TextureParam::TextureParam(GLenum paramName, GLenum value)

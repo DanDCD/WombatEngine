@@ -1,4 +1,4 @@
-#include "rendering/shader/shader.h"
+#include "root/graphics/implementation/shader.h"
 #include <glm/gtc/type_ptr.hpp>
 #include "utils/logging/logging.h"
 

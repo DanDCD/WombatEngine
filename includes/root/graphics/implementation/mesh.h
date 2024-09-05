@@ -2,11 +2,11 @@
 #include "glm/glm.hpp"
 #include <string>
 #include <vector>
-#include "rendering/shader/shader.h"
+#include "root/graphics/implementation/shader.h"
 #include "rendering/VAO/vao.h"
 #include "rendering/buffer/vbo/vbo.h"
 #include "rendering/buffer/ebo/ebo.h"
-#include "rendering/texture/texture.h"
+#include "root/graphics/implementation/texture.h"
 #include "rendering/texture/texture_manager.h"
 
 class Mesh

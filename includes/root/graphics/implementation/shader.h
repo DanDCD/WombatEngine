@@ -1,16 +1,14 @@
 #pragma once
-
 #include <glad/glad.h>
-
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include "glm/glm.hpp"
 
+
 class Shader
 {
-
 public:
     /// @brief the id of this Shader Object's shader program in OpenGL
     unsigned int program_ID;
