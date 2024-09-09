@@ -5,6 +5,10 @@
 #include "root/graphics/implementation/material.h"
 #include "root/graphics/implementation/shader.h"
 #include "root/graphics/implementation/mesh.h"
+#include "root/graphics/implementation/mesh_node.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 namespace Wombat
 {
@@ -31,12 +35,14 @@ namespace Wombat
         using TextureLoader = Loader<Texture>;
         using MaterialLoader = Loader<Material>;
         using MeshLoader = Loader<Mesh>;
+        using MeshNodeLoader = Loader<MeshNode>;
 
         // aliases for caches
         using ShaderCache = entt::resource_cache<Shader, ShaderLoader>;
         using TextureCache = entt::resource_cache<Texture, TextureLoader>;
         using MaterialCache = entt::resource_cache<Material, MaterialLoader>;
         using MeshCache = entt::resource_cache<Mesh, MeshLoader>;
+        using MeshNodeCache = entt::resource_cache<MeshNode, MeshNodeLoader>;
 
         /// @brief A class responsible for owning resource caches and organising resource loading
         class ResourceManager
@@ -70,8 +76,19 @@ namespace Wombat
             TextureCache texture_cache;
             MaterialCache material_cache;
             MeshCache mesh_cache;
+            MeshNodeCache mesh_node_cache;
 
         private:
+
+            /// @brief loads a model from the given path, loading each submesh and returning the top mesh
+            /// @param model_path the path of the model file
+            /// @return the top mesh of the model hierarchy
+            entt::resource<Mesh> load_model(const std::string &model_path);
+
+
+            entt::resource<MeshNode> process_ai_mesh_node(std::string mesh_node_id_str, aiNode *mesh_node, aiScene *scene);
+
+            entt::resource<Mesh> process_ai_mesh(std::string mesh_id_str, const aiMesh *mesh, const aiScene *scene);
         };
 
     }

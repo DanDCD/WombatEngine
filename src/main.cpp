@@ -75,6 +75,11 @@ void init_glad()
 
 int main()
 {
+    Wombat::Graphics::ResourceManager resource_manager;
+
+
+
+
     Logging::set_minimum_priority(Logging::LOG_PRIORITY::MEDIUM);
     LOG("\n" +
             readFile("text/wombat_screen.txt") +
