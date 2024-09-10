@@ -6,6 +6,7 @@ MeshNode::MeshNode()
 }
 
 MeshNode::MeshNode(std::vector<entt::resource<Mesh>> meshes, std::vector<entt::resource<MeshNode>> child_nodes, glm::mat4 offset)
+    :meshes(meshes), child_nodes(child_nodes), offset(offset)
 {
 }
 

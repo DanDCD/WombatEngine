@@ -14,6 +14,12 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     setupMesh();
 }
 
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, entt::resource<Material> material)
+    : vertices(vertices), indices(indices), material(material), vao()
+{
+    setupMesh();
+}
+
 Mesh::Mesh(Mesh &&other)
     : vao(std::move(other.vao))
 {
@@ -21,6 +27,7 @@ Mesh::Mesh(Mesh &&other)
     this->indices = other.indices;
     this->textures = other.textures;
     this->shininess = other.shininess;
+    this->material = other.material;
     other.vertices.clear();
     other.indices.clear();
     other.textures.clear();
@@ -33,6 +40,7 @@ Mesh &Mesh::operator=(Mesh &&other) noexcept
     this->indices = other.indices;
     this->textures = other.textures;
     this->shininess = other.shininess;
+    this->material = other.material;
     this->vao = std::move(other.vao);
     other.vertices.clear();
     other.indices.clear();

@@ -8,6 +8,8 @@
 #include "rendering/buffer/ebo/ebo.h"
 #include "root/graphics/implementation/texture.h"
 #include "rendering/texture/texture_manager.h"
+#include "dependencies/entt/entt.hpp"
+#include "root/graphics/implementation/material.h"
 
 class Mesh
 {
@@ -18,6 +20,10 @@ public:
     /// @param textures list of textures associated with this mesh (specular, diffuse, etc.)
     /// @param shininess the shininiess value of this mesh's material
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureInfo> textures, float shininess);
+
+
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, entt::resource<Material> material);
+
 
     /// @brief
     /// @param other
@@ -53,10 +59,14 @@ private:
     /// @brief the indices defining the order in which vertices are drawn
     std::vector<unsigned int> indices;
 
-    /// @brief the textures associated with this mesh
+    /// @brief the material associated with this mesh
+    entt::resource<Material> material;
+
+
+    /// @brief the textures associated with this mesh TODO: DELETE THIS
     std::vector<TextureInfo> textures;
 
-    /// @brief the shininess of this mesh's material
+    /// @brief the shininess of this mesh's material TODO: DELETE THIS
     float shininess;
 
     /// @brief this mesh's VAO (containing the VBO and EBO)

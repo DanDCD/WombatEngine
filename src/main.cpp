@@ -104,7 +104,7 @@ int main()
 
 
     // test for new resource manager
-
+    entt::resource<MeshNode> mesh_node = resource_manager.load_model("models/backpack/backpack.obj");
 
     // Set Up Rendering
     Shader shader("shaders/test_phong.vert", "shaders/test_phong.frag");

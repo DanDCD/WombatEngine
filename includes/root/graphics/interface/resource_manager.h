@@ -75,7 +75,7 @@ namespace Wombat
             /// @brief loads a model from the given path, loading each submesh and returning the top mesh
             /// @param model_path the path of the model file
             /// @return the top mesh of the model hierarchy
-            entt::resource<Mesh> load_model(const std::string &model_path);
+            entt::resource<MeshNode> load_model(const std::string &model_path);
 
             ShaderCache shader_cache;
             TextureCache texture_cache;
@@ -84,9 +84,36 @@ namespace Wombat
             MeshNodeCache mesh_node_cache;
 
         private:
-            entt::resource<MeshNode> process_ai_mesh_node(std::string mesh_node_id_str, aiNode *mesh_node, aiScene *scene);
+            /// @brief process an ai mesh node by registering it with a mesh cache after processing its child nodes
+            /// @param mesh_node_id_str the string form of the id to be associated with this node in the mesh node cache
+            /// @param dir the directory that this assimp model was loaded from (this will remain the same for the whole mesh_node tree)
+            /// @param mesh_node the assimp mesh node to process
+            /// @param scene the assimp scene associated with this mesh node
+            /// @return the handle for this meshnode
+            entt::resource<MeshNode> process_ai_mesh_node(std::string mesh_node_id_str, const std::string dir, const aiNode *mesh_node, const aiScene *scene);
 
-            entt::resource<Mesh> process_ai_mesh(std::string mesh_id_str, const aiMesh *mesh, const aiScene *scene);
+            /// @brief
+            /// @param mesh_id_str
+            /// @param dir
+            /// @param mesh
+            /// @param scene
+            /// @return
+            entt::resource<Mesh> process_ai_mesh(std::string mesh_id_str, const std::string dir, const aiMesh *mesh, const aiScene *scene);
+
+            /// @brief
+            /// @param material_id_str
+            /// @param material
+            /// @param scene
+            /// @return
+            entt::resource<Material> process_ai_material(std::string material_id_str, const std::string dir, const aiMaterial *material, const aiScene *scene);
+
+            /// @brief 
+            /// @param texture_id_str 
+            /// @param path 
+            /// @param usecase 
+            /// @param texture_buffer_index 
+            /// @return 
+            entt::resource<Texture> process_texture(std::string texture_id_str, const std::string path, Texture::TEXTURE_USECASE usecase, unsigned int texture_buffer_index);
         };
 
     }
