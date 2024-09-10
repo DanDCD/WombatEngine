@@ -72,6 +72,11 @@ namespace Wombat
             /// @return
             ResourceManager &operator=(const ResourceManager &) = delete;
 
+            /// @brief loads a model from the given path, loading each submesh and returning the top mesh
+            /// @param model_path the path of the model file
+            /// @return the top mesh of the model hierarchy
+            entt::resource<Mesh> load_model(const std::string &model_path);
+
             ShaderCache shader_cache;
             TextureCache texture_cache;
             MaterialCache material_cache;
@@ -79,13 +84,6 @@ namespace Wombat
             MeshNodeCache mesh_node_cache;
 
         private:
-
-            /// @brief loads a model from the given path, loading each submesh and returning the top mesh
-            /// @param model_path the path of the model file
-            /// @return the top mesh of the model hierarchy
-            entt::resource<Mesh> load_model(const std::string &model_path);
-
-
             entt::resource<MeshNode> process_ai_mesh_node(std::string mesh_node_id_str, aiNode *mesh_node, aiScene *scene);
 
             entt::resource<Mesh> process_ai_mesh(std::string mesh_id_str, const aiMesh *mesh, const aiScene *scene);

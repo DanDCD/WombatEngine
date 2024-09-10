@@ -102,6 +102,10 @@ int main()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
     ImGui::StyleColorsDark();
 
+
+    // test for new resource manager
+
+
     // Set Up Rendering
     Shader shader("shaders/test_phong.vert", "shaders/test_phong.frag");
 

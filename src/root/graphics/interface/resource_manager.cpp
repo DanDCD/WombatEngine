@@ -27,7 +27,7 @@ Wombat::Graphics::ResourceManager::~ResourceManager()
 
 Wombat::Graphics::ResourceManager::ResourceManager(ResourceManager &&other)
     : shader_cache(std::move(other.shader_cache)), texture_cache(std::move(other.texture_cache)),
-      material_cache(std::move(other.material_cache)), mesh_cache(std::move(mesh_cache)),
+      material_cache(std::move(other.material_cache)), mesh_cache(std::move(other.mesh_cache)),
       mesh_node_cache(std::move(other.mesh_node_cache))
 {
 }
@@ -108,9 +108,8 @@ entt::resource<MeshNode> Wombat::Graphics::ResourceManager::process_ai_mesh_node
                        ai_offset.d1, ai_offset.d2, ai_offset.d3, ai_offset.d4);
 
     // finally create the mesh node itself in the mesh node cache
-    
+    auto mesh_node_id = entt::hashed_string::value(mesh_node_id_str.c_str());
     mesh_node_cache.load(mesh_node_id, meshes, child_nodes, offset);
-
     return mesh_node_cache[mesh_node_id];
 }
 
