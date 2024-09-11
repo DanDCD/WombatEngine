@@ -4,20 +4,22 @@
 #include "rendering/log/check_gl.h"
 #include "utils/logging/logging.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureInfo> textures, float shininess)
-    : vao()
-{
-    this->vertices = vertices;
-    this->indices = indices;
-    this->textures = textures;
-    this->shininess = shininess;
-    setupMesh();
-}
-
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, entt::resource<Material> material)
     : vertices(vertices), indices(indices), material(material), vao()
 {
-    setupMesh();
+    VBO vbo = VBO(GL_ARRAY_BUFFER);
+    vbo.assignData(&vertices[0], vertices.size() * sizeof(Vertex), GL_STATIC_DRAW);
+
+    EBO ebo = EBO();
+    ebo.assignData(&indices[0], indices.size() * sizeof(unsigned int), GL_STATIC_DRAW);
+
+    VertexBufferLayout layout = VertexBufferLayout();
+    layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // verts
+    layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // normals
+    layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture coords
+
+    vao.addBuffer(std::move(vbo), layout);
+    vao.addBuffer(std::move(ebo));
 }
 
 Mesh::Mesh(Mesh &&other)
@@ -53,27 +55,13 @@ Mesh::~Mesh()
 {
 }
 
-void Mesh::setupMesh()
-{
-    VBO vbo = VBO(GL_ARRAY_BUFFER);
-    vbo.assignData(&vertices[0], vertices.size() * sizeof(Vertex), GL_STATIC_DRAW);
-
-    EBO ebo = EBO();
-    ebo.assignData(&indices[0], indices.size() * sizeof(unsigned int), GL_STATIC_DRAW);
-
-    VertexBufferLayout layout = VertexBufferLayout();
-    layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // verts
-    layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // normals
-    layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture coords
-
-    vao.addBuffer(std::move(vbo), layout);
-    vao.addBuffer(std::move(ebo));
-}
-
 void Mesh::draw(Shader &shader)
 {
     shader.use();
     vao.bind();
+
+    // bind all diffuse shaders
+    // bind all specular shaders
 
     // bind textures associated with this mesh to their respective uniforms
     unsigned int num_diffuse = 0, num_specular = 0, num_other = 0; // the current number of diffuse/specular shaders processed by this mesh

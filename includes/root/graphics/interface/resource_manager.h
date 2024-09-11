@@ -77,6 +77,13 @@ namespace Wombat
             /// @return the top mesh of the model hierarchy
             entt::resource<MeshNode> load_model(const std::string &model_path);
 
+            /// @brief loads a shader program from vertex and fragment shader files at the given paths
+            /// @param vertex_shader_path 
+            /// @param fragment_shader_path 
+            /// @return a handle to the loaded shader
+            entt::resource<Shader> load_shader(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
+
+
             ShaderCache shader_cache;
             TextureCache texture_cache;
             MaterialCache material_cache;

@@ -14,14 +14,10 @@
 class Mesh
 {
 public:
-    /// @brief constructor
-    /// @param vertices the vertex data (verts, normals, texture coords)
-    /// @param indices the indices for the vertex data
-    /// @param textures list of textures associated with this mesh (specular, diffuse, etc.)
-    /// @param shininess the shininiess value of this mesh's material
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<TextureInfo> textures, float shininess);
-
-
+    /// @brief 
+    /// @param vertices 
+    /// @param indices 
+    /// @param material 
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, entt::resource<Material> material);
 
 
@@ -50,9 +46,6 @@ public:
     void draw(Shader &shader);
 
 private:
-    /// @brief create VAO, VBO, and EBO for this mesh in OpenGL
-    void setupMesh();
-
     /// @brief the vertices associated with this mesh
     std::vector<Vertex> vertices;
 

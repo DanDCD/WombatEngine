@@ -72,14 +72,8 @@ void init_glad()
         LOG("Failed to load GLAD", Logging::LOG_TYPE::ERROR);
 }
 
-
 int main()
 {
-    Wombat::Graphics::ResourceManager resource_manager;
-
-
-
-
     Logging::set_minimum_priority(Logging::LOG_PRIORITY::MEDIUM);
     LOG("\n" +
             readFile("text/wombat_screen.txt") +
@@ -102,15 +96,14 @@ int main()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
     ImGui::StyleColorsDark();
 
-
     // test for new resource manager
+    Wombat::Graphics::ResourceManager resource_manager;
     entt::resource<MeshNode> mesh_node = resource_manager.load_model("models/backpack/backpack.obj");
+    entt::resource<Shader> shader = resource_manager.load_shader("shaders/test_phong.vert", "shaders/test_phong.frag");
 
-    // Set Up Rendering
-    Shader shader("shaders/test_phong.vert", "shaders/test_phong.frag");
-
-    // test: load model
-    Model modelObj("models/backpack/backpack.obj");
+ 
+    // Shader shader("shaders/test_phong.vert", "shaders/test_phong.frag");
+    // Model modelObj("models/backpack/backpack.obj");
 
     // Setup Camera
     CameraParams cameraParams(glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, 2.0f, 0.1f, 45.0f);
@@ -178,20 +171,20 @@ int main()
     DeltaTracker deltaTracker;
 
     // we only need to set some uniforms for the guitar shader once
-    shader.use();
-    shader.setUniform("dirLight.direction", glm::vec3(0.1f, -1.0f, 0.1f));
-    shader.setUniform("dirLight.ambient", glm::vec3(0.02f, 0.02f, 0.02f));
-    shader.setUniform("dirLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-    shader.setUniform("dirLight.specular", glm::vec3(0.50f, 0.5f, 0.5f));
+    shader->use();
+    shader->setUniform("dirLight.direction", glm::vec3(0.1f, -1.0f, 0.1f));
+    shader->setUniform("dirLight.ambient", glm::vec3(0.02f, 0.02f, 0.02f));
+    shader->setUniform("dirLight.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+    shader->setUniform("dirLight.specular", glm::vec3(0.50f, 0.5f, 0.5f));
 
     glm::vec3 lightSourcePosition = glm::vec3(0.0f, 0.0f, 0.0f);
-    shader.setUniform("pointLights[0].position", glm::vec3(lightSourcePosition));
-    shader.setUniform("pointLights[0].constant", 1.0f);
-    shader.setUniform("pointLights[0].linear", 0.09f);
-    shader.setUniform("pointLights[0].quadratic", 0.032f);
-    shader.setUniform("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
-    shader.setUniform("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
-    shader.setUniform("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    shader->setUniform("pointLights[0].position", glm::vec3(lightSourcePosition));
+    shader->setUniform("pointLights[0].constant", 1.0f);
+    shader->setUniform("pointLights[0].linear", 0.09f);
+    shader->setUniform("pointLights[0].quadratic", 0.032f);
+    shader->setUniform("pointLights[0].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+    shader->setUniform("pointLights[0].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+    shader->setUniform("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window.get(), true); // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
@@ -224,14 +217,14 @@ int main()
         model = glm::rotate(model, (float)glfwGetTime() * glm::radians(5.0f), glm::vec3(0.0f, 0.5f, 0.0f));
         model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f)); // it's a bit too big for our scene, so scale it down
 
-        shader.use();
-        shader.setUniform("view", 1, false, view);             // set the view matrix
-        shader.setUniform("projection", 1, false, projection); // set the projection matrix
-        shader.setUniform("model", 1, false, model);
-        shader.setUniform("viewPos", camera.getPosition());
-        shader.setUniform("normalModel", 1, false, glm::inverse(glm::transpose(glm::mat3(model))));
+        shader->use();
+        shader->setUniform("view", 1, false, view);             // set the view matrix
+        shader->setUniform("projection", 1, false, projection); // set the projection matrix
+        shader->setUniform("model", 1, false, model);
+        shader->setUniform("viewPos", camera.getPosition());
+        shader->setUniform("normalModel", 1, false, glm::inverse(glm::transpose(glm::mat3(model))));
         checkGLError("BEFORE MODEL DRAW");
-        modelObj.draw(shader);
+        mesh_node->draw(shader);
 
         // Rendering
         ImGui::Render();

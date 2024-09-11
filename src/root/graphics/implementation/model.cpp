@@ -136,7 +136,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
             shininess = 64.0f;
         }
     }
-    return Mesh(vertices, indices, textures, shininess);
+    // return Mesh(vertices, indices, textures, shininess);
 }
 
 std::vector<TextureInfo> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, unsigned int count_offset)

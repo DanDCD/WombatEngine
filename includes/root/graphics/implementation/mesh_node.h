@@ -17,6 +17,8 @@ public:
     MeshNode(const MeshNode &) = delete;
     MeshNode &operator=(const MeshNode &) = delete;
 
+    void draw(entt::resource<Shader> &shader);
+
 
     /// @brief meshes belonging to this mesh node
     std::vector<entt::resource<Mesh>> meshes;

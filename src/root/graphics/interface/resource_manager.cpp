@@ -47,6 +47,12 @@ entt::resource<MeshNode> Wombat::Graphics::ResourceManager::load_model(const std
     // create the id for the root or 'top' mesh
     std::string dir = model_path.substr(0, model_path.find_last_of('/')); // assign the directory the path ends at (not the file)
     std::string root_mesh_id_str = "loaded_mesh/" + dir;                  // the string representation of the hash id
+
+    // check that this model has not already been loaded
+    auto root_mesh_id = entt::hashed_string::value(root_mesh_id_str.c_str());
+    if (mesh_node_cache.contains(root_mesh_id))
+        return mesh_node_cache[root_mesh_id];
+
     // load assimp model
     LOG("Attempting to load model from " + model_path, Logging::LOG_TYPE::INFO, Logging::LOG_PRIORITY::MEDIUM);
     Assimp::Importer importer;
@@ -59,6 +65,20 @@ entt::resource<MeshNode> Wombat::Graphics::ResourceManager::load_model(const std
     LOG("Assimp successfuly read model file " + model_path, Logging::LOG_TYPE::INFO, Logging::LOG_PRIORITY::MEDIUM);
     aiNode *root_node = scene->mRootNode;
     return process_ai_mesh_node(root_mesh_id_str, dir, root_node, scene);
+}
+
+entt::resource<Shader> Wombat::Graphics::ResourceManager::load_shader(const std::string &vertex_shader_path, const std::string &fragment_shader_path)
+{
+    std::string shader_id_str = "shaders/" + vertex_shader_path + fragment_shader_path;
+    auto shader_id = entt::hashed_string::value(shader_id_str.c_str());
+
+    // check the shader hasnt already been loaded
+    if(shader_cache.contains(shader_id))
+        return shader_cache[shader_id];
+
+    // otherwise load shader
+    shader_cache.load(shader_id, vertex_shader_path.c_str(), fragment_shader_path.c_str());
+    return shader_cache[shader_id];
 }
 
 entt::resource<MeshNode> Wombat::Graphics::ResourceManager::process_ai_mesh_node(std::string mesh_node_id_str, const std::string dir, const aiNode *mesh_node, const aiScene *scene)
