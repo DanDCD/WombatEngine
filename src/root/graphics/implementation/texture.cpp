@@ -85,9 +85,9 @@ void Texture::bind()
     glBindTexture(this->textureTargetType, this->texture_ID); // bind this texture to the unit
 }
 
-void Texture::bind(int i_textureUnit)
+void Texture::bind(unsigned int i_textureUnit)
 {
-    glActiveTexture(i_textureUnit); // TODO: remove the 'i_' here once textureUnit is deprecated 
+    glActiveTexture(GL_TEXTURE0 + i_textureUnit); // TODO: remove the 'i_' here once textureUnit is deprecated 
     glBindTexture(textureTargetType, texture_ID);
 }
 

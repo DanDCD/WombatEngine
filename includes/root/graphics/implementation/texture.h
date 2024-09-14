@@ -72,7 +72,7 @@ public:
     /// @brief bind the texture to active state in OpenGL
     void bind();
 
-    void bind(int textureUnit);
+    void bind(unsigned int textureUnit);
 
     /// @brief unbind the texture from active state in OpenGL
     void unbind();
