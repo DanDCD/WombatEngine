@@ -145,20 +145,6 @@ std::vector<TextureInfo> Model::loadMaterialTextures(aiMaterial *mat, aiTextureT
     std::vector<TextureInfo> textures;
     unsigned int numTexturesInMat = mat->GetTextureCount(type);
 
-    Texture::TEXTURE_USECASE usecase;
-    switch (type)
-    {
-    case aiTextureType_DIFFUSE:
-        usecase = Texture::TEXTURE_USECASE::DIFFUSE;
-        break;
-    case aiTextureType_SPECULAR:
-        usecase = Texture::TEXTURE_USECASE::SPECULAR;
-        break;
-    default:
-        usecase = Texture::TEXTURE_USECASE::OTHER;
-        break;
-    }
-
     for (unsigned int i = 0; i < numTexturesInMat; i++)
     {
         // get the location of texture of type 'type' and index 'i'
@@ -170,7 +156,7 @@ std::vector<TextureInfo> Model::loadMaterialTextures(aiMaterial *mat, aiTextureT
         fullPath += "/";
         fullPath += textureName.C_Str();
 
-        auto texture_info = TextureManager::loadNewTexture(fullPath, usecase, count_offset + i);
+        auto texture_info = TextureManager::loadNewTexture(fullPath);
         textures.push_back(texture_info);
     }
     return textures;

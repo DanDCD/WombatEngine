@@ -13,7 +13,7 @@ TextureParam::TextureParam(std::tuple<GLenum, GLenum> pair)
     this->value = std::get<1>(pair);
 }
 
-Texture::Texture(GLenum texture_target_type, const std::vector<TextureParam> &params, const std::string &texture_path, TEXTURE_USECASE usecase, GLenum texture_unit)
+Texture::Texture(GLenum texture_target_type, const std::vector<TextureParam> &params, const std::string &texture_path)
 {
     // generate a texture object in OpenGL
     unsigned int id;
@@ -23,10 +23,6 @@ Texture::Texture(GLenum texture_target_type, const std::vector<TextureParam> &pa
     // bind it (using the explicit texture type)
     this->textureTargetType = texture_target_type;
     glBindTexture(this->textureTargetType, this->texture_ID);
-
-    this->usecase = usecase;
-
-    this->textureUnit = texture_unit;
 
     // set the parameters (if any)
     for (const auto &param : params)
@@ -39,18 +35,11 @@ Texture::Texture(GLenum texture_target_type, const std::vector<TextureParam> &pa
     unbind();
 }
 
-Texture::Texture(GLenum texture_target_type, const std::vector<TextureParam> &params, const std::string &texture_path)
-    : Texture::Texture(texture_target_type, params, texture_path, TEXTURE_USECASE::OTHER, GL_TEXTURE0)
-{
-}
-
 Texture::Texture(Texture &&other)
 {
     // copy over important params
     this->texture_ID = other.texture_ID; // obtain ownership of texture object
     this->textureTargetType = other.textureTargetType;
-    this->usecase = other.usecase;
-    this->textureUnit = other.textureUnit;
     this->dimensions = other.dimensions;
     // remove ownership of the texture object from other
     other.texture_ID = 0;
@@ -65,9 +54,7 @@ Texture &Texture::operator=(Texture &&other) noexcept
         // copy over important params
         this->texture_ID = other.texture_ID; // obtain ownership of texture object
         this->textureTargetType = other.textureTargetType;
-        this->textureUnit = other.textureUnit;
         this->dimensions = other.dimensions;
-        this->usecase = other.usecase;
         // remove ownership of the texture object from other
         other.texture_ID = 0;
     }
@@ -79,15 +66,9 @@ Texture::~Texture()
     glDeleteTextures(1, &texture_ID); // delete the associated texture object from OpenGL
 }
 
-void Texture::bind()
-{
-    glActiveTexture(this->textureUnit);                       // activate the associated texture unit
-    glBindTexture(this->textureTargetType, this->texture_ID); // bind this texture to the unit
-}
-
 void Texture::bind(unsigned int i_textureUnit)
 {
-    glActiveTexture(GL_TEXTURE0 + i_textureUnit); // TODO: remove the 'i_' here once textureUnit is deprecated 
+    glActiveTexture(GL_TEXTURE0 + i_textureUnit); // TODO: remove the 'i_' here once textureUnit is deprecated
     glBindTexture(textureTargetType, texture_ID);
 }
 
@@ -129,14 +110,4 @@ void Texture::assignTexture(const std::string &texture_path)
 void Texture::unbind()
 {
     glBindTexture(this->textureTargetType, 0);
-}
-
-Texture::TEXTURE_USECASE Texture::getUseCase() const
-{
-    return usecase;
-}
-
-unsigned int Texture::getTextureUnit() const
-{
-    return textureUnit - GL_TEXTURE0;
 }

@@ -120,7 +120,7 @@ namespace Wombat
             /// @param usecase 
             /// @param texture_buffer_index 
             /// @return 
-            entt::resource<Texture> process_texture(std::string texture_id_str, const std::string path, Texture::TEXTURE_USECASE usecase, unsigned int texture_buffer_index);
+            entt::resource<Texture> process_texture(std::string texture_id_str, const std::string path);
         };
 
     }

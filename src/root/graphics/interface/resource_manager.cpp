@@ -193,7 +193,7 @@ entt::resource<Material> Wombat::Graphics::ResourceManager::process_ai_material(
         path += dir.c_str();
         path += "/";
         path += texture_name.C_Str();
-        diffuse_maps.push_back(process_texture("loaded_texture/" + path, path, Texture::TEXTURE_USECASE::DIFFUSE, i));
+        diffuse_maps.push_back(process_texture("loaded_texture/" + path, path));
     }
     // load specular maps
     std::vector<entt::resource<Texture>> specular_maps;
@@ -206,7 +206,7 @@ entt::resource<Material> Wombat::Graphics::ResourceManager::process_ai_material(
         path += dir.c_str();
         path += "/";
         path += texture_name.C_Str();
-        specular_maps.push_back(process_texture("loaded_texture/" + path, path, Texture::TEXTURE_USECASE::SPECULAR, num_diffuse + i));
+        specular_maps.push_back(process_texture("loaded_texture/" + path, path));
     }
 
     // loaded shininess
@@ -222,7 +222,7 @@ entt::resource<Material> Wombat::Graphics::ResourceManager::process_ai_material(
     return material_cache[material_id];
 }
 
-entt::resource<Texture> Wombat::Graphics::ResourceManager::process_texture(std::string texture_id_str, const std::string path, Texture::TEXTURE_USECASE usecase, unsigned int texture_buffer_index)
+entt::resource<Texture> Wombat::Graphics::ResourceManager::process_texture(std::string texture_id_str, const std::string path)
 {
     // check if texture is already loaded
     auto texture_id = entt::hashed_string::value(texture_id_str.c_str());
@@ -236,8 +236,6 @@ entt::resource<Texture> Wombat::Graphics::ResourceManager::process_texture(std::
                            TextureParam(GL_TEXTURE_WRAP_T, GL_REPEAT),
                            TextureParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR),
                            TextureParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR)},
-                       path,
-                       usecase,
-                       GL_TEXTURE0 + texture_buffer_index);
+                       path);
     return texture_cache[texture_id];
 }
