@@ -43,7 +43,7 @@ public:
 
     /// @brief draw this mesh
     /// @param shader the shader to render this mesh with
-    void draw(Shader &shader);
+    void draw(entt::resource<Shader> shader);
 
 private:
     /// @brief the vertices associated with this mesh

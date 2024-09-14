@@ -85,6 +85,12 @@ void Texture::bind()
     glBindTexture(this->textureTargetType, this->texture_ID); // bind this texture to the unit
 }
 
+void Texture::bind(int i_textureUnit)
+{
+    glActiveTexture(i_textureUnit); // TODO: remove the 'i_' here once textureUnit is deprecated 
+    glBindTexture(textureTargetType, texture_ID);
+}
+
 void Texture::assignTexture(const std::string &texture_path)
 {
     LOG("Attempting to load texture from: " + texture_path, Logging::LOG_TYPE::INFO, Logging::LOG_PRIORITY::MEDIUM);

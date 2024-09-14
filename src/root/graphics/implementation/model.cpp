@@ -24,7 +24,8 @@ Model &Model::operator=(Model &&other) noexcept
 void Model::draw(Shader &shader)
 {
     for (auto &mesh : meshes)
-        mesh.draw(shader);
+        // mesh.draw(shader);
+        {}
 }
 
 Model::~Model()

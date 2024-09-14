@@ -72,6 +72,8 @@ public:
     /// @brief bind the texture to active state in OpenGL
     void bind();
 
+    void bind(int textureUnit);
+
     /// @brief unbind the texture from active state in OpenGL
     void unbind();
 
@@ -90,10 +92,10 @@ private:
     /// @brief the type of texture (i.e. GL_TEXTURE_2D)
     GLenum textureTargetType;
 
-    /// @brief the usecase of this texture (i.e. DIFFUSE, SPECULAR, OTHER)
+    /// @brief the usecase of this texture (i.e. DIFFUSE, SPECULAR, OTHER) TODO: remove this!
     TEXTURE_USECASE usecase;
 
-    /// @brief the texture unit to be associated with this texture (i.e. GL_TEXTURE1)
+    /// @brief the texture unit to be associated with this texture (i.e. GL_TEXTURE1) TODO: remove this!
     GLenum textureUnit;
 
     /// @brief the height/width of the texture

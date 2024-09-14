@@ -26,10 +26,10 @@ MeshNode &MeshNode::operator=(MeshNode &&other) noexcept
     return *this;
 }
 
-void MeshNode::draw(entt::resource<Shader> &shader)
+void MeshNode::draw(entt::resource<Shader> shader)
 {
     for (auto mesh : meshes)
-        mesh->draw(*shader);
+        mesh->draw(shader);
 
     for (auto mesh_node : child_nodes)
         mesh_node->draw(shader);

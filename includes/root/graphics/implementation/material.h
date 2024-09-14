@@ -8,6 +8,8 @@ class Material
 public:
     Material(float shininess, std::vector<entt::resource<Texture>> diffuse_maps, std::vector<entt::resource<Texture>> specular_maps);
 
+    std::vector<entt::resource<Texture>> getTexturesFlat() const;
+
     float shininess;
     std::vector<entt::resource<Texture>> diffuse_maps;
     std::vector<entt::resource<Texture>> specular_maps;
