@@ -7,7 +7,6 @@
 #include <vert_data/vert_data.h>
 #include <stb/stb_image.h>
 #include "root/graphics/implementation/texture.h"
-#include "rendering/vao/vao.h"
 #include "rendering/buffer/vbo/vbo.h"
 #include "rendering/buffer/ebo/ebo.h"
 #include <glm/glm.hpp>

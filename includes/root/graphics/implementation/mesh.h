@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include "root/graphics/implementation/shader.h"
-#include "rendering/VAO/vao.h"
+#include "root/graphics/implementation/vao.h"
 #include "rendering/buffer/vbo/vbo.h"
 #include "rendering/buffer/ebo/ebo.h"
 #include "root/graphics/implementation/texture.h"

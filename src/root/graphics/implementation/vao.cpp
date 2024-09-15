@@ -1,4 +1,4 @@
-#include "rendering/vao/vao.h"
+#include "root/graphics/implementation/vao.h"
 #include "glad/glad.h"
 #include <iostream>
 #include "rendering/buffer/ebo/ebo.h"
