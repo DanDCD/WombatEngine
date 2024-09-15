@@ -7,7 +7,6 @@
 #include "rendering/buffer/vbo/vbo.h"
 #include "rendering/buffer/ebo/ebo.h"
 #include "root/graphics/implementation/texture.h"
-#include "rendering/texture/texture_manager.h"
 #include "dependencies/entt/entt.hpp"
 #include "root/graphics/implementation/material.h"
 
@@ -54,13 +53,6 @@ private:
 
     /// @brief the material associated with this mesh
     entt::resource<Material> material;
-
-
-    /// @brief the textures associated with this mesh TODO: DELETE THIS
-    std::vector<TextureInfo> textures;
-
-    /// @brief the shininess of this mesh's material TODO: DELETE THIS
-    float shininess;
 
     /// @brief this mesh's VAO (containing the VBO and EBO)
     VAO vao;

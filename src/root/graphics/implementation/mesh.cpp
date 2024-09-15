@@ -27,27 +27,19 @@ Mesh::Mesh(Mesh &&other)
 {
     this->vertices = other.vertices;
     this->indices = other.indices;
-    this->textures = other.textures;
-    this->shininess = other.shininess;
     this->material = other.material;
     other.vertices.clear();
     other.indices.clear();
-    other.textures.clear();
-    other.shininess = 0.0f;
 }
 
 Mesh &Mesh::operator=(Mesh &&other) noexcept
 {
     this->vertices = other.vertices;
     this->indices = other.indices;
-    this->textures = other.textures;
-    this->shininess = other.shininess;
     this->material = other.material;
     this->vao = std::move(other.vao);
     other.vertices.clear();
     other.indices.clear();
-    other.textures.clear();
-    other.shininess = 0.0f;
     return *this;
 }
 
