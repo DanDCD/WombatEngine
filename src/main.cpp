@@ -99,8 +99,8 @@ int main()
     // Model modelObj("models/backpack/backpack.obj");
 
     // Setup Camera
-    CameraParams cameraParams(glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, 2.0f, 0.1f, 45.0f);
-    Camera camera = Camera(cameraParams);
+    Wombat::Graphics::CameraParams cameraParams(glm::vec3(0.0f, 0.0f, 0.0f), 0.0f, 0.0f, 2.0f, 0.1f, 45.0f);
+    Wombat::Graphics::Camera camera = Wombat::Graphics::Camera(cameraParams);
 
     // Input Handling
     float delta; // the time between frames
@@ -147,17 +147,17 @@ int main()
         [&camera, &delta](KeyData keyData)
         {
             if (keyData.key_code == GLFW_KEY_W)
-                camera.processKeyboard(Camera::Movement::FORWARD, delta);
+                camera.processKeyboard(Wombat::Graphics::Camera::Movement::FORWARD, delta);
             if (keyData.key_code == GLFW_KEY_S)
-                camera.processKeyboard(Camera::Movement::BACKWARD, delta);
+                camera.processKeyboard(Wombat::Graphics::Camera::Movement::BACKWARD, delta);
             if (keyData.key_code == GLFW_KEY_A)
-                camera.processKeyboard(Camera::Movement::LEFT, delta);
+                camera.processKeyboard(Wombat::Graphics::Camera::Movement::LEFT, delta);
             if (keyData.key_code == GLFW_KEY_D)
-                camera.processKeyboard(Camera::Movement::RIGHT, delta);
+                camera.processKeyboard(Wombat::Graphics::Camera::Movement::RIGHT, delta);
             if (keyData.key_code == GLFW_KEY_SPACE)
-                camera.processKeyboard(Camera::Movement::UP, delta);
+                camera.processKeyboard(Wombat::Graphics::Camera::Movement::UP, delta);
             if (keyData.key_code == GLFW_KEY_LEFT_SHIFT)
-                camera.processKeyboard(Camera::Movement::DOWN, delta);
+                camera.processKeyboard(Wombat::Graphics::Camera::Movement::DOWN, delta);
         });
     KeyTracker::getOnKeyHeldSignal().addHandler(keyHoldHandler);
 

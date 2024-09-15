@@ -3,7 +3,7 @@
 #include "algorithm"
 #include <iostream>
 
-CameraParams::CameraParams()
+Wombat::Graphics::CameraParams::CameraParams()
     : cameraPos(0.0f, 0.0f, 0.0f),
       yaw(0.0f), pitch(0.0f), movementSpeed(2.5f),
       mouseSensitivity(0.1f), zoom(45.0f)
@@ -11,7 +11,7 @@ CameraParams::CameraParams()
     updateDirections();
 }
 
-CameraParams::CameraParams(const glm::vec3 &pos,
+Wombat::Graphics::CameraParams::CameraParams(const glm::vec3 &pos,
                            float yaw, float pitch,
                            float speed, float sensitivity, float zoom)
     : cameraPos(pos), yaw(yaw),
@@ -20,7 +20,7 @@ CameraParams::CameraParams(const glm::vec3 &pos,
     updateDirections();
 }
 
-void CameraParams::updateDirections()
+void Wombat::Graphics::CameraParams::updateDirections()
 {
     // calculate front
     glm::vec3 front;
@@ -33,17 +33,17 @@ void CameraParams::updateDirections()
     cameraUp = glm::normalize(glm::cross(cameraRight, cameraFront));
 }
 
-Camera::Camera(CameraParams &cameraParams)
+Wombat::Graphics::Camera::Camera(CameraParams &cameraParams)
     : cameraParams(cameraParams)
 {
 }
 
-glm::mat4 Camera::getViewMatrix()
+glm::mat4 Wombat::Graphics::Camera::getViewMatrix()
 {
     return glm::lookAt(cameraParams.cameraPos, cameraParams.cameraPos + cameraParams.cameraFront, cameraParams.cameraUp);
 }
 
-void Camera::processKeyboard(Movement direction, float deltaTime)
+void Wombat::Graphics::Camera::processKeyboard(Movement direction, float deltaTime)
 {
     float velocity = cameraParams.movementSpeed * deltaTime;
     if (direction == Movement::FORWARD)
@@ -62,7 +62,7 @@ void Camera::processKeyboard(Movement direction, float deltaTime)
     // (so left/right/up/down dirs are constant)
 }
 
-void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
+void Wombat::Graphics::Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
 {
     // Scale mouse movement by sensitivity
     xoffset *= cameraParams.mouseSensitivity;
@@ -80,13 +80,13 @@ void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constr
     cameraParams.updateDirections(); // we do have to update dirs here, as we are modifying pitch and yaw
 }
 
-void Camera::processMouseScroll(float yoffset)
+void Wombat::Graphics::Camera::processMouseScroll(float yoffset)
 {
     cameraParams.zoom -= (float)yoffset;
     cameraParams.zoom = std::max(cameraParams.zoom, 1.0f);
     cameraParams.pitch = std::min(cameraParams.pitch, 45.0f);
 }
 
-glm::vec3 Camera::getPosition() const {
+glm::vec3 Wombat::Graphics::Camera::getPosition() const {
     return cameraParams.cameraPos;
 }
