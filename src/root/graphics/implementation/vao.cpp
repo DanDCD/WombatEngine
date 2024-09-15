@@ -1,8 +1,7 @@
 #include "root/graphics/implementation/vao.h"
 #include "glad/glad.h"
 #include <iostream>
-#include "rendering/buffer/ebo/ebo.h"
-#include "utils/logging/logging.h"
+#include "root/utils/logging.h"
 
 VertexBufferElement::VertexBufferElement(GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised)
     : type(type), count(count), totalSize(totalSize), normalised(normalised)

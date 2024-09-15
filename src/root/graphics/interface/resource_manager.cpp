@@ -1,5 +1,5 @@
 #include "root/graphics/interface/resource_manager.h"
-#include "utils/logging/logging.h"
+#include "root/utils/logging.h"
 #include "glm/glm.hpp"
 
 template <typename T>

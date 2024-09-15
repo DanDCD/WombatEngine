@@ -1,11 +1,11 @@
 #pragma once
-#include "rendering/buffer/vbo/vbo.h"
+#include "root/graphics/implementation/vbo.h"
 #include <glad/glad.h>
 #include <map>
 #include <vector>
 #include <iostream>
 #include <optional>
-#include "rendering/buffer/ebo/ebo.h"
+#include "root/graphics/implementation/ebo.h"
 
 class VertexBufferElement
 {

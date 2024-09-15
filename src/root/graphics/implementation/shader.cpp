@@ -1,6 +1,6 @@
 #include "root/graphics/implementation/shader.h"
 #include <glm/gtc/type_ptr.hpp>
-#include "utils/logging/logging.h"
+#include "root/utils/logging.h"
 
 Shader::Shader(const char *vertex_shader_path, const char *fragment_shader_path)
 {

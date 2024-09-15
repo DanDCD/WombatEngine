@@ -1,8 +1,7 @@
 #include "root/graphics/implementation/mesh.h"
-#include "rendering/vertex/vertex.h"
 #include <string>
-#include "rendering/log/check_gl.h"
-#include "utils/logging/logging.h"
+#include "root/graphics/implementation/check_gl.h"
+#include "root/utils/logging.h"
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, entt::resource<Material> material)
     : vertices(vertices), indices(indices), material(material), vao()

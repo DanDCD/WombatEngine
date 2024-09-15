@@ -6,7 +6,7 @@
 #include <string>
 #include <glm/vec2.hpp>
 #include <iostream>
-#include <stb/stb_image.h>
+#include "dependencies/stb/stb_image.h"
 
 struct TextureParam
 {
