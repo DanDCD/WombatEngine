@@ -123,14 +123,14 @@ entt::resource<MeshNode> Wombat::Graphics::ResourceManager::process_ai_mesh_node
 
 entt::resource<Mesh> Wombat::Graphics::ResourceManager::process_ai_mesh(std::string mesh_id_str, const std::string dir, const aiMesh *mesh, const aiScene *scene)
 {
-    std::vector<Vertex> vertices;      // the vertices belonging to this mesh
+    std::vector<Wombat::Graphics::Vertex> vertices;      // the vertices belonging to this mesh
     std::vector<unsigned int> indices; // the indices belonging to this mesh
     entt::resource<Material> material; // the material of this mesh
 
     // populate vertices from the vertices of the mesh
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
-        Vertex vertex;
+        Wombat::Graphics::Vertex vertex;
         glm::vec3 position;
         position.x = mesh->mVertices[i].x;
         position.y = mesh->mVertices[i].y;

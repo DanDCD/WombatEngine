@@ -3,11 +3,11 @@
 #include "root/graphics/implementation/check_gl.h"
 #include "root/utils/logging.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, entt::resource<Material> material)
+Mesh::Mesh(std::vector<Wombat::Graphics::Vertex> vertices, std::vector<unsigned int> indices, entt::resource<Material> material)
     : vertices(vertices), indices(indices), material(material), vao()
 {
     VBO vbo = VBO(GL_ARRAY_BUFFER);
-    vbo.assignData(&vertices[0], vertices.size() * sizeof(Vertex), GL_STATIC_DRAW);
+    vbo.assignData(&vertices[0], vertices.size() * sizeof(Wombat::Graphics::Vertex), GL_STATIC_DRAW);
 
     EBO ebo = EBO();
     ebo.assignData(&indices[0], indices.size() * sizeof(unsigned int), GL_STATIC_DRAW);

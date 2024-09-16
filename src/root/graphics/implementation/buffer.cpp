@@ -46,7 +46,7 @@ void Buffer::assignData(const unsigned int *data, GLsizeiptr dataSize, GLenum us
     unbind();
 }
 
-void Buffer::assignData(const Vertex *data, GLsizeiptr dataSize, GLenum usage)
+void Buffer::assignData(const Wombat::Graphics::Vertex *data, GLsizeiptr dataSize, GLenum usage)
 {
     bind();
     glBufferData(targetType, dataSize, data, usage);

@@ -30,7 +30,7 @@ public:
 
     void assignData(const unsigned int *data, GLsizeiptr dataSize, GLenum usage);
 
-    void assignData(const Vertex *data, GLsizeiptr dataSize, GLenum usage);
+    void assignData(const Wombat::Graphics::Vertex *data, GLsizeiptr dataSize, GLenum usage);
 
     /// @brief binds this buffer to OpenGL
     void bind() const;

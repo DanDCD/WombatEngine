@@ -16,7 +16,7 @@ public:
     /// @param vertices 
     /// @param indices 
     /// @param material 
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, entt::resource<Material> material);
+    Mesh(std::vector<Wombat::Graphics::Vertex> vertices, std::vector<unsigned int> indices, entt::resource<Material> material);
 
 
     /// @brief
@@ -45,7 +45,7 @@ public:
 
 private:
     /// @brief the vertices associated with this mesh
-    std::vector<Vertex> vertices;
+    std::vector<Wombat::Graphics::Vertex> vertices;
 
     /// @brief the indices defining the order in which vertices are drawn
     std::vector<unsigned int> indices;
