@@ -2,13 +2,20 @@
 #include "root/graphics/implementation/buffer.h"
 #include "glad/glad.h"
 
-/// @brief the Virtual Buffer Object enables the storage of vertex data in OpenGL
-class VBO : public Buffer
+namespace Wombat
 {
-public:
-    VBO(GLenum targetType);
+    namespace Graphics
+    {
 
-    VBO(VBO &&other);
+        /// @brief the Virtual Buffer Object enables the storage of vertex data in OpenGL
+        class VBO : public Buffer
+        {
+        public:
+            VBO(GLenum targetType);
 
-    VBO &operator=(VBO &&other) noexcept;
-};
+            VBO(VBO &&other);
+
+            VBO &operator=(VBO &&other) noexcept;
+        };
+    }
+}

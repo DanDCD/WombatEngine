@@ -100,7 +100,7 @@ VAO::~VAO()
         LOG("Deleted VAO: " + std::to_string(vao_ID), Logging::LOG_TYPE::INFO);
 }
 
-void VAO::addBuffer(VBO &&vbo, const VertexBufferLayout &layout)
+void VAO::addBuffer(Wombat::Graphics::VBO &&vbo, const VertexBufferLayout &layout)
 {
     bind();     // Bind the VAO
     vbo.bind(); // Bind the VBO

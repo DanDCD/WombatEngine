@@ -92,7 +92,7 @@ public:
     /// @brief add a Virtual Buffer Object to this VAO in OpenGL
     /// @param vbo the vbo to add
     /// @param layout the layout of this vbo
-    void addBuffer(VBO &&vbo, const VertexBufferLayout &layout);
+    void addBuffer(Wombat::Graphics::VBO &&vbo, const VertexBufferLayout &layout);
 
     /// @brief add an Element Buffer Object to this VAO
     /// @param ebo the ebo to add
@@ -118,7 +118,7 @@ private:
     unsigned int vao_ID;
 
     /// @brief the vbos this vao owns
-    std::vector<VBO> vbos;
+    std::vector<Wombat::Graphics::VBO> vbos;
 
     /// @brief the ebo this vao owns
     std::optional<EBO> ebo;

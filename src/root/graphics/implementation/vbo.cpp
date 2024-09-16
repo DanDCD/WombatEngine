@@ -3,18 +3,18 @@
 #include "root/utils/logging.h"
 #include <string>
 
-VBO::VBO(GLenum targetType)
+Wombat::Graphics::VBO::VBO(GLenum targetType)
     : Buffer(targetType)
 {
     LOG("Initialised new VBO: " + std::to_string(getID()), Logging::LOG_TYPE::INFO);
 }
 
-VBO::VBO(VBO &&other)
+Wombat::Graphics::VBO::VBO(Wombat::Graphics::VBO &&other)
     : Buffer(std::move(other))
 {
 }
 
-VBO &VBO::operator=(VBO &&other) noexcept
+Wombat::Graphics::VBO &Wombat::Graphics::VBO::operator=(Wombat::Graphics::VBO &&other) noexcept
 {
     Buffer::operator=(std::move(other));
     return *this;

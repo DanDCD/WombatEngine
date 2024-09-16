@@ -6,7 +6,7 @@
 Mesh::Mesh(std::vector<Wombat::Graphics::Vertex> vertices, std::vector<unsigned int> indices, entt::resource<Material> material)
     : vertices(vertices), indices(indices), material(material), vao()
 {
-    VBO vbo = VBO(GL_ARRAY_BUFFER);
+    Wombat::Graphics::VBO vbo = Wombat::Graphics::VBO(GL_ARRAY_BUFFER);
     vbo.assignData(&vertices[0], vertices.size() * sizeof(Wombat::Graphics::Vertex), GL_STATIC_DRAW);
 
     EBO ebo = EBO();
