@@ -26,6 +26,7 @@
 #include "root/utils/text_reading.h"
 #include "dependencies/entt/entt.hpp"
 #include "root/graphics/interface/resource_manager.h"
+#include "root/components/transform_component.h"
 
 /// @brief a callback for when the window is resized
 /// @param window the glfw window
@@ -67,6 +68,16 @@ void init_glad()
 
 int main()
 {
+    // TODO: delete this testing code
+    entt::registry registry;
+
+    entt::entity entity = registry.create();
+    // auto version = entt::to_version(entity); still need to find out what this does!
+
+    auto &transform = registry.emplace<Wombat::ECS::TransformComponent>(entity);
+    
+
+
     Logging::set_minimum_priority(Logging::LOG_PRIORITY::MEDIUM);
     LOG("\n" +
             readFile("text/wombat_screen.txt") +
