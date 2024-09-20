@@ -3,34 +3,34 @@
 #include <iostream>
 #include "root/utils/logging.h"
 
-VertexBufferElement::VertexBufferElement(GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised)
+Wombat::Graphics::VertexBufferElement::VertexBufferElement(GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised)
     : type(type), count(count), totalSize(totalSize), normalised(normalised)
 {
 }
 
-VertexBufferElement::VertexBufferElement()
+Wombat::Graphics::VertexBufferElement::VertexBufferElement()
 {
 }
 
-VertexBufferLayout::VertexBufferLayout()
+Wombat::Graphics::VertexBufferLayout::VertexBufferLayout()
     : attributeToElements(), stride()
 {
 }
 
-void VertexBufferLayout::addAttribute(unsigned int index, GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised)
+void Wombat::Graphics::VertexBufferLayout::addAttribute(unsigned int index, GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised)
 {
-    VertexBufferElement vertexBufferElement = VertexBufferElement(type, count, totalSize, normalised);
+    Wombat::Graphics::VertexBufferElement vertexBufferElement = Wombat::Graphics::VertexBufferElement(type, count, totalSize, normalised);
     attributeToElements[index] = vertexBufferElement;
 }
 
-void VertexBufferLayout::addAttribute(GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised)
+void Wombat::Graphics::VertexBufferLayout::addAttribute(GLenum type, unsigned int count, unsigned int totalSize, GLboolean normalised)
 {
     addAttribute(attributeToElements.size(), type, count, totalSize, normalised);
 }
 
-const std::vector<VertexBufferElement> VertexBufferLayout::getElements() const
+const std::vector<Wombat::Graphics::VertexBufferElement> Wombat::Graphics::VertexBufferLayout::getElements() const
 {
-    std::vector<VertexBufferElement> elements;
+    std::vector<Wombat::Graphics::VertexBufferElement> elements;
 
     for (const auto &pair : attributeToElements)
     {
@@ -40,7 +40,7 @@ const std::vector<VertexBufferElement> VertexBufferLayout::getElements() const
     return elements;
 }
 
-unsigned int VertexBufferLayout::getStride() const
+unsigned int Wombat::Graphics::VertexBufferLayout::getStride() const
 {
     unsigned int stride = 0;
 
@@ -52,18 +52,18 @@ unsigned int VertexBufferLayout::getStride() const
     return stride;
 }
 
-const std::map<int, VertexBufferElement> VertexBufferLayout::getMap() const
+const std::map<int, Wombat::Graphics::VertexBufferElement> Wombat::Graphics::VertexBufferLayout::getMap() const
 {
     return attributeToElements;
 }
 
-VAO::VAO()
+Wombat::Graphics::VAO::VAO()
 {
     glGenVertexArrays(1, &vao_ID);
     LOG("Initialised new VAO: " + std::to_string(vao_ID), Logging::LOG_TYPE::INFO);
 }
 
-VAO::VAO(VAO &&other)
+Wombat::Graphics::VAO::VAO(Wombat::Graphics::VAO &&other)
 {
     // transfer ownership of Vertex Array Object to this VAO
     this->vao_ID = other.vao_ID;
@@ -75,7 +75,7 @@ VAO::VAO(VAO &&other)
     other.ebo = std::nullopt;
 }
 
-VAO &VAO::operator=(VAO &&other) noexcept
+Wombat::Graphics::VAO &Wombat::Graphics::VAO::operator=(Wombat::Graphics::VAO &&other) noexcept
 {
     if (this != &other)
     {
@@ -93,14 +93,14 @@ VAO &VAO::operator=(VAO &&other) noexcept
     return *this;
 }
 
-VAO::~VAO()
+Wombat::Graphics::VAO::~VAO()
 {
     glDeleteVertexArrays(1, &vao_ID);
     if (vao_ID != 0)
         LOG("Deleted VAO: " + std::to_string(vao_ID), Logging::LOG_TYPE::INFO);
 }
 
-void VAO::addBuffer(Wombat::Graphics::VBO &&vbo, const VertexBufferLayout &layout)
+void Wombat::Graphics::VAO::addBuffer(Wombat::Graphics::VBO &&vbo, const VertexBufferLayout &layout)
 {
     bind();     // Bind the VAO
     vbo.bind(); // Bind the VBO
@@ -127,20 +127,20 @@ void VAO::addBuffer(Wombat::Graphics::VBO &&vbo, const VertexBufferLayout &layou
     unbind(); // Unbind the VAO
 }
 
-void VAO::addBuffer(EBO &&ebo)
+void Wombat::Graphics::VAO::addBuffer(EBO &&ebo)
 {   
     unsigned int ebo_id = ebo.getID();
     this->ebo = std::move(ebo);
     LOG(std::string("Assigned EBO: ") + std::to_string(ebo_id) + " to VAO: " + std::to_string(vao_ID), Logging::LOG_TYPE::INFO);
 }
 
-void VAO::addVertexAttrribSpec(unsigned int attrib_ID, unsigned int count, GLenum type, GLboolean normalised, unsigned int stride, unsigned int offset)
+void Wombat::Graphics::VAO::addVertexAttrribSpec(unsigned int attrib_ID, unsigned int count, GLenum type, GLboolean normalised, unsigned int stride, unsigned int offset)
 {
     glEnableVertexAttribArray(attrib_ID);
     glVertexAttribPointer(attrib_ID, count, type, normalised, stride, reinterpret_cast<void *>(offset));
 }
 
-void VAO::bind() const
+void Wombat::Graphics::VAO::bind() const
 {
     glBindVertexArray(vao_ID);
     if (ebo.has_value())
@@ -149,7 +149,7 @@ void VAO::bind() const
     }
 }
 
-void VAO::unbind() const
+void Wombat::Graphics::VAO::unbind() const
 {
     glBindVertexArray(0);
 }

@@ -54,5 +54,5 @@ private:
     entt::resource<Material> material;
 
     /// @brief this mesh's VAO (containing the VBO and EBO)
-    VAO vao;
+    Wombat::Graphics::VAO vao;
 };

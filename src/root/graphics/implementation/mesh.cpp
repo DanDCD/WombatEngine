@@ -12,7 +12,7 @@ Mesh::Mesh(std::vector<Wombat::Graphics::Vertex> vertices, std::vector<unsigned 
     EBO ebo = EBO();
     ebo.assignData(&indices[0], indices.size() * sizeof(unsigned int), GL_STATIC_DRAW);
 
-    VertexBufferLayout layout = VertexBufferLayout();
+    Wombat::Graphics::VertexBufferLayout layout = Wombat::Graphics::VertexBufferLayout();
     layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // verts
     layout.addAttribute(GL_FLOAT, 3, 3 * sizeof(float), GL_FALSE); // normals
     layout.addAttribute(GL_FLOAT, 2, 2 * sizeof(float), GL_FALSE); // texture coords
